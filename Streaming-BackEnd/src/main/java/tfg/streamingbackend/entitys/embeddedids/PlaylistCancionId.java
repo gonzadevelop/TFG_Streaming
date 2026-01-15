@@ -13,8 +13,8 @@ import lombok.*;
 public class PlaylistCancionId {
 
     @Column(name = "playlist_id")
-    private Integer playlistId;
+    private Long playlistId;
 
     @Column(name = "cancion_id")
-    private Integer cancionId;
+    private Long cancionId;
 }

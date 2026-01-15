@@ -13,7 +13,7 @@ import lombok.*;
 public class AlbumProductorId {
 
     @Column(name = "album_id")
-    private Integer albumId;
+    private Long albumId;
 
     @Column(name = "nombre_productor")
     private String productorNombre;
