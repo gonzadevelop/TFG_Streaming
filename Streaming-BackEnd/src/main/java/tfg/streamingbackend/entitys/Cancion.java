@@ -15,7 +15,7 @@ public class Cancion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
-    private Integer id;
+    private Long id;
 
     @Size(max = 100)
     @NotNull
