@@ -28,7 +28,8 @@ Este proyecto constituye nuestro **Trabajo de Fin de Grado (TFG)**. Se trata de 
 El desarrollo de este TFG ha sido llevado a cabo por:
 
 * **Backend Developer:** [Gonzalo Vicente](https://github.com/gonzadevelop) - (`@gonzadevelop`)
-* **Frontend Developer:** [Enrique Ruiz](https://github.com/kikeruuuiz) - (`@kikeruuuiz`)
+* **Frontend Developer: (interfaz de usuario)** [Enrique Ruiz](https://github.com/kikeruuuiz) - (`@kikeruuuiz`)
+* **Frontend Developer: (interfaz de artista)** [Elena Cristina Chiru](https://github.com/KiruuxX) - (`@KiruuxX`)
 
 ---
 
