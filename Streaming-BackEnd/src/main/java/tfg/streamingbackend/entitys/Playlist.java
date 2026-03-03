@@ -31,5 +31,5 @@ public class Playlist {
     private Boolean esPublica;
 
     @OneToMany(mappedBy = "playlist")
-    private Set<PlaylistCancion> playlistCancions = new LinkedHashSet<>();
+    private Set<PlaylistLanzamientoCancion> playlistLanzamientoCanciones = new LinkedHashSet<>();
 }
