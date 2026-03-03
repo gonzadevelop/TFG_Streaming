@@ -42,8 +42,8 @@ public class Usuario implements UserDetails {
     private String tipoSuscripcion;
 
     @Size(max = 255)
-    @Column(name = "foto_perfil")
-    private String fotoPerfil;
+    @Column(name = "archivo_avatar")
+    private String archivoAvatar;
 
     @Lob
     private String biografia;

@@ -24,8 +24,8 @@ public class Lanzamiento {
     private String titulo;
 
     @Size(max = 255)
-    @Column(name = "portada_url")
-    private String portadaUrl;
+    @Column(name = "archivo_portada")
+    private String archivoPortada;
 
     @Column(name = "fecha_lanzamiento")
     private LocalDate fechaLanzamiento;
