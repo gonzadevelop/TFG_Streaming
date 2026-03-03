@@ -15,6 +15,6 @@ public class PlaylistCancionId {
     @Column(name = "playlist_id")
     private Long playlistId;
 
-    @Column(name = "cancion_id")
-    private Long cancionId;
+    @Column(name = "lanzamiento_id")
+    private Long lanzamientoId;
 }
