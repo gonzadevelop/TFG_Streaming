@@ -24,8 +24,8 @@ public class Cancion {
 
     @Size(max = 255)
     @NotNull
-    @Column(name = "archivo_url")
-    private String archivoUrl;
+    @Column(name = "nombre_archivo")
+    private String nombreArchivo;
 
     @ManyToMany(mappedBy = "canciones")
     private Set<Usuario> usuarios = new LinkedHashSet<>();
@@ -34,5 +34,5 @@ public class Cancion {
     private Set<CancionProductor> cancionProductores = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "cancion")
-    private Set<Lanzamiento> lanzamientos = new LinkedHashSet<>();
+    private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
 }
