@@ -78,6 +78,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- DEPENDENCIA PARA FIREBASE (ALMACENAMIENTO DE ARCHIVOS EN LA NUBE -->
+
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.2.0</version>
+        </dependency>
+
         <!-- DEPENDENCIAS PARA JWT Y SEGURIDAD -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
