@@ -35,16 +35,4 @@ public class Cancion {
 
     @OneToMany(mappedBy = "cancion")
     private Set<Lanzamiento> lanzamientos = new LinkedHashSet<>();
-
-    public void setLanzamientos(Set<Lanzamiento> lanzamientos) {
-        this.lanzamientos = lanzamientos;
-    }
-
-    public void setCancionProductores(Set<CancionProductor> cancionProductores) {
-        this.cancionProductores = cancionProductores;
-    }
-
-    public void setUsuarios(Set<Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
 }

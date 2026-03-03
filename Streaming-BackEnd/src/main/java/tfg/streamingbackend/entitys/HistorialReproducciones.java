@@ -2,7 +2,8 @@ package tfg.streamingbackend.entitys;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import tfg.streamingbackend.entitys.embeddedids.UsuarioLanzamientoId;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "historial_reproducciones")
 @Getter
+@Setter
 public class HistorialReproducciones {
 
     @EmbeddedId
@@ -25,7 +27,7 @@ public class HistorialReproducciones {
     @JoinColumn(name = "lanzamiento_id", nullable = false)
     private Lanzamiento lanzamiento;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @CreationTimestamp
     @Column(name = "fecha_reproduccion")
     private LocalDateTime fechaReproduccion;
 
