@@ -1,6 +1,6 @@
-# TFG - Plataforma de Streaming Musical 🎵
+# TFG - KeySound 🎵
 
-Este proyecto constituye nuestro **Trabajo de Fin de Grado (TFG)**. Se trata de una plataforma web de streaming diseñada para la gestión y visualización de contenido multimedia, desarrollada con una arquitectura moderna y escalable.
+Este proyecto constituye nuestro **Trabajo de Fin de Grado (TFG)**. Se trata de **KeySound**, una plataforma web de streaming musical diseñada para la gestión y visualización de contenido multimedia, desarrollada con una arquitectura moderna y escalable.
 
 ---
 
@@ -18,6 +18,9 @@ Este proyecto constituye nuestro **Trabajo de Fin de Grado (TFG)**. Se trata de 
     </a> &nbsp;
     <a href="https://www.docker.com">
         <img src="https://www.svgrepo.com/show/452192/docker.svg" width="50" />
+    </a> &nbsp;
+    <a href="https://firebase.google.com/">
+        <img src="https://www.svgrepo.com/show/373595/firebase.svg" width="50" />
     </a>
 </p>
 

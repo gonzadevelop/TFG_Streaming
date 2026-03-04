@@ -10,10 +10,10 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class AlbumProductorId {
+public class LanzamientoProductorId {
 
-    @Column(name = "album_id")
-    private Long albumId;
+    @Column(name = "lanzamiento_id")
+    private Long lanzamientoId;
 
     @Column(name = "nombre_productor")
     private String productorNombre;

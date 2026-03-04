@@ -1,7 +1,7 @@
 services:
   db:
     image: mysql:8.4
-    container_name: mysql_streaming
+    container_name: mysql_keysound
 
     environment:
       MYSQL_DATABASE: ${DB_NAME}

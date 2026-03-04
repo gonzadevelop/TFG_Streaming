@@ -42,14 +42,14 @@ public class Usuario implements UserDetails {
     private String tipoSuscripcion;
 
     @Size(max = 255)
-    @Column(name = "foto_perfil")
-    private String fotoPerfil;
+    @Column(name = "archivo_avatar")
+    private String archivoAvatar;
 
     @Lob
     private String biografia;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "rol_id")
     private Rol rol;
 
@@ -62,8 +62,8 @@ public class Usuario implements UserDetails {
     @ManyToMany
     @JoinTable(name = "favoritos",
             joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "lanzamiento_id"))
-    private Set<Lanzamiento> lanzamientos = new LinkedHashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "lanzamiento_cancion_id"))
+    private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "usuario")
     private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();
