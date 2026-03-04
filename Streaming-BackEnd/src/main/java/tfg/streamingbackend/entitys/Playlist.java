@@ -17,7 +17,6 @@ public class Playlist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
