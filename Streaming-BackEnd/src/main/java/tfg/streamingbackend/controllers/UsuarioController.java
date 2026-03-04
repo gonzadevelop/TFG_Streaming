@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tfg.streamingbackend.model.AddCancionesPlaylistDTO;
 import tfg.streamingbackend.model.CrearPlaylistDTO;
 import tfg.streamingbackend.services.UsuarioService;
 
@@ -30,5 +31,14 @@ public class UsuarioController {
             @RequestHeader("Authorization") String token) {
         usuarioService.crearPlaylist(dto, token.substring(7));
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/agregar-cancion-playlist")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> agregarCancionAPlaylist(
+            @RequestBody AddCancionesPlaylistDTO dto,
+            @RequestHeader ("Authorization") String token) {
+        usuarioService.agregarCancionesAPlaylist(dto, token.substring(7));
+        return ResponseEntity.ok().build();
     }
 }
