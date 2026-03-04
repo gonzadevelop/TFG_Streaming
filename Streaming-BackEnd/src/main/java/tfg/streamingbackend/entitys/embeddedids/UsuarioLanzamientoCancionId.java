@@ -10,11 +10,11 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class UsuarioLanzamientoId {
+public class UsuarioLanzamientoCancionId {
 
     @Column(name = "usuario_id")
     private Long usuarioId;
 
-    @Column(name = "lanzamiento_id")
-    private Long lanzamientoId;
+    @Column(name = "lanzamiento_cancion_id")
+    private Long lanzamientoCancionId;
 }

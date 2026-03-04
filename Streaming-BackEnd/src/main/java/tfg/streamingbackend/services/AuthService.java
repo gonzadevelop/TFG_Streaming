@@ -73,7 +73,9 @@ public class AuthService {
         // Mapeo y guardado del usuario
         Usuario user = usuarioMapper.toEntity(request);
 
-        String rol = "ROLE_" + request.getRol().toUpperCase();
+        String rol = (request.getRol() == null || request.getRol().isBlank())
+                ? "ROLE_USER"
+                : "ROLE_" + request.getRol().trim().toUpperCase();
 
         user.setRol(rolRepository.findByNombre(rol));
 

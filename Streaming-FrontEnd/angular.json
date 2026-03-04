@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "Streaming-FrontEnd": {
+    "KeySound-FrontEnd": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:class": {
@@ -86,10 +86,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Streaming-FrontEnd:build:production"
+              "buildTarget": "KeySound-FrontEnd:build:production"
             },
             "development": {
-              "buildTarget": "Streaming-FrontEnd:build:development"
+              "buildTarget": "KeySound-FrontEnd:build:development"
             }
           },
           "defaultConfiguration": "development"
