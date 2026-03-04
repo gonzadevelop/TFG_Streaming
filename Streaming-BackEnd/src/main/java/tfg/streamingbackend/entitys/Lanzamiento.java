@@ -36,8 +36,5 @@ public class Lanzamiento {
     private String tipo;
 
     @OneToMany(mappedBy = "lanzamiento")
-    private Set<LanzamientoProductor> lanzamientoProductores = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "lanzamiento")
     private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
 }

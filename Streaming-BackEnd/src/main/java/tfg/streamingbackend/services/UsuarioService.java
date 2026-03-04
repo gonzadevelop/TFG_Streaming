@@ -2,15 +2,13 @@ package tfg.streamingbackend.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tfg.streamingbackend.entitys.Cancion;
-import tfg.streamingbackend.entitys.Playlist;
-import tfg.streamingbackend.entitys.PlaylistLanzamientoCancion;
-import tfg.streamingbackend.entitys.Usuario;
+import tfg.streamingbackend.entitys.*;
 import tfg.streamingbackend.entitys.embeddedids.PlaylistLanzamientoCancionId;
 import tfg.streamingbackend.exception.auth.UsernameNotFoundException;
 import tfg.streamingbackend.exception.cancion.CancionNotFoundException;
 import tfg.streamingbackend.exception.cancion.FileUploadException;
 import tfg.streamingbackend.exception.lanzamiento.LanzamientoCancionNotFoundException;
+import tfg.streamingbackend.exception.playlist.FavoriteAlreadyExistsException;
 import tfg.streamingbackend.exception.playlist.OwnershipRequiredException;
 import tfg.streamingbackend.exception.playlist.PlaylistNotFoundException;
 import tfg.streamingbackend.firebase.FirebaseService;
@@ -90,6 +88,7 @@ public class UsuarioService {
         Playlist playlist = playlistRepository.findById(dto.getPlaylistId())
                 .orElseThrow(() -> new PlaylistNotFoundException(dto.getPlaylistId()));
 
+        // Verificar que el usuario es el propietario de la playlist
         if (!playlist.getPropietario().getId().equals(usuario.getId())) {
             throw new OwnershipRequiredException();
         }
@@ -108,5 +107,27 @@ public class UsuarioService {
                     return relacion;
                 })
                 .forEach(playlistLanzamientoCancionRepository::save); // Guardar la relación en la base de datos
+    }
+
+    public void agregarCancionAFavoritos(Long lanzamientoCancionId, String token) {
+
+        // Extraer el nombre de usuario del token JWT
+        String username = jwtService.extractUsername(token);
+
+        // Buscar el usuario en la base de datos
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        LanzamientoCancion lanzamiento = lanzamientoCancionRepository.findById(lanzamientoCancionId)
+                .orElseThrow(() -> new LanzamientoCancionNotFoundException(lanzamientoCancionId));
+
+        // Verificar si la canción ya está en favoritos del usuario
+        if (usuario.getFavoritos().contains(lanzamiento)) {
+            throw new FavoriteAlreadyExistsException();
+        }
+
+        // Agregar la canción a favoritos del usuario
+        usuario.getFavoritos().add(lanzamiento);
+        usuarioRepository.save(usuario);
     }
 }
