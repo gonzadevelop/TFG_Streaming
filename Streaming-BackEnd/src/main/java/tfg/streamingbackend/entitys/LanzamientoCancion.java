@@ -3,6 +3,7 @@ package tfg.streamingbackend.entitys;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -10,11 +11,11 @@ import java.util.Set;
 @Entity
 @Table(name = "lanzamiento_canciones")
 @Getter
+@Setter
 public class LanzamientoCancion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Long id;
 
     @NotNull
@@ -29,9 +30,6 @@ public class LanzamientoCancion {
 
     @Column(name = "numero_pista")
     private Integer numeroPista;
-
-    @ManyToMany(mappedBy = "lanzamientoCanciones")
-    private Set<Usuario> usuarios = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "lanzamientoCancion")
     private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();
