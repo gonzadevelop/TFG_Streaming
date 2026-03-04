@@ -1,0 +1,37 @@
+### Crear playlist (sin foto de portada)
+POST http://localhost:8080/api/usuarios/crear-playlist
+Authorization: Bearer (tokenUsuario)
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="nombrePlaylist"
+
+Mi Playlist
+--boundary
+Content-Disposition: form-data; name="esPublica"
+
+true
+--boundary--
+
+###
+
+### Crear playlist (con foto de portada)
+POST http://localhost:8080/api/usuarios/crear-playlist
+Authorization: Bearer (tokenUsuario)
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="nombrePlaylist"
+
+Mi Playlist Rock
+--boundary
+Content-Disposition: form-data; name="esPublica"
+
+true
+--boundary
+Content-Disposition: form-data; name="fotoPortada"; filename="portada.jpg"
+Content-Type: image/jpeg
+
+< /home/gonza/Descargas/images.jpeg
+--boundary--
+
