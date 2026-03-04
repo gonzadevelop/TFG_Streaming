@@ -12,7 +12,7 @@ import tfg.streamingbackend.model.RegisterRequestDTO;
 import tfg.streamingbackend.services.AuthService;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

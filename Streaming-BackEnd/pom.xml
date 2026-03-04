@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>tfg</groupId>
-    <artifactId>Streaming-BackEnd</artifactId>
+    <artifactId>KeySound-BackEnd</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Streaming-BackEnd</name>
-    <description>Streaming-BackEnd</description>
+    <name>KeySound-BackEnd</name>
+    <description>KeySound-BackEnd</description>
     <url/>
     <licenses>
         <license/>
