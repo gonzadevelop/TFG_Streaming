@@ -31,4 +31,16 @@ public class FirebaseService {
             blob.delete();
         }
     }
+
+    public String obtenerUrlArchivo(String nombreArchivo) {
+        Bucket bucket = StorageClient.getInstance().bucket();
+
+        // Generar URL pública del archivo
+        // Formato: https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{archivo}?alt=media
+        return String.format(
+                "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
+                bucket.getName(),
+                nombreArchivo.replace("/", "%2F")
+        );
+    }
 }
