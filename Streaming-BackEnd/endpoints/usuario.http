@@ -1,5 +1,0 @@
-### ==================== USUARIO ENDPOINTS ====================
-
-### Reproducir canción (obtener URL de audio)
-GET http://localhost:8080/api/usuarios/reproducir/(idCancion)
-Authorization: Bearer (tokenUsuario)
