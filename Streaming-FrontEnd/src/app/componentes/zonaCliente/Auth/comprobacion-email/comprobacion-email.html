@@ -1,0 +1,16 @@
+
+
+        <h3 class="fw-bold">INICIA SESIÓN O CREA UNA CUENTA</h3>
+        <p class="text-muted">Si no tienes una cuenta, te pediremos que crees una.</p>
+
+        <form [formGroup]="registroForm" class="mt-4" (ngSubmit)="comprobarEmail()">
+          <div class="mb-3">
+            <label for="email" class="form-label">Dirección de correo electrónico</label>
+            <input type="email" class="form-control" id="email" formControlName="email" required>
+          </div>
+
+          <button type="submit" class="btn btn-secondary w-100 py-2 mb-3" [disabled]="registroForm.invalid">Continuar</button>
+        </form>
+
+          <p class="small text-muted">Al continuar hacia la siguiente página, aceptas las <a href="#">Condiciones de uso</a> y comprendes que la información se usará como se describe en nuestra <a href="#">Política de Privacidad</a>.</p>
+          <!-- Añadir links -->
