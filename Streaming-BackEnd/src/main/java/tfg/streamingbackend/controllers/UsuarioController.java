@@ -1,9 +1,11 @@
 package tfg.streamingbackend.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tfg.streamingbackend.model.CrearPlaylistDTO;
 import tfg.streamingbackend.services.UsuarioService;
 
 @RestController
@@ -19,5 +21,14 @@ public class UsuarioController {
     public ResponseEntity<String> reproducirCancion(@PathVariable Long cancionId) {
         String urlAudio = usuarioService.obtenerUrlCancion(cancionId);
         return ResponseEntity.ok(urlAudio);
+    }
+
+    @PostMapping("/crear-playlist")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> crearPlaylist(
+            @ModelAttribute CrearPlaylistDTO dto,
+            @RequestHeader("Authorization") String token) {
+        usuarioService.crearPlaylist(dto, token.substring(7));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
