@@ -1,5 +1,4 @@
-### ================================ ARTISTA ENDPOINTS ================================
-### Prueba de subida de sencillo
+### Subir sencillo
 POST http://localhost:8080/api/artistas/subir-sencillo
 Authorization: Bearer (tokenArtista)
 Content-Type: multipart/form-data; boundary=WebAppBoundary
@@ -18,8 +17,5 @@ Content-Disposition: form-data; name="cancion"; filename="cancion.mp3"
 Content-Type: audio/mpeg
 
 < (ruta a tu archivo de audio)
---WebAppBoundary
+--WebAppBoundary--
 
-### Prueba de borrado de sencillo
-DELETE http://localhost:8080/api/artistas/borrar-sencillo/(idSencillo)
-Authorization: Bearer (tokenArtista)

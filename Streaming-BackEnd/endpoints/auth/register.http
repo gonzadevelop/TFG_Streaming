@@ -1,17 +1,4 @@
-### ==================== AUTH ENDPOINTS ====================
-
-### Login de usuario
-POST http://localhost:8080/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "gonzalovicente@proton.me",
-  "password": "google2.0"
-}
-
-###
-
-### Registro de usuario (rol: USUARIO)
+### Registro de usuario (rol: USER)
 POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
@@ -23,8 +10,6 @@ Content-Type: application/json
   "apellidos": "Apellidos",
   "rol": "USER"
 }
-
-###
 
 ### Registro de artista (rol: ARTISTA)
 POST http://localhost:8080/api/auth/register
@@ -38,12 +23,4 @@ Content-Type: application/json
   "apellidos": "Apellidos Artista",
   "rol": "ARTISTA"
 }
-
-###
-
-### Verificar si un email existe
-POST http://localhost:8080/api/auth/check-email
-Content-Type: application/json
-
-"usuario@ejemplo.com"
 
