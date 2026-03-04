@@ -1,0 +1,99 @@
+<div class="login-bg">
+  <div class="login-blob login-blob--1"></div>
+  <div class="login-blob login-blob--2"></div>
+  <div class="login-blob login-blob--3"></div>
+</div>
+
+<!-- Contenido centrado -->
+<div class="d-flex justify-content-center align-items-center vh-100 login-content">
+  <div class="card shadow-lg login-card p-4 p-md-5">
+
+    <!-- Cabecera -->
+    <div class="text-center mb-4">
+      <img src="../img/KeySound_logo_V2.png" alt="">
+      <h3 class="fw-bold mb-1">INICIAR SESIÓN</h3>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+
+      <!-- Campo usuario / email -->
+      <div class="mb-3">
+        <label for="user" class="form-label fw-semibold small">Correo electrónico o usuario</label>
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            id="user"
+            formControlName="user"
+            placeholder="Escribe tu nombre de usuario o correo"
+            required
+          >
+        </div>
+      </div>
+
+      <!-- Campo contraseña -->
+      <div class="mb-3">
+        <label for="password" class="form-label fw-semibold small">Contraseña</label>
+        <div class="input-group">
+          <input
+            [type]="mostrarPassword() ? 'text' : 'password'"
+            class="form-control"
+            id="password"
+            formControlName="password"
+            placeholder=""
+            autocomplete="current-password"
+            required
+          >
+          <button
+            type="button"
+            class="btn btn-outline-secondary border-start-0"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            @if (mostrarPassword()) {
+              <i class="bi bi-eye-slash"></i>
+            } @else {
+              <i class="bi bi-eye"></i>
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Enlace olvidé contraseña -->
+      <div class="text-end mb-3">
+        <a href="#" class="forgot-link text-decoration-none small">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <!-- Botón iniciar sesión -->
+      <button
+        type="submit"
+        class="btn btn-submit w-100 py-2 mb-3"
+        [disabled]="loginForm.invalid"
+      >
+        Iniciar Sesión
+      </button>
+
+      <!-- Divisor -->
+      <div class="divider my-3" role="separator" aria-orientation="horizontal">
+        <span class="divider-text">o bien</span>
+      </div>
+
+      <!-- Botón volver -->
+      <button
+        type="button"
+        class="btn-back w-100 py-2"
+        (click)="goBack()"
+        aria-label="Volver atrás"
+      >
+        ← Volver
+      </button>
+    </form>
+
+    <p class="text-center text-muted small mt-4 mb-0">
+      ¿No tienes una cuenta?
+      <a href="#" class="text-decoration-none fw-semibold forgot-link">Crear cuenta</a>
+    </p>
+
+  </div>
+</div>
