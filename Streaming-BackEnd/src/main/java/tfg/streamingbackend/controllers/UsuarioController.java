@@ -33,12 +33,23 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    // Se puede agregar una o varias canciones a una playlist existente, siempre que el usuario sea el propietario de la playlist
     @PostMapping("/agregar-cancion-playlist")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> agregarCancionAPlaylist(
             @RequestBody AddCancionesPlaylistDTO dto,
             @RequestHeader ("Authorization") String token) {
         usuarioService.agregarCancionesAPlaylist(dto, token.substring(7));
+        return ResponseEntity.ok().build();
+    }
+
+    // Se puede agregar una canción a favoritos, siempre que no esté ya en favoritos
+    @PostMapping("/agregar-favoritos")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> agregarCancionAFavoritos(
+            @RequestBody Long lanzamientoCancionId,
+            @RequestHeader ("Authorization") String token) {
+        usuarioService.agregarCancionAFavoritos(lanzamientoCancionId, token.substring(7));
         return ResponseEntity.ok().build();
     }
 }

@@ -34,3 +34,4 @@ build/
 
 firebase-account.json
 .env
+endpoints

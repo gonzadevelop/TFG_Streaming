@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import tfg.streamingbackend.entitys.embeddedids.UsuarioLanzamientoCancionId;
+import tfg.streamingbackend.entitys.embeddedids.UsuarioCancionId;
 
 import java.time.LocalDateTime;
 
@@ -15,17 +15,17 @@ import java.time.LocalDateTime;
 public class HistorialReproducciones {
 
     @EmbeddedId
-    private UsuarioLanzamientoCancionId id;
+    private UsuarioCancionId id;
 
     @MapsId("usuarioId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @MapsId("lanzamientoCancionId")
+    @MapsId("cancionId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lanzamiento_cancion_id", nullable = false)
-    private LanzamientoCancion lanzamientoCancion;
+    @JoinColumn(name = "cancion_id", nullable = false)
+    private Cancion cancion;
 
     @CreationTimestamp
     @Column(name = "fecha_reproduccion")

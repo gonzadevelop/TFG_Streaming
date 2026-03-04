@@ -15,7 +15,6 @@ public interface LanzamientoMapper {
     @Mapping(target = "tipo", constant = "sencillo")
     @Mapping(target = "fechaLanzamiento", expression = "java(LocalDate.now())")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lanzamientoProductores", ignore = true)
     @Mapping(target = "lanzamientoCanciones", ignore = true)
     Lanzamiento toEntity(CrearCancionDTO dto, String archivoPortada);
 }
