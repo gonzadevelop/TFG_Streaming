@@ -1,0 +1,9 @@
+### Agregar canciones a playlist
+POST http://localhost:8080/api/usuarios/agregar-cancion-playlist
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX1VTRVIiXSwic3ViIjoiZ29uemFkZXYiLCJpYXQiOjE3NzI2MjM2ODksImV4cCI6MTc3MzQ4NzY4OX0.cewsKEFFK1AO10jnqrH4MaP0WU2awdkDxbrkKbPPEos
+Content-Type: application/json
+
+{
+  "playlistId": 2,
+  "lanzamientoCancionIds": [1, 2]
+}
