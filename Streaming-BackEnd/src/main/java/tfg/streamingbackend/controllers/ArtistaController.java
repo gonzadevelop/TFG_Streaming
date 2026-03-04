@@ -18,11 +18,21 @@ public class ArtistaController {
 
     @PostMapping(value = "/subir-sencillo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ARTISTA')")
-    public ResponseEntity<Void> subirCancion(
+    public ResponseEntity<Void> subirSencillo(
             @RequestHeader("Authorization") String token,
             @ModelAttribute CrearCancionDTO dto) {
         // substring(7) para eliminar "Bearer " del token
-        artistaService.subirCancion(dto, token.substring(7));
+        artistaService.subirSencillo(dto, token.substring(7));
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/borrar-sencillo/{sencilloId}")
+    @PreAuthorize("hasRole('ARTISTA')")
+    public ResponseEntity<Void> borrarSencillo(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long sencilloId) {
+        // substring(7) para eliminar "Bearer " del token
+        artistaService.eliminarSencillo(sencilloId, token.substring(7));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
