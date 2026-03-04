@@ -28,7 +28,10 @@ public class Cancion {
     @Column(name = "archivo_cancion")
     private String archivoCancion;
 
-    @ManyToMany(mappedBy = "canciones")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "cancion_artista",
+            joinColumns = @JoinColumn(name = "cancion_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id"))
     private Set<Usuario> usuarios = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "cancion")

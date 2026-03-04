@@ -11,7 +11,7 @@ import java.io.IOException;
 @Service
 public class FirebaseService {
 
-    public String subirArchivo(MultipartFile archivo, String nombreDestino) throws IOException {
+    public void subirArchivo(MultipartFile archivo, String nombreDestino) throws IOException {
         // Obtener el bucket configurado en FirebaseConfig
         Bucket bucket = StorageClient.getInstance().bucket();
 
@@ -20,9 +20,6 @@ public class FirebaseService {
         }
 
         bucket.create(nombreDestino, archivo.getBytes(), archivo.getContentType());
-
-        // Devolver el nombre del archivo subido para que pueda ser almacenado en la base de datos
-        return nombreDestino;
     }
 
     public void borrarArchivo(String nombreArchivo) {

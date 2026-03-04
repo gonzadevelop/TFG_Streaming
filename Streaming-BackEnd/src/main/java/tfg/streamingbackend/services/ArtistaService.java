@@ -9,6 +9,11 @@ import tfg.streamingbackend.entitys.Usuario;
 import tfg.streamingbackend.exception.auth.UsernameNotFoundException;
 import tfg.streamingbackend.exception.cancion.FileUploadException;
 import tfg.streamingbackend.exception.cancion.InvalidFormatFileException;
+import tfg.streamingbackend.exception.cancion.OwnershipRequiredException;
+import tfg.streamingbackend.exception.lanzamiento.InvalidReleaseTypeException;
+import tfg.streamingbackend.exception.lanzamiento.LanzamientoNotFoundException;
+import tfg.streamingbackend.exception.lanzamiento.MissingTrackException;
+import tfg.streamingbackend.exception.lanzamiento.RelationNotFoundException;
 import tfg.streamingbackend.firebase.FirebaseService;
 import tfg.streamingbackend.mappers.CancionMapper;
 import tfg.streamingbackend.mappers.LanzamientoCancionMapper;
@@ -31,17 +36,22 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ArtistaService {
 
+    // --------------- INYECCIONES POR CONSTRUCTOR ---------------
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
+
     private final UsuarioRepository usuarioRepository;
     private final CancionRepository cancionRepository;
     private final LanzamientoRepository lanzamientoRepository;
     private final LanzamientoCancionRepository lanzamientoCancionRepository;
+
     private final CancionMapper cancionMapper;
     private final LanzamientoMapper lanzamientoMapper;
     private final LanzamientoCancionMapper lanzamientoCancionMapper;
 
-    public Void subirCancion(CrearCancionDTO dto, String token) {
+    // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
+
+    public void subirSencillo(CrearCancionDTO dto, String token) {
 
         /*
               ------------ VALIDACIONES INICIALES -------------
@@ -93,20 +103,78 @@ public class ArtistaService {
         Lanzamiento lanzamiento = lanzamientoMapper.toEntity(dto, nombreArchivoPortada);
 
         // Guardar primero cancion y lanzamiento
-        cancionRepository.save(cancion);
-        lanzamientoRepository.save(lanzamiento);
+        cancionRepository.saveAndFlush(cancion);
+        lanzamientoRepository.saveAndFlush(lanzamiento);
 
         // Crear y guardar la relación
         LanzamientoCancion lanzamientoCancion = lanzamientoCancionMapper.toEntity(cancion, lanzamiento, 1);
         lanzamientoCancionRepository.save(lanzamientoCancion);
 
-        return null;
+
+
+    }
+
+    public void eliminarSencillo(Long idSencillo, String token) {
+        /*
+         ------------- VALIDACIONES INICIALES -------------
+         */
+
+        // Buscar el lanzamiento por ID
+        Lanzamiento lanzamiento = lanzamientoRepository.findById(idSencillo)
+                .orElseThrow(() -> new LanzamientoNotFoundException(idSencillo));
+
+        // Verificar que el lanzamiento es un sencillo
+        if (!"sencillo".equalsIgnoreCase(lanzamiento.getTipo())) {
+            throw new InvalidReleaseTypeException(idSencillo);
+        }
+
+        // Obtener la canción asociada al lanzamiento
+        Cancion cancion = lanzamiento.getLanzamientoCanciones().stream().findFirst()
+                .orElseThrow(() -> new MissingTrackException(idSencillo))
+                .getCancion();
+
+        // Extraer el nombre del artista del JWT
+        String nombreArtista = jwtService.extractUsername(token);
+
+        // Buscar el usuario en la base de datos
+        Usuario artista = usuarioRepository.findByUsernameIgnoreCase(nombreArtista)
+                .orElseThrow(() -> new UsernameNotFoundException(nombreArtista));
+
+        // Verificar que el artista es el propietario de la canción
+        if (!cancion.getUsuarios().contains(artista)) {
+            throw new OwnershipRequiredException();
+        }
+
+        /*
+         ------------- ELIMINACIÓN DE ARCHIVOS EN FIREBASE STORAGE -------------
+         */
+
+        // Eliminar el archivo de audio de Firebase Storage
+        firebaseService.borrarArchivo(cancion.getArchivoCancion());
+
+        // Eliminar el archivo de portada de Firebase Storage
+        firebaseService.borrarArchivo(lanzamiento.getArchivoPortada());
+
+        /*
+         ------------- ELIMINACIÓN DE ENTIDADES Y RELACIONES EN LA BASE DE DATOS -------------
+         */
+
+        // Eliminar la relación entre lanzamiento y canción
+        LanzamientoCancion lanzamientoCancion = lanzamientoCancionRepository.findByLanzamientoIdAndCancionId(idSencillo, cancion.getId())
+                .orElseThrow(() -> new RelationNotFoundException());
+
+        lanzamientoCancionRepository.delete(lanzamientoCancion);
+
+        // Eliminar la canción
+        cancionRepository.delete(cancion);
+        // Eliminar el lanzamiento
+        lanzamientoRepository.delete(lanzamiento);
+
+
     }
 
 
-
-
-
+    // -------------------- MÉTODOS AUXILIARES --------------------
 
     private void validarFormatoArchivo(String tipo) {
         // Lista de formatos permitidos
