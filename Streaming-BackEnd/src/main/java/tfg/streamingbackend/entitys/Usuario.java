@@ -79,10 +79,7 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "seguido_id"))
     private Set<Usuario> seguidores = new LinkedHashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "seguidores",
-            joinColumns = @JoinColumn(name = "seguido_id"),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id"))
+    @ManyToMany(mappedBy = "seguidores")
     private Set<Usuario> seguidos = new LinkedHashSet<>();
 
 

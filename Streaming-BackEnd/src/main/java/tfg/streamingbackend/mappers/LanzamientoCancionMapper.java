@@ -13,7 +13,6 @@ public interface LanzamientoCancionMapper {
     @Mapping(source = "lanzamiento", target = "lanzamiento")
     @Mapping(source = "numeroPista", target = "numeroPista")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "historialReproducciones", ignore = true)
     @Mapping(target = "playlistLanzamientoCanciones", ignore = true)
     LanzamientoCancion toEntity(Cancion cancion, Lanzamiento lanzamiento, Integer numeroPista);
 }
