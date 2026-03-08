@@ -12,9 +12,11 @@ import tfg.streamingbackend.exception.playlist.FavoriteAlreadyExistsException;
 import tfg.streamingbackend.exception.playlist.OwnershipRequiredException;
 import tfg.streamingbackend.exception.playlist.PlaylistNotFoundException;
 import tfg.streamingbackend.firebase.FirebaseService;
+import tfg.streamingbackend.mappers.LanzamientoCancionMapper;
 import tfg.streamingbackend.mappers.PlaylistMapper;
 import tfg.streamingbackend.model.AddCancionesPlaylistDTO;
 import tfg.streamingbackend.model.CrearPlaylistDTO;
+import tfg.streamingbackend.model.ReproducirCancionDTO;
 import tfg.streamingbackend.repositorys.CancionRepository;
 import tfg.streamingbackend.repositorys.LanzamientoCancionRepository;
 import tfg.streamingbackend.repositorys.PlaylistLanzamientoCancionRepository;
@@ -23,6 +25,7 @@ import tfg.streamingbackend.repositorys.UsuarioRepository;
 import tfg.streamingbackend.security.JwtService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,17 +38,37 @@ public class UsuarioService {
     private final LanzamientoCancionRepository lanzamientoCancionRepository;
     private final PlaylistLanzamientoCancionRepository playlistLanzamientoCancionRepository;
     private final PlaylistMapper playlistMapper;
+    private final LanzamientoCancionMapper lanzamientoCancionMapper;
     private final PlaylistRepository playlistRepository;
     private final UsuarioRepository usuarioRepository;
 
-
-    public String obtenerUrlCancion(Long cancionId) {
+    public ReproducirCancionDTO obtenerUrlCancion(Long lanzamientoCancionId) {
         // Verificar que la canción existe
-        Cancion cancion = cancionRepository.findById(cancionId)
-                .orElseThrow(() -> new CancionNotFoundException(cancionId));
+        LanzamientoCancion lanzamientoCancion = lanzamientoCancionRepository.findById(lanzamientoCancionId)
+                .orElseThrow(() -> new CancionNotFoundException(lanzamientoCancionId));
 
-        // Obtener la URL pública de Firebase Storage para reproducir la canción
-        return firebaseService.obtenerUrlArchivo(cancion.getArchivoCancion());
+        String nombreCancion = lanzamientoCancion.getCancion().getTitulo();
+
+        // Obtener la lista de artistas asociados al lanzamiento de canción
+        List<String> artistas =  lanzamientoCancion.getCancion().getUsuarios()
+                .stream()
+                .map(Usuario::getUsername)
+                .toList();
+
+        // Obtener la URL pública de Firebase Storage para reproducir la canción y
+        String urlAudio = firebaseService.obtenerUrlArchivo(lanzamientoCancion.getCancion().getArchivoCancion());
+
+        // Obtener la URL de la portada (si existe) o generar una URL de avatar con las iniciales del título
+        String urlImagen = lanzamientoCancion.getLanzamiento().getArchivoPortada() != null ?
+                firebaseService.obtenerUrlArchivo(lanzamientoCancion.getLanzamiento().getArchivoPortada()) :
+                "https://ui-avatars.com/api/?name=" + getInicialesTitulo(nombreCancion) + "&background=0b75c0&bold=true&color=FFF";
+
+        return lanzamientoCancionMapper.toReproducirCancionDTO(
+                nombreCancion,
+                urlAudio,
+                artistas,
+                urlImagen
+        );
     }
 
     public void crearPlaylist(CrearPlaylistDTO dto, String token) {
@@ -129,5 +152,14 @@ public class UsuarioService {
         // Agregar la canción a favoritos del usuario
         usuario.getFavoritos().add(lanzamiento);
         usuarioRepository.save(usuario);
+    }
+
+
+
+    private String getInicialesTitulo(String titulo) {
+        return java.util.Arrays.stream(titulo.split(" "))
+                .filter(s -> !s.isEmpty())
+                .map(s -> s.substring(0, 1))
+                .reduce("", String::concat);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tfg.streamingbackend.model.AddCancionesPlaylistDTO;
 import tfg.streamingbackend.model.CrearPlaylistDTO;
+import tfg.streamingbackend.model.ReproducirCancionDTO;
 import tfg.streamingbackend.services.UsuarioService;
 
 @RestController
@@ -16,12 +17,11 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    // Se envía al cliente la URL pública de Firebase Storage para reproducir la canción
-    @GetMapping("/reproducir/{cancionId}")
+    // Se envía al cliente la URL pública de Firebase Storage para reproducir la canción, junto con el nombre de la canción, los artistas y la url de la portada.
+    @GetMapping("/reproducir/{lanzamientoCancionId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> reproducirCancion(@PathVariable Long cancionId) {
-        String urlAudio = usuarioService.obtenerUrlCancion(cancionId);
-        return ResponseEntity.ok(urlAudio);
+    public ResponseEntity<ReproducirCancionDTO> reproducirCancion(@PathVariable Long lanzamientoCancionId) {
+        return ResponseEntity.ok(usuarioService.obtenerUrlCancion(lanzamientoCancionId));
     }
 
     @PostMapping("/crear-playlist")
