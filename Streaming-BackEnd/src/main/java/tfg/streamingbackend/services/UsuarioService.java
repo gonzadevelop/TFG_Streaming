@@ -14,9 +14,11 @@ import tfg.streamingbackend.exception.playlist.PlaylistNotFoundException;
 import tfg.streamingbackend.firebase.FirebaseService;
 import tfg.streamingbackend.mappers.LanzamientoCancionMapper;
 import tfg.streamingbackend.mappers.PlaylistMapper;
+import tfg.streamingbackend.mappers.UsuarioMapper;
 import tfg.streamingbackend.model.AddCancionesPlaylistDTO;
 import tfg.streamingbackend.model.CrearPlaylistDTO;
 import tfg.streamingbackend.model.ReproducirCancionDTO;
+import tfg.streamingbackend.model.UsuarioDTO;
 import tfg.streamingbackend.repositorys.CancionRepository;
 import tfg.streamingbackend.repositorys.LanzamientoCancionRepository;
 import tfg.streamingbackend.repositorys.PlaylistLanzamientoCancionRepository;
@@ -41,6 +43,7 @@ public class UsuarioService {
     private final LanzamientoCancionMapper lanzamientoCancionMapper;
     private final PlaylistRepository playlistRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
 
     public ReproducirCancionDTO obtenerUrlCancion(Long lanzamientoCancionId) {
         // Verificar que la canción existe
@@ -61,7 +64,7 @@ public class UsuarioService {
         // Obtener la URL de la portada (si existe) o generar una URL de avatar con las iniciales del título
         String urlImagen = lanzamientoCancion.getLanzamiento().getArchivoPortada() != null ?
                 firebaseService.obtenerUrlArchivo(lanzamientoCancion.getLanzamiento().getArchivoPortada()) :
-                "https://ui-avatars.com/api/?name=" + getInicialesTitulo(nombreCancion) + "&background=0b75c0&bold=true&color=FFF";
+                "https://ui-avatars.com/api/?name=" + getInicialesTitulo(nombreCancion) + "&background=0b75c0&bold=true&color=FFF&size=256";
 
         return lanzamientoCancionMapper.toReproducirCancionDTO(
                 nombreCancion,
@@ -154,7 +157,17 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    // mas adelante añadir playlists de usuario, canciones favoritas, etc.
+    public UsuarioDTO obtenerInfoUsuario(String username) {
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        String urlAvatar = usuario.getArchivoAvatar() != null ?
+                firebaseService.obtenerUrlArchivo(usuario.getArchivoAvatar()) :
+                "https://ui-avatars.com/api/?name=" + usuario.getUsername().charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
+
+        return usuarioMapper.toDto(usuario, urlAvatar);
+    }
 
     private String getInicialesTitulo(String titulo) {
         return java.util.Arrays.stream(titulo.split(" "))

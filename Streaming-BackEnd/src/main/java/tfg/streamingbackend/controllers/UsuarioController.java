@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import tfg.streamingbackend.model.AddCancionesPlaylistDTO;
 import tfg.streamingbackend.model.CrearPlaylistDTO;
 import tfg.streamingbackend.model.ReproducirCancionDTO;
+import tfg.streamingbackend.model.UsuarioDTO;
 import tfg.streamingbackend.services.UsuarioService;
 
 @RestController
@@ -51,5 +52,10 @@ public class UsuarioController {
             @RequestHeader ("Authorization") String token) {
         usuarioService.agregarCancionAFavoritos(lanzamientoCancionId, token.substring(7));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/info-usuario/{username}")
+    public ResponseEntity<UsuarioDTO> obtenerInfoUsuario(@PathVariable String username) {
+        return ResponseEntity.ok(usuarioService.obtenerInfoUsuario(username));
     }
 }
