@@ -63,7 +63,7 @@ public class Usuario implements UserDetails {
     @JoinTable(name = "favoritos",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "lanzamiento_cancion_id"))
-    private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
+    private Set<LanzamientoCancion> favoritos = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "usuario")
     private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();
@@ -79,10 +79,7 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "seguido_id"))
     private Set<Usuario> seguidores = new LinkedHashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "seguidores",
-            joinColumns = @JoinColumn(name = "seguido_id"),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id"))
+    @ManyToMany(mappedBy = "seguidores")
     private Set<Usuario> seguidos = new LinkedHashSet<>();
 
 
