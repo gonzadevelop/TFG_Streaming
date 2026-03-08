@@ -2,18 +2,22 @@ package tfg.streamingbackend.entitys;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import tfg.streamingbackend.entitys.embeddedids.CancionProductorId;
+import lombok.Setter;
 
 @Entity
 @Table(name = "cancion_productores")
 @Getter
+@Setter
 public class CancionProductor {
 
-    @EmbeddedId
-    private CancionProductorId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @MapsId("cancionId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cancion_id", nullable = false)
     private Cancion cancion;
+
+    @Column(name = "nombre_productor", nullable = false, length = 100)
+    private String nombreProductor;
 }
