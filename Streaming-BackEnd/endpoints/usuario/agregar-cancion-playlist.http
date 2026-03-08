@@ -4,6 +4,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX1VTRVIiXSwic3ViI
 Content-Type: application/json
 
 {
-  "playlistId": 2,
-  "lanzamientoCancionIds": [1, 2]
+  "playlistId": {idPlaylist},
+  "lanzamientoCancionIds": [{idLanzamientoCancion1}, {idLanzamientoCancion2}, ...]
 }

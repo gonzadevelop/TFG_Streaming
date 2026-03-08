@@ -1,4 +1,4 @@
 ### Borrar sencillo
 DELETE http://localhost:8080/api/artistas/borrar-sencillo/{idSencillo}
-Authorization: Bearer (tokenArtista)
+Authorization: Bearer {tokenArtista}
 
