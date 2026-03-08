@@ -39,4 +39,7 @@ public class Cancion {
 
     @OneToMany(mappedBy = "cancion")
     private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "cancion")
+    private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();
 }
