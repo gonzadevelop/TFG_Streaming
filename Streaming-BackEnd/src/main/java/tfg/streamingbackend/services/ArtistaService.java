@@ -15,10 +15,14 @@ import tfg.streamingbackend.exception.lanzamiento.LanzamientoNotFoundException;
 import tfg.streamingbackend.exception.lanzamiento.MissingTrackException;
 import tfg.streamingbackend.exception.lanzamiento.RelationNotFoundException;
 import tfg.streamingbackend.firebase.FirebaseService;
+import tfg.streamingbackend.mappers.ArtistaMapper;
 import tfg.streamingbackend.mappers.CancionMapper;
 import tfg.streamingbackend.mappers.LanzamientoCancionMapper;
 import tfg.streamingbackend.mappers.LanzamientoMapper;
+import tfg.streamingbackend.model.ArtistaDTO;
+import tfg.streamingbackend.model.CancionDTO;
 import tfg.streamingbackend.model.CrearCancionDTO;
+import tfg.streamingbackend.model.LanzamientoDTO;
 import tfg.streamingbackend.repositorys.CancionRepository;
 import tfg.streamingbackend.repositorys.LanzamientoCancionRepository;
 import tfg.streamingbackend.repositorys.LanzamientoRepository;
@@ -48,6 +52,7 @@ public class ArtistaService {
     private final CancionMapper cancionMapper;
     private final LanzamientoMapper lanzamientoMapper;
     private final LanzamientoCancionMapper lanzamientoCancionMapper;
+    private final ArtistaMapper artistaMapper;
 
     // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
 
@@ -173,6 +178,47 @@ public class ArtistaService {
 
     }
 
+    public ArtistaDTO obtenerInfoArtista(String username, String token) {
+        // Buscar el artista por username
+        Usuario artista = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+
+        // Buscar el usuario que hace la peticion en la bd (si viene el header) para contar cuántas canciones del artista tiene en favoritos
+        int cancionesEnFavoritos = 0;
+        if (token != null) {
+            String usernameToken = jwtService.extractUsername(token);
+            Usuario usuarioToken = usuarioRepository.findByUsernameIgnoreCase(usernameToken)
+                    .orElseThrow(() -> new UsernameNotFoundException(usernameToken));
+
+            cancionesEnFavoritos = usuarioToken
+                    .getFavoritos()
+                    .stream()
+                    .filter(lanzamientoCancion -> lanzamientoCancion.getCancion().getUsuarios().contains(artista))
+                    .mapToInt(lanzamientoCancion -> 1)
+                    .sum();
+        }
+
+        // Sacar todos los lanzamientos del artista.
+        List<Lanzamiento> lanzamientos = artista.getLanzamientos()
+                .stream()
+                .toList();
+
+        // Buscar las 10 canciones más populares del artista, ordenadas por número de reproducciones (historialReproducciones)
+        List<LanzamientoCancion> cancionesPopulares = artista.getCanciones().stream()
+                .sorted((c1, c2) -> Integer.compare(
+                        c2.getHistorialReproducciones() != null ? c2.getHistorialReproducciones().size() : 0,
+                        c1.getHistorialReproducciones() != null ? c1.getHistorialReproducciones().size() : 0))
+                .limit(10)
+                .map(cancion -> cancion.getLanzamientoCanciones().stream().findFirst().orElse(null))
+                .filter(lc -> lc != null)
+                .toList();
+
+        // Mapear a DTO
+        List<LanzamientoDTO> lanzamientosDTO = lanzamientoMapper.toDtos(lanzamientos);
+        List<CancionDTO> cancionesPopularesDTO = cancionMapper.toDtos(cancionesPopulares);
+        return artistaMapper.toDto(artista, cancionesPopularesDTO, lanzamientosDTO, cancionesEnFavoritos);
+    }
 
     // -------------------- MÉTODOS AUXILIARES --------------------
 
@@ -201,4 +247,6 @@ public class ArtistaService {
             throw new InvalidFormatFileException(tipo);
         }
     }
+
+
 }

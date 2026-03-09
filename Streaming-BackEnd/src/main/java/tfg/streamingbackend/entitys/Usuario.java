@@ -53,6 +53,7 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "rol_id")
     private Rol rol;
 
+    // ARTISTAS!!!!
     @ManyToMany
     @JoinTable(name = "cancion_artista",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -70,6 +71,10 @@ public class Usuario implements UserDetails {
 
     @OneToMany(mappedBy = "propietario")
     private Set<Playlist> playlists = new LinkedHashSet<>();
+
+    // ARTISTAS!!!!
+    @OneToMany(mappedBy = "usuario")
+    private Set<Lanzamiento> lanzamientos = new LinkedHashSet<>();
 
     // COMPROBAR QUE SEGUIDORES Y SEGUIDOS ESTÁ CORRECTAMENTE.
 
