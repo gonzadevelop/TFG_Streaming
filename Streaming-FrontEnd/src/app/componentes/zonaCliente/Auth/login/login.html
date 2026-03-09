@@ -10,7 +10,12 @@
 
     <!-- Cabecera -->
     <div class="text-center mb-4">
-      <img src="../img/KeySound_logo_V2.png" alt="">
+      <img class="login-logo"
+           src="img/logo_llave_KeySound-Photoroom.png"
+           alt="Logo KeySound"
+           width="250"
+           height="250"
+           priority>
       <h3 class="fw-bold mb-1">INICIAR SESIÓN</h3>
     </div>
 
@@ -24,12 +29,23 @@
           <input
             type="text"
             class="form-control"
+            [class.is-invalid]="loginForm.get('user')?.invalid && loginForm.get('user')?.touched"
             id="user"
             formControlName="user"
             placeholder="Escribe tu nombre de usuario o correo"
+            autocomplete="username"
             required
           >
         </div>
+        @if (loginForm.get('user')?.invalid && loginForm.get('user')?.touched) {
+          <div class="invalid-feedback d-block" role="alert">
+            @if (loginForm.get('user')?.hasError('required')) {
+              <span>El correo electrónico o usuario es obligatorio.</span>
+            } @else if (loginForm.get('user')?.hasError('minlength')) {
+              <span>Debe tener al menos 3 caracteres.</span>
+            }
+          </div>
+        }
       </div>
 
       <!-- Campo contraseña -->
@@ -39,6 +55,7 @@
           <input
             [type]="mostrarPassword() ? 'text' : 'password'"
             class="form-control"
+            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
             id="password"
             formControlName="password"
             placeholder=""
@@ -47,7 +64,7 @@
           >
           <button
             type="button"
-            class="btn btn-outline-secondary border-start-0"
+            class="btn border-start-0"
             (click)="togglePasswordVisibility()"
             [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
           >
@@ -58,7 +75,24 @@
             }
           </button>
         </div>
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="invalid-feedback d-block" role="alert">
+            @if (loginForm.get('password')?.hasError('required')) {
+              <span>La contraseña es obligatoria.</span>
+            } @else if (loginForm.get('password')?.hasError('minlength')) {
+              <span>La contraseña debe tener al menos 6 caracteres.</span>
+            }
+          </div>
+        }
       </div>
+
+      <!-- Mensaje de error de credenciales -->
+      @if (errorCredenciales()) {
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2 mb-3" role="alert" aria-live="assertive">
+          <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+          <span>{{ errorCredenciales() }}</span>
+        </div>
+      }
 
       <!-- Enlace olvidé contraseña -->
       <div class="text-end mb-3">
@@ -69,9 +103,14 @@
       <button
         type="submit"
         class="btn btn-submit w-100 py-2 mb-3"
-        [disabled]="loginForm.invalid"
+        [disabled]="loginForm.invalid || cargando()"
       >
-        Iniciar Sesión
+        @if (cargando()) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span>Iniciando sesión...</span>
+        } @else {
+          <span>Iniciar sesión</span>
+        }
       </button>
 
       <!-- Divisor -->
@@ -80,19 +119,21 @@
       </div>
 
       <!-- Botón volver -->
-      <button
-        type="button"
-        class="btn-back w-100 py-2"
-        (click)="goBack()"
-        aria-label="Volver atrás"
-      >
-        ← Volver
-      </button>
+      <a href="/" class="text-decoration-none">
+        <button
+          type="button"
+          class="btn-back w-100 py-2"
+          (click)="goBack()"
+          aria-label="Volver atrás"
+        >
+          ← Volver
+        </button>
+      </a>
     </form>
 
     <p class="text-center text-muted small mt-4 mb-0">
       ¿No tienes una cuenta?
-      <a href="#" class="text-decoration-none fw-semibold forgot-link">Crear cuenta</a>
+      <a href="../registro/registro.html" class="text-decoration-none fw-semibold forgot-link">Crear cuenta</a>
     </p>
 
   </div>

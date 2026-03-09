@@ -34,7 +34,7 @@
 .login-blob--1 {
   width: 550px;
   height: 550px;
-  background: radial-gradient(circle, #33708a, #a4d4e4);
+  background: radial-gradient(circle, #33708a, #7fdfff);
   top: -12%;
   left: -10%;
   animation: blob-1 15s ease-in-out infinite;
@@ -52,7 +52,7 @@
 .login-blob--3 {
   width: 380px;
   height: 380px;
-  background: radial-gradient(circle, #78bfda, #787b7e);
+  background: radial-gradient(circle, #009dd5, #787b7e);
   top: 45%;
   left: 55%;
   transform: translate(-50%, -50%);
