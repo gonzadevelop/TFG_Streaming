@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tfg.streamingbackend.model.ArtistaDTO;
 import tfg.streamingbackend.model.CrearCancionDTO;
 import tfg.streamingbackend.services.ArtistaService;
 
@@ -34,5 +35,12 @@ public class ArtistaController {
         // substring(7) para eliminar "Bearer " del token
         artistaService.eliminarSencillo(sencilloId, token.substring(7));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/info-artista/{username}")
+    public ResponseEntity<ArtistaDTO> obtenerInfoArtista(
+            @PathVariable String username,
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(artistaService.obtenerInfoArtista(username, token.substring(7)));
     }
 }
