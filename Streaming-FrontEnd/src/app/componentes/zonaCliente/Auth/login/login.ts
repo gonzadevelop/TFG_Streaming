@@ -15,17 +15,22 @@ import {HttpErrorResponse, HttpResponse} from '@angular/common/http';
 import ILoginResponse from '../../../../model/ILoginResponse';
 import ILoginRequest from '../../../../model/ILoginRequest';
 import {Subscription} from 'rxjs';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-login',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink
   ],
+  standalone: true,
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login implements OnInit, OnDestroy {
+  private router = inject(Router);
+
   private servApiSpring:ServApiSpring = inject( ServApiSpring );
   private suscripcionLogin?: Subscription;
   private errorTimeout?: ReturnType<typeof setTimeout>;
@@ -96,6 +101,10 @@ export class Login implements OnInit, OnDestroy {
 
   goBack(): void {
     this.atras.emit();
+  }
+
+  goRegistro(): void {
+    this.router.navigate(['/registro']);
   }
 
   ngOnInit(): void {

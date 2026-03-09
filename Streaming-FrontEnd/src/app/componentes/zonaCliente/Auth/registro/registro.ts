@@ -12,15 +12,18 @@ import {
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ServApiSpring} from '../../../../services/ServApiSpring';
 import ILoginRequest from '../../../../model/ILoginRequest';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
+  standalone: true,
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
 export class Registro implements OnInit, OnDestroy {
   private servApiSpring:ServApiSpring = inject( ServApiSpring );
+  private router = inject(Router);
 
   public email:InputSignal<string> = input<string>('');
   public atras:OutputEmitterRef<void> = output<void>();
@@ -51,6 +54,10 @@ export class Registro implements OnInit, OnDestroy {
 
   togglePasswordVisibility(): void {
     this.mostrarPassword.set(!this.mostrarPassword());
+  }
+
+  goLogin(): void {
+    this.router.navigate(['/login']);
   }
 
   goBack(): void {
