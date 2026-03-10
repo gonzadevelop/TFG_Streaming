@@ -8,9 +8,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class CrearCancionDTO {
-    private String nombreSencillo;
+public class CrearAlbumDTO {
+    private String nombreAlbum;
     private MultipartFile portada;
-    private MultipartFile cancion;
-    private List<Long> idUsuarios;
+    private List<CancionAlbumDTO> canciones;
 }

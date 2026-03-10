@@ -7,8 +7,6 @@ import tfg.streamingbackend.entitys.Lanzamiento;
 import tfg.streamingbackend.entitys.LanzamientoCancion;
 import tfg.streamingbackend.entitys.Usuario;
 import tfg.streamingbackend.exception.auth.UsernameNotFoundException;
-import tfg.streamingbackend.exception.cancion.FileUploadException;
-import tfg.streamingbackend.exception.cancion.InvalidFormatFileException;
 import tfg.streamingbackend.exception.cancion.OwnershipRequiredException;
 import tfg.streamingbackend.exception.lanzamiento.InvalidReleaseTypeException;
 import tfg.streamingbackend.exception.lanzamiento.LanzamientoNotFoundException;
@@ -19,22 +17,17 @@ import tfg.streamingbackend.mappers.ArtistaMapper;
 import tfg.streamingbackend.mappers.CancionMapper;
 import tfg.streamingbackend.mappers.LanzamientoCancionMapper;
 import tfg.streamingbackend.mappers.LanzamientoMapper;
-import tfg.streamingbackend.model.ArtistaDTO;
-import tfg.streamingbackend.model.CancionDTO;
-import tfg.streamingbackend.model.CrearCancionDTO;
-import tfg.streamingbackend.model.LanzamientoDTO;
+import tfg.streamingbackend.model.*;
 import tfg.streamingbackend.repositorys.CancionRepository;
 import tfg.streamingbackend.repositorys.LanzamientoCancionRepository;
 import tfg.streamingbackend.repositorys.LanzamientoRepository;
 import tfg.streamingbackend.repositorys.UsuarioRepository;
 import tfg.streamingbackend.security.JwtService;
+import tfg.streamingbackend.utils.ArtistaUtils;
+import tfg.streamingbackend.utils.AudioUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -56,17 +49,17 @@ public class ArtistaService {
 
     // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
 
-    public void subirSencillo(CrearCancionDTO dto, String token) {
+    public void subirSencillo(CrearSencilloDTO dto, String token) {
 
         /*
               ------------ VALIDACIONES INICIALES -------------
          */
 
         // Validar el formato del archivo de audio
-        validarFormatoArchivo(dto.getCancion().getContentType());
+        ArtistaUtils.validarFormatoArchivo(dto.getCancion().getContentType());
 
         // Validar el formato de la portada
-        validarFormatoImagen(dto.getPortada().getContentType());
+        ArtistaUtils.validarFormatoImagen(dto.getPortada().getContentType());
 
         // Extraer el nombre del artista del JWT
         String nombreArtista = jwtService.extractUsername(token);
@@ -80,17 +73,12 @@ public class ArtistaService {
          */
 
         // Crear nombres únicos para los archivos
-        String uuid = UUID.randomUUID().toString();
-        String nombreArchivoAudio = nombreArtista + "_" + dto.getNombreSencillo() + "_" + uuid;
-        String nombreArchivoPortada = nombreArtista + "_" + dto.getNombreSencillo() + "_portada_" + uuid;
+        String archivoAudio = nombreArtista + "_" + dto.getNombreSencillo();
+        String archivoPortada = nombreArtista + "_" + dto.getNombreSencillo() + "_portada";
 
         // Subir los archivos a Firebase Storage
-        try {
-            firebaseService.subirArchivo(dto.getCancion(), nombreArchivoAudio);
-            firebaseService.subirArchivo(dto.getPortada(), nombreArchivoPortada);
-        } catch (IOException e) {
-            throw new FileUploadException();
-        }
+        String nombreArchivoAudio = firebaseService.subirArchivo(dto.getCancion(), archivoAudio);
+        String nombreArchivoPortada = firebaseService.subirArchivo(dto.getPortada(), archivoPortada);
 
         /*
                 ------------ CREACIÓN DE ENTIDADES Y RELACIONES -------------
@@ -108,6 +96,7 @@ public class ArtistaService {
         Lanzamiento lanzamiento = lanzamientoMapper.toEntity(dto, nombreArchivoPortada);
 
         // Guardar primero cancion y lanzamiento
+        // Save and flush para asegurar que se generan los ID necesarios para la relación
         cancionRepository.saveAndFlush(cancion);
         lanzamientoRepository.saveAndFlush(lanzamiento);
 
@@ -166,7 +155,7 @@ public class ArtistaService {
 
         // Eliminar la relación entre lanzamiento y canción
         LanzamientoCancion lanzamientoCancion = lanzamientoCancionRepository.findByLanzamientoIdAndCancionId(idSencillo, cancion.getId())
-                .orElseThrow(() -> new RelationNotFoundException());
+                .orElseThrow(RelationNotFoundException::new);
 
         lanzamientoCancionRepository.delete(lanzamientoCancion);
 
@@ -211,7 +200,7 @@ public class ArtistaService {
                         c1.getHistorialReproducciones() != null ? c1.getHistorialReproducciones().size() : 0))
                 .limit(10)
                 .map(cancion -> cancion.getLanzamientoCanciones().stream().findFirst().orElse(null))
-                .filter(lc -> lc != null)
+                .filter(Objects::nonNull)
                 .toList();
 
         // Mapear a DTO
@@ -220,33 +209,76 @@ public class ArtistaService {
         return artistaMapper.toDto(artista, cancionesPopularesDTO, lanzamientosDTO, cancionesEnFavoritos);
     }
 
-    // -------------------- MÉTODOS AUXILIARES --------------------
+    public void subirAlbum(CrearAlbumDTO dto, String token) {
 
-    private void validarFormatoArchivo(String tipo) {
-        // Lista de formatos permitidos
-        List<String> formatosPermitidos = Arrays.asList(
-                "audio/mpeg",
-                "audio/wav",
-                "audio/x-wav"
-        );
+        // obtener el artista que sube el álbum a partir del token JWT
+        Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
+                .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(token)));
 
-        if (tipo == null || !formatosPermitidos.contains(tipo)) {
-            throw new InvalidFormatFileException(tipo);
+        /*
+            -------------- PORTADA Y ALBUM --------------
+         */
+        // Validar el formato de la portada
+        ArtistaUtils.validarFormatoImagen(dto.getPortada().getContentType());
+
+        // Crear nombres únicos para la portada y subirla a Firebase Storage
+
+        String nombreArchivoPortada  = dto.getPortada() != null
+                ? firebaseService.subirArchivo(dto.getPortada(), artista.getUsername() + "_" + dto.getNombreAlbum() + "_portada")
+                : "";
+
+        // Crear la entidad album sin canciones (se añaden más tarde)
+        Lanzamiento album = lanzamientoMapper.createAlbum(dto.getNombreAlbum(), nombreArchivoPortada);
+
+        /*
+            -------------- CANCIONES -------------
+         */
+        List<Cancion> canciones = new ArrayList<>();
+
+        // Validar los colaboradores de cada canción, crear nombres únicos para los archivos de cada canción, subirlos a Firebase Storage y mapear a entidades Cancion
+        for (CancionAlbumDTO cancion : dto.getCanciones()) {
+            // Si se ha proporcionado un ID de canción existente, buscarla en la base de datos y añadirla a la lista de canciones
+            if (cancion.getIdCancionExistente() != null) {
+                Cancion cancionExistente = cancionRepository.findById(cancion.getIdCancionExistente())
+                        .orElseThrow(() -> new RuntimeException("ID de canción existente no encontrado: " + cancion.getIdCancionExistente()));
+
+                canciones.add(cancionExistente);
+
+                continue;
+            }
+
+            // comprobar cuanto dura el archivo de audio (en segundos) y guardarlo en una variable
+            Integer duracionSegundos = 0;
+            duracionSegundos = AudioUtils.obtenerDuracionSegundos(cancion.getArchivo());
+
+            // validar formato del archivo
+            ArtistaUtils.validarFormatoArchivo(cancion.getArchivo().getContentType());
+
+            List<Usuario> colaboradores = ArtistaUtils.obtenerColaboradores(cancion.getIdArtistas(), artista, usuarioRepository);
+
+            // Crear un nombre único para el archivo de audio de la canción y subirlo a Firebase Storage
+            String nombreArchivoAudio = firebaseService.subirArchivo(cancion.getArchivo(), artista.getUsername() + "_" + cancion.getTitulo());
+
+            // Mapear a entidad y asignar duración
+            Cancion cancionEntidad = cancionMapper.fromData(cancion.getTitulo(), nombreArchivoAudio, colaboradores, duracionSegundos);
+            canciones.add(cancionEntidad);
         }
-    }
 
-    private void validarFormatoImagen(String tipo) {
-        // Lista de formatos de imagen permitidos
-        List<String> formatosPermitidos = Arrays.asList(
-                "image/jpeg",
-                "image/png",
-                "image/webp"
-        );
+        /*
+            -------------- GUARDAR EN BASE DE DATOS -------------
+         */
 
-        if (tipo == null || !formatosPermitidos.contains(tipo)) {
-            throw new InvalidFormatFileException(tipo);
+        // Guardar primero el álbum para generar su ID y luego las canciones y la relación
+        lanzamientoRepository.saveAndFlush(album);
+        cancionRepository.saveAllAndFlush(canciones);
+
+        List<LanzamientoCancion> lanzamientoCanciones = new ArrayList<>();
+        int numeroPista = 1;
+        for (Cancion c : canciones) {
+            LanzamientoCancion lc = lanzamientoCancionMapper.toEntity(c, album, numeroPista++);
+            lanzamientoCanciones.add(lc);
         }
+
+        lanzamientoCancionRepository.saveAll(lanzamientoCanciones);
     }
-
-
 }

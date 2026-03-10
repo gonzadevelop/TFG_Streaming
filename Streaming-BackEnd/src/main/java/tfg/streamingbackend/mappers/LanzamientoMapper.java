@@ -3,7 +3,7 @@ package tfg.streamingbackend.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.streamingbackend.entitys.Lanzamiento;
-import tfg.streamingbackend.model.CrearCancionDTO;
+import tfg.streamingbackend.model.CrearSencilloDTO;
 import tfg.streamingbackend.model.LanzamientoDTO;
 
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ public interface LanzamientoMapper {
     @Mapping(target = "fechaLanzamiento", expression = "java(LocalDate.now())")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lanzamientoCanciones", ignore = true)
-    Lanzamiento toEntity(CrearCancionDTO dto, String archivoPortada);
+    Lanzamiento toEntity(CrearSencilloDTO dto, String archivoPortada);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "titulo", source = "titulo")
@@ -28,4 +28,12 @@ public interface LanzamientoMapper {
     LanzamientoDTO toDto(tfg.streamingbackend.entitys.Lanzamiento lanzamiento);
 
     List<LanzamientoDTO> toDtos(List<Lanzamiento> lanzamientos);
+
+    @Mapping(target = "titulo", source = "titulo")
+    @Mapping(target = "archivoPortada", source = "archivoPortada")
+    @Mapping(target = "fechaLanzamiento", expression = "java(LocalDate.now())")
+    @Mapping(target = "tipo", constant = "album")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lanzamientoCanciones", ignore = true)
+    Lanzamiento createAlbum(String titulo, String archivoPortada);
 }

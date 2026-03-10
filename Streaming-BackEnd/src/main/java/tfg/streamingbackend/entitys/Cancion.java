@@ -42,4 +42,23 @@ public class Cancion {
 
     @OneToMany(mappedBy = "cancion")
     private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();
+
+    // Duración almacenada en segundos (Integer)
+    @Column(name = "duracion_segundos")
+    private Integer duracionSegundos;
+
+    // Métodos auxiliares para obtener la duración en minutos y en formato mm:ss
+    @Transient
+    public Integer getDuracionMinutos() {
+        if (this.duracionSegundos == null) return null;
+        return this.duracionSegundos / 60;
+    }
+
+    @Transient
+    public String getDuracionFormato() {
+        if (this.duracionSegundos == null) return null;
+        int minutos = this.duracionSegundos / 60;
+        int segundos = this.duracionSegundos % 60;
+        return String.format("%d:%02d", minutos, segundos);
+    }
 }
