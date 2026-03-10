@@ -86,13 +86,9 @@ public class UsuarioService {
         // Subir la foto de portada a Firebase Storage y obtener el nombre del archivo
         String nombreArchivo = null;
         if (dto.getFotoPortada() != null) {
-            nombreArchivo = "playlists_" + usuario.getId() + "_" + dto.getNombrePlaylist() + "_" + UUID.randomUUID();
-            try {
-                firebaseService.subirArchivo(dto.getFotoPortada() , nombreArchivo);
-            } catch (IOException e) {
-                // Manejar la excepción si ocurre un error al cerrar el InputStream
-                throw new FileUploadException();
-            }
+            String nombre = "playlists_" + usuario.getId() + "_" + dto.getNombrePlaylist();
+
+            nombreArchivo = firebaseService.subirArchivo(dto.getFotoPortada() , nombre);
         }
 
         // Mapear el DTO a la entidad Playlist y establecer el propietario
@@ -118,7 +114,6 @@ public class UsuarioService {
         if (!playlist.getPropietario().getId().equals(usuario.getId())) {
             throw new OwnershipRequiredException();
         }
-
 
         dto.getLanzamientoCancionIds().stream()
                 .map(id -> lanzamientoCancionRepository.findById(id) // Buscar el lanzamiento de canción por su ID
@@ -157,7 +152,7 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    // mas adelante añadir playlists de usuario, canciones favoritas, etc.
+    // más adelante añadir playlists de usuario, canciones favoritas, etc.
     public UsuarioDTO obtenerInfoUsuario(String username) {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));

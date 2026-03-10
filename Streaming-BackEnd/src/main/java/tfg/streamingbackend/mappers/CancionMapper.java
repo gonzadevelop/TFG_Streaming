@@ -6,7 +6,7 @@ import tfg.streamingbackend.entitys.Cancion;
 import tfg.streamingbackend.entitys.LanzamientoCancion;
 import tfg.streamingbackend.entitys.Usuario;
 import tfg.streamingbackend.model.CancionDTO;
-import tfg.streamingbackend.model.CrearCancionDTO;
+import tfg.streamingbackend.model.CrearSencilloDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -20,7 +20,7 @@ public interface CancionMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cancionProductores", ignore = true)
     @Mapping(target = "lanzamientoCanciones", ignore = true)
-    Cancion toEntity(CrearCancionDTO dto, String archivoCancion, Set<Usuario> usuarios);
+    Cancion toEntity(CrearSencilloDTO dto, String archivoCancion, Set<Usuario> usuarios);
 
     @Mapping(target = "idLanzamiento", source = "id")
     @Mapping(target = "titulo", source = "cancion.titulo")
@@ -31,4 +31,14 @@ public interface CancionMapper {
     CancionDTO toDto(LanzamientoCancion lanzamientoCancion);
 
     List<CancionDTO> toDtos(List<LanzamientoCancion> lanzamientoCanciones);
+
+    @Mapping(target = "titulo", source = "titulo")
+    @Mapping(target = "archivoCancion", source = "archivo")
+    @Mapping(target = "usuarios", source = "usuarios")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "cancionProductores", ignore = true)
+    @Mapping(target = "lanzamientoCanciones", ignore = true)
+    @Mapping(target = "historialReproducciones", ignore = true)
+    @Mapping(target = "duracionSegundos", source = "duracionSegundos")
+    Cancion fromData(String titulo, String archivo, List<Usuario> usuarios, Integer duracionSegundos);
 }
