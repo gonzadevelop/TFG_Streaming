@@ -1,0 +1,29 @@
+### Subir sencillo (multipart/form-data)
+POST http://localhost:8080/api/artistas/subir-sencillo
+Authorization: Bearer {{tokenArtista}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="nombreSencillo"
+
+{{nombreSencillo}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="portada"; filename="portada.png"
+Content-Type: image/png
+
+< {{rutaDeLaPortada}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="cancion"; filename="cancion.mp3"
+Content-Type: audio/mpeg
+
+< {{rutaDeLaCancion}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="idUsuarios[0]"
+
+{{idUsuarioColaborador}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+
+# Notas:
+# - Reemplaza {{tokenArtista}} por un JWT válido (Bearer ...).
+# - Si no hay colaboradores, omite los campos idUsuarios.
+
