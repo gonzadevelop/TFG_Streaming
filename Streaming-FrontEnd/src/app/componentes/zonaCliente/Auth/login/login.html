@@ -10,7 +10,7 @@
 
     <!-- Cabecera -->
     <div class="text-center mb-4">
-      <img src="../img/KeySound_logo_V2.png" alt="">
+      <img class="login-icon" src="/img/KeySound_logo_definitive.png" alt="KeySound logo">
       <h3 class="fw-bold mb-1">INICIAR SESIÓN</h3>
     </div>
 
@@ -19,17 +19,30 @@
 
       <!-- Campo usuario / email -->
       <div class="mb-3">
-        <label for="user" class="form-label fw-semibold small">Correo electrónico o usuario</label>
+        <label for="user" class="form-label fw-semibold small">Correo electrónico</label>
         <div class="input-group">
           <input
-            type="text"
+            type="email"
             class="form-control"
+            [class.is-invalid]="loginForm.get('user')?.invalid && loginForm.get('user')?.touched"
             id="user"
             formControlName="user"
-            placeholder="Escribe tu nombre de usuario o correo"
+            placeholder=""
+            autocomplete="email"
             required
           >
         </div>
+        @if (loginForm.get('user')?.touched) {
+          @if (loginForm.get('user')?.hasError('required')) {
+            <div class="invalid-feedback d-block small mt-1">
+              El correo electrónico es obligatorio.
+            </div>
+          } @else if (loginForm.get('user')?.hasError('email')) {
+            <div class="invalid-feedback d-block small mt-1">
+              Introduce un correo electrónico válido.
+            </div>
+          }
+        }
       </div>
 
       <!-- Campo contraseña -->
@@ -39,6 +52,7 @@
           <input
             [type]="mostrarPassword() ? 'text' : 'password'"
             class="form-control"
+            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
             id="password"
             formControlName="password"
             placeholder=""
@@ -47,7 +61,7 @@
           >
           <button
             type="button"
-            class="btn btn-outline-secondary border-start-0"
+            class="btn border-start-0"
             (click)="togglePasswordVisibility()"
             [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
           >
@@ -58,11 +72,22 @@
             }
           </button>
         </div>
+        @if (loginForm.get('password')?.touched) {
+          @if (loginForm.get('password')?.hasError('required')) {
+            <div class="invalid-feedback d-block small mt-1">
+              La contraseña es obligatoria.
+            </div>
+          } @else if (loginForm.get('password')?.hasError('minlength')) {
+            <div class="invalid-feedback d-block small mt-1">
+              La contraseña debe tener al menos 8 caracteres.
+            </div>
+          }
+        }
       </div>
 
       <!-- Enlace olvidé contraseña -->
       <div class="text-end mb-3">
-        <a href="#" class="forgot-link text-decoration-none small">¿Olvidaste tu contraseña?</a>
+        <a href="#" class="forgot-link text-decoration-none fw-semibold small">¿Olvidaste tu contraseña?</a>
       </div>
 
       <!-- Botón iniciar sesión -->
@@ -71,7 +96,7 @@
         class="btn btn-submit w-100 py-2 mb-3"
         [disabled]="loginForm.invalid"
       >
-        Iniciar Sesión
+        Iniciar sesión
       </button>
 
       <!-- Divisor -->
@@ -92,7 +117,7 @@
 
     <p class="text-center text-muted small mt-4 mb-0">
       ¿No tienes una cuenta?
-      <a href="#" class="text-decoration-none fw-semibold forgot-link">Crear cuenta</a>
+      <a routerLink="/register" class="text-decoration-none fw-semibold forgot-link">Crear cuenta.</a>
     </p>
 
   </div>
