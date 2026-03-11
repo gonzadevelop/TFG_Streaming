@@ -1,4 +1,4 @@
-package tfg.KeySound.security;
+package tfg.KeySound.services.external;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

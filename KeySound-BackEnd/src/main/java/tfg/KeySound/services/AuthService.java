@@ -13,12 +13,12 @@ import tfg.KeySound.exception.auth.EmailAlrreadyExistsException;
 import tfg.KeySound.exception.auth.EmailNotFoundException;
 import tfg.KeySound.exception.auth.UsernameAlreadyExistsException;
 import tfg.KeySound.mappers.UsuarioMapper;
-import tfg.KeySound.model.LoginRequestDTO;
-import tfg.KeySound.model.LoginResponseDTO;
-import tfg.KeySound.model.RegisterRequestDTO;
+import tfg.KeySound.model.auth.LoginRequestDTO;
+import tfg.KeySound.model.auth.LoginResponseDTO;
+import tfg.KeySound.model.auth.RegisterRequestDTO;
 import tfg.KeySound.repositorys.RolRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
-import tfg.KeySound.security.JwtService;
+import tfg.KeySound.services.external.JwtService;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RolRepository rolRepository;
-
 
     // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
 
@@ -52,7 +51,7 @@ public class AuthService {
         return new LoginResponseDTO(token);
     }
 
-    public Void register(RegisterRequestDTO request) {
+    public void register(RegisterRequestDTO request) {
 
         // Comprbaciones contra la bd
         usuarioRepository.findByEmailIgnoreCase(request.getEmail())
@@ -70,18 +69,18 @@ public class AuthService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // Mapeo y guardado del usuario
-        Usuario user = usuarioMapper.toEntity(request);
-
         String rol = (request.getRol() == null || request.getRol().isBlank())
                 ? "ROLE_USER"
                 : "ROLE_" + request.getRol().trim().toUpperCase();
 
+        // Mapeo y guardado del usuario
+        Usuario user = usuarioMapper.toEntity(request, rolRepository.findByNombre(rol));
+
+
+
         user.setRol(rolRepository.findByNombre(rol));
 
         usuarioRepository.save(user);
-
-        return null;
     }
 
     public Boolean checkEmailExists(String email) {

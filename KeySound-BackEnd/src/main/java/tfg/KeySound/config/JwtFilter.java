@@ -1,4 +1,4 @@
-package tfg.KeySound.security;
+package tfg.KeySound.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tfg.KeySound.services.external.JwtService;
 
 import java.io.IOException;
 
@@ -22,7 +23,10 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-
+    /**
+     * Este filtro se ejecuta para cada solicitud entrante. Extrae el token JWT del encabezado de autorización,
+     * valida el token y, si es válido, establece la autenticación en el contexto de seguridad de Spring.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

@@ -12,18 +12,22 @@ import tfg.KeySound.exception.lanzamiento.InvalidReleaseTypeException;
 import tfg.KeySound.exception.lanzamiento.LanzamientoNotFoundException;
 import tfg.KeySound.exception.lanzamiento.MissingTrackException;
 import tfg.KeySound.exception.lanzamiento.RelationNotFoundException;
-import tfg.KeySound.firebase.FirebaseService;
+import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.LanzamientoCancionMapper;
 import tfg.KeySound.mappers.LanzamientoMapper;
-import tfg.KeySound.model.*;
-import tfg.streamingbackend.model.*;
+import tfg.KeySound.model.cancion.RequestCancionAlbumDTO;
+import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
+import tfg.KeySound.model.lanzamiento.RequestAlbumDTO;
+import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
+import tfg.KeySound.model.lanzamiento.ResponseLanzamientoArtistaDTO;
+import tfg.KeySound.model.usuario.ResponseArtistaDTO;
 import tfg.KeySound.repositorys.CancionRepository;
 import tfg.KeySound.repositorys.LanzamientoCancionRepository;
 import tfg.KeySound.repositorys.LanzamientoRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
-import tfg.KeySound.security.JwtService;
+import tfg.KeySound.services.external.JwtService;
 import tfg.KeySound.utils.ArtistaUtils;
 import tfg.KeySound.utils.AudioUtils;
 
@@ -34,6 +38,7 @@ import java.util.*;
 public class ArtistaService {
 
     // --------------- INYECCIONES POR CONSTRUCTOR ---------------
+
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
 
@@ -49,7 +54,7 @@ public class ArtistaService {
 
     // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
 
-    public void subirSencillo(CrearSencilloDTO dto, String token) {
+    public void subirSencillo(RequestSencilloDTO dto, String token) {
 
         /*
               ------------ VALIDACIONES INICIALES -------------
@@ -167,7 +172,7 @@ public class ArtistaService {
 
     }
 
-    public ArtistaDTO obtenerInfoArtista(String username, String token) {
+    public ResponseArtistaDTO obtenerInfoArtista(String username, String token) {
         // Buscar el artista por username
         Usuario artista = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -204,12 +209,12 @@ public class ArtistaService {
                 .toList();
 
         // Mapear a DTO
-        List<LanzamientoDTO> lanzamientosDTO = lanzamientoMapper.toDtos(lanzamientos);
-        List<CancionDTO> cancionesPopularesDTO = cancionMapper.toDtos(cancionesPopulares);
+        List<ResponseLanzamientoArtistaDTO> lanzamientosDTO = lanzamientoMapper.toDtos(lanzamientos);
+        List<ResponseCancionArtistaDTO> cancionesPopularesDTO = cancionMapper.toDtos(cancionesPopulares);
         return artistaMapper.toDto(artista, cancionesPopularesDTO, lanzamientosDTO, cancionesEnFavoritos);
     }
 
-    public void subirAlbum(CrearAlbumDTO dto, String token) {
+    public void subirAlbum(RequestAlbumDTO dto, String token) {
 
         // obtener el artista que sube el álbum a partir del token JWT
         Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
@@ -236,7 +241,7 @@ public class ArtistaService {
         List<Cancion> canciones = new ArrayList<>();
 
         // Validar los colaboradores de cada canción, crear nombres únicos para los archivos de cada canción, subirlos a Firebase Storage y mapear a entidades Cancion
-        for (CancionAlbumDTO cancion : dto.getCanciones()) {
+        for (RequestCancionAlbumDTO cancion : dto.getCanciones()) {
             // Si se ha proporcionado un ID de canción existente, buscarla en la base de datos y añadirla a la lista de canciones
             if (cancion.getIdCancionExistente() != null) {
                 Cancion cancionExistente = cancionRepository.findById(cancion.getIdCancionExistente())

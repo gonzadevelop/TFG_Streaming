@@ -5,10 +5,6 @@ import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Lanzamiento;
 import tfg.KeySound.entitys.LanzamientoCancion;
-import tfg.KeySound.model.ReproducirCancionDTO;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface LanzamientoCancionMapper {
@@ -19,19 +15,4 @@ public interface LanzamientoCancionMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "playlistLanzamientoCanciones", ignore = true)
     LanzamientoCancion toEntity(Cancion cancion, Lanzamiento lanzamiento, Integer numeroPista);
-
-    default List<LanzamientoCancion> toEntityList(List<Cancion> canciones, Lanzamiento lanzamiento) {
-        List<LanzamientoCancion> result = new ArrayList<>();
-        int numeroPista = 1;
-        for (Cancion cancion : canciones) {
-            result.add(toEntity(cancion, lanzamiento, numeroPista++));
-        }
-        return result;
-    }
-
-    @Mapping(target = "nombreCancion", source = "nombreCancion")
-    @Mapping(target = "urlAudio", source = "urlAudio")
-    @Mapping(target = "artistas", source = "artistas")
-    @Mapping(target = "urlPortada", source = "urlPortada")
-    ReproducirCancionDTO toReproducirCancionDTO(String nombreCancion, String urlAudio, java.util.List<String> artistas, String urlPortada);
 }

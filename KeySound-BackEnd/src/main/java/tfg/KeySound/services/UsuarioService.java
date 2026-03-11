@@ -6,76 +6,43 @@ import tfg.KeySound.entitys.LanzamientoCancion;
 import tfg.KeySound.entitys.Playlist;
 import tfg.KeySound.entitys.PlaylistLanzamientoCancion;
 import tfg.KeySound.entitys.Usuario;
-import tfg.streamingbackend.entitys.*;
 import tfg.KeySound.entitys.embeddedids.PlaylistLanzamientoCancionId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
-import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.exception.lanzamiento.LanzamientoCancionNotFoundException;
 import tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException;
 import tfg.KeySound.exception.playlist.OwnershipRequiredException;
 import tfg.KeySound.exception.playlist.PlaylistNotFoundException;
-import tfg.KeySound.firebase.FirebaseService;
-import tfg.KeySound.mappers.LanzamientoCancionMapper;
+import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.mappers.UsuarioMapper;
-import tfg.KeySound.model.AddCancionesPlaylistDTO;
-import tfg.KeySound.model.CrearPlaylistDTO;
-import tfg.KeySound.model.ReproducirCancionDTO;
-import tfg.KeySound.model.UsuarioDTO;
-import tfg.KeySound.repositorys.CancionRepository;
+import tfg.KeySound.model.cancion.RequestCancionesPlaylistDTO;
+import tfg.KeySound.model.playlist.RequestPlaylistDTO;
+import tfg.KeySound.model.usuario.ResponseUsuarioDTO;
 import tfg.KeySound.repositorys.LanzamientoCancionRepository;
 import tfg.KeySound.repositorys.PlaylistLanzamientoCancionRepository;
 import tfg.KeySound.repositorys.PlaylistRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
-import tfg.KeySound.security.JwtService;
-
-import java.util.List;
+import tfg.KeySound.services.external.JwtService;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
 
-    private final CancionRepository cancionRepository;
+    // --------------- INYECCIONES POR CONSTRUCTOR ---------------
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
     private final LanzamientoCancionRepository lanzamientoCancionRepository;
+
     private final PlaylistLanzamientoCancionRepository playlistLanzamientoCancionRepository;
-    private final PlaylistMapper playlistMapper;
-    private final LanzamientoCancionMapper lanzamientoCancionMapper;
     private final PlaylistRepository playlistRepository;
+
+    private final PlaylistMapper playlistMapper;
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
 
-    public ReproducirCancionDTO obtenerUrlCancion(Long lanzamientoCancionId) {
-        // Verificar que la canción existe
-        LanzamientoCancion lanzamientoCancion = lanzamientoCancionRepository.findById(lanzamientoCancionId)
-                .orElseThrow(() -> new CancionNotFoundException(lanzamientoCancionId));
+    // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
 
-        String nombreCancion = lanzamientoCancion.getCancion().getTitulo();
-
-        // Obtener la lista de artistas asociados al lanzamiento de canción
-        List<String> artistas =  lanzamientoCancion.getCancion().getUsuarios()
-                .stream()
-                .map(Usuario::getUsername)
-                .toList();
-
-        // Obtener la URL pública de Firebase Storage para reproducir la canción y
-        String urlAudio = firebaseService.obtenerUrlArchivo(lanzamientoCancion.getCancion().getArchivoCancion());
-
-        // Obtener la URL de la portada (si existe) o generar una URL de avatar con las iniciales del título
-        String urlImagen = lanzamientoCancion.getLanzamiento().getArchivoPortada() != null ?
-                firebaseService.obtenerUrlArchivo(lanzamientoCancion.getLanzamiento().getArchivoPortada()) :
-                "https://ui-avatars.com/api/?name=" + getInicialesTitulo(nombreCancion) + "&background=0b75c0&bold=true&color=FFF&size=256";
-
-        return lanzamientoCancionMapper.toReproducirCancionDTO(
-                nombreCancion,
-                urlAudio,
-                artistas,
-                urlImagen
-        );
-    }
-
-    public void crearPlaylist(CrearPlaylistDTO dto, String token) {
+    public void crearPlaylist(RequestPlaylistDTO dto, String token) {
 
         // Extraer el nombre de usuario del token JWT
         String username = jwtService.extractUsername(token);
@@ -99,7 +66,7 @@ public class UsuarioService {
         playlistRepository.save(playlist);
     }
 
-    public void agregarCancionesAPlaylist(AddCancionesPlaylistDTO dto, String token) {
+    public void agregarCancionesAPlaylist(RequestCancionesPlaylistDTO dto, String token) {
         // Extraer el nombre de usuario del token JWT
         String username = jwtService.extractUsername(token);
 
@@ -154,7 +121,7 @@ public class UsuarioService {
     }
 
     // más adelante añadir playlists de usuario, canciones favoritas, etc.
-    public UsuarioDTO obtenerInfoUsuario(String username) {
+    public ResponseUsuarioDTO obtenerInfoUsuario(String username) {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
@@ -163,12 +130,5 @@ public class UsuarioService {
                 "https://ui-avatars.com/api/?name=" + usuario.getUsername().charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
 
         return usuarioMapper.toDto(usuario, urlAvatar);
-    }
-
-    private String getInicialesTitulo(String titulo) {
-        return java.util.Arrays.stream(titulo.split(" "))
-                .filter(s -> !s.isEmpty())
-                .map(s -> s.substring(0, 1))
-                .reduce("", String::concat);
     }
 }

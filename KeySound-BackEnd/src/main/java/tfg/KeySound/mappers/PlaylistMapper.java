@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Playlist;
 import tfg.KeySound.entitys.Usuario;
-import tfg.KeySound.model.CrearPlaylistDTO;
+import tfg.KeySound.model.playlist.RequestPlaylistDTO;
 
 @Mapper(componentModel = "spring")
 public interface PlaylistMapper {
@@ -17,6 +17,6 @@ public interface PlaylistMapper {
     @Mapping(target = "descripcion", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "playlistLanzamientoCanciones", ignore = true)
-    Playlist toEntity(CrearPlaylistDTO dto, Usuario usuario, String nombreArchivo);
+    Playlist toEntity(RequestPlaylistDTO dto, Usuario usuario, String nombreArchivo);
 }
 

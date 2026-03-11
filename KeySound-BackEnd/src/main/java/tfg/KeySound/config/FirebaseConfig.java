@@ -1,4 +1,4 @@
-package tfg.KeySound.firebase;
+package tfg.KeySound.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -20,6 +20,14 @@ public class FirebaseConfig {
     @Value("${FIREBASE_BUCKET}")
     private String bucketName;
 
+    /**
+     * Configura FirebaseApp utilizando las credenciales proporcionadas en el archivo de configuración.
+     * El archivo de configuración se carga desde el classpath, lo que permite una fácil gestión de las credenciales.
+     * Además, se establece el bucket de almacenamiento para Firebase Storage.
+     *
+     * @return una instancia de FirebaseApp configurada
+     * @throws IOException si ocurre un error al cargar las credenciales
+     */
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         // Cargar las credenciales desde el classpath

@@ -1,4 +1,4 @@
-package tfg.KeySound.model;
+package tfg.KeySound.model.playlist;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CrearPlaylistDTO {
+public class RequestPlaylistDTO {
     private String nombrePlaylist;
     private Boolean esPublica;
     private MultipartFile fotoPortada;

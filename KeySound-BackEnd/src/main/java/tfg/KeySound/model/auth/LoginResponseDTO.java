@@ -1,4 +1,4 @@
-package tfg.KeySound.model;
+package tfg.KeySound.model.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

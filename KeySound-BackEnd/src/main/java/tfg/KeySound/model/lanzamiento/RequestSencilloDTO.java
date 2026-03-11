@@ -1,4 +1,4 @@
-package tfg.KeySound.model;
+package tfg.KeySound.model.lanzamiento;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class CrearSencilloDTO {
+public class RequestSencilloDTO {
     private String nombreSencillo;
     private MultipartFile portada;
     private MultipartFile cancion;

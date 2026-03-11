@@ -1,4 +1,4 @@
-package tfg.KeySound.firebase;
+package tfg.KeySound.services.external;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;

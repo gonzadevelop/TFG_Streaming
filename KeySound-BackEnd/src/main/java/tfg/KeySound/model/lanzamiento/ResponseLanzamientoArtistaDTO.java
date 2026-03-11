@@ -1,9 +1,9 @@
-package tfg.KeySound.model;
+package tfg.KeySound.model.lanzamiento;
 
 import lombok.Data;
 
 @Data
-public class LanzamientoDTO {
+public class ResponseLanzamientoArtistaDTO {
     private Long id;
     private String titulo;
     private String urlPortada;

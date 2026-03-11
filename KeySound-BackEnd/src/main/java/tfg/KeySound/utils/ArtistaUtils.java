@@ -14,8 +14,6 @@ import java.util.List;
  */
 public final class ArtistaUtils {
 
-    private ArtistaUtils() {}
-
     public static void validarFormatoArchivo(String tipo) {
         List<String> formatosPermitidos = Arrays.asList(
                 "audio/mpeg",

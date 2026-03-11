@@ -3,8 +3,8 @@ package tfg.KeySound.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Lanzamiento;
-import tfg.KeySound.model.CrearSencilloDTO;
-import tfg.KeySound.model.LanzamientoDTO;
+import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
+import tfg.KeySound.model.lanzamiento.ResponseLanzamientoArtistaDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,16 +18,16 @@ public interface LanzamientoMapper {
     @Mapping(target = "fechaLanzamiento", expression = "java(LocalDate.now())")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lanzamientoCanciones", ignore = true)
-    Lanzamiento toEntity(CrearSencilloDTO dto, String archivoPortada);
+    Lanzamiento toEntity(RequestSencilloDTO dto, String archivoPortada);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "urlPortada", source = "archivoPortada")
     @Mapping(target = "anioLanzamiento", expression = "java(lanzamiento.getFechaLanzamiento() != null ? lanzamiento.getFechaLanzamiento().getYear() : 0)")
     @Mapping(target = "tipo", source = "tipo")
-    LanzamientoDTO toDto(Lanzamiento lanzamiento);
+    ResponseLanzamientoArtistaDTO toDto(Lanzamiento lanzamiento);
 
-    List<LanzamientoDTO> toDtos(List<Lanzamiento> lanzamientos);
+    List<ResponseLanzamientoArtistaDTO> toDtos(List<Lanzamiento> lanzamientos);
 
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "archivoPortada", source = "archivoPortada")

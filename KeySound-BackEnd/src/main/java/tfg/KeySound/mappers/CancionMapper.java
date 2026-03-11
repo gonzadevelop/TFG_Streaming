@@ -5,8 +5,8 @@ import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.LanzamientoCancion;
 import tfg.KeySound.entitys.Usuario;
-import tfg.KeySound.model.CancionDTO;
-import tfg.KeySound.model.CrearSencilloDTO;
+import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
+import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -20,7 +20,7 @@ public interface CancionMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cancionProductores", ignore = true)
     @Mapping(target = "lanzamientoCanciones", ignore = true)
-    Cancion toEntity(CrearSencilloDTO dto, String archivoCancion, Set<Usuario> usuarios);
+    Cancion toEntity(RequestSencilloDTO dto, String archivoCancion, Set<Usuario> usuarios);
 
     @Mapping(target = "idLanzamiento", source = "id")
     @Mapping(target = "titulo", source = "cancion.titulo")
@@ -28,9 +28,9 @@ public interface CancionMapper {
     @Mapping(target = "artistas", expression = "java(lanzamientoCancion.getCancion().getUsuarios().stream().map(u -> u.getUsername()).toList())")
     @Mapping(target = "urlCancion", source = "cancion.archivoCancion")
     @Mapping(target = "reproducciones", expression = "java((long) (lanzamientoCancion.getCancion().getHistorialReproducciones() != null ? lanzamientoCancion.getCancion().getHistorialReproducciones().size() : 0))")
-    CancionDTO toDto(LanzamientoCancion lanzamientoCancion);
+    ResponseCancionArtistaDTO toDto(LanzamientoCancion lanzamientoCancion);
 
-    List<CancionDTO> toDtos(List<LanzamientoCancion> lanzamientoCanciones);
+    List<ResponseCancionArtistaDTO> toDtos(List<LanzamientoCancion> lanzamientoCanciones);
 
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "archivoCancion", source = "archivo")

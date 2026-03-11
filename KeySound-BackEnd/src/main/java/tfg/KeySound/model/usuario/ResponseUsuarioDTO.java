@@ -1,9 +1,9 @@
-package tfg.KeySound.model;
+package tfg.KeySound.model.usuario;
 
 import lombok.Data;
 
 @Data
-public class UsuarioDTO {
+public class ResponseUsuarioDTO {
     private String username;
     private String email;
     private String urlAvatar;
