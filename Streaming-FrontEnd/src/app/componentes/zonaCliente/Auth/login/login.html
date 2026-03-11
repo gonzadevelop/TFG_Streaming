@@ -10,7 +10,6 @@
 
     <!-- Cabecera -->
     <div class="text-center mb-4">
-      <img src="../img/KeySound_logo_V2.png" alt="">
       <h3 class="fw-bold mb-1">INICIAR SESIÓN</h3>
     </div>
 
@@ -19,14 +18,11 @@
 
       <!-- Campo usuario / email -->
       <div class="mb-3">
-        <label for="user" class="form-label fw-semibold small">Correo electrónico o usuario</label>
         <div class="input-group">
           <input
-            type="text"
             class="form-control"
             id="user"
             formControlName="user"
-            placeholder="Escribe tu nombre de usuario o correo"
             required
           >
         </div>
@@ -47,7 +43,6 @@
           >
           <button
             type="button"
-            class="btn btn-outline-secondary border-start-0"
             (click)="togglePasswordVisibility()"
             [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
           >
@@ -62,7 +57,6 @@
 
       <!-- Enlace olvidé contraseña -->
       <div class="text-end mb-3">
-        <a href="#" class="forgot-link text-decoration-none small">¿Olvidaste tu contraseña?</a>
       </div>
 
       <!-- Botón iniciar sesión -->
@@ -71,7 +65,6 @@
         class="btn btn-submit w-100 py-2 mb-3"
         [disabled]="loginForm.invalid"
       >
-        Iniciar Sesión
       </button>
 
       <!-- Divisor -->
@@ -92,7 +85,6 @@
 
     <p class="text-center text-muted small mt-4 mb-0">
       ¿No tienes una cuenta?
-      <a href="#" class="text-decoration-none fw-semibold forgot-link">Crear cuenta</a>
     </p>
 
   </div>

@@ -9,7 +9,8 @@ import {ChangeDetectionStrategy,
   OutputEmitterRef,
   signal, WritableSignal
 } from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {RouterLink} from '@angular/router';
 import {ServApiSpring} from '../../../../services/ServApiSpring';
 import {HttpResponse} from '@angular/common/http';
 import ILoginResponse from '../../../../model/ILoginResponse';
@@ -19,7 +20,8 @@ import {Subscription} from 'rxjs';
 @Component({
   selector: 'app-login',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink,
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -35,12 +37,10 @@ export class Login implements OnInit, OnDestroy {
 
   protected mostrarPassword:WritableSignal<boolean> = signal<boolean>(false);
 
-  protected loginForm:FormGroup = new FormGroup(
-    {
-      user: new FormControl(''),
-      password: new FormControl('')
-    }
-  );
+  protected loginForm: FormGroup = new FormGroup({
+    user: new FormControl('', [Validators.email]),
+    password: new FormControl('', [Validators.minLength(8)]),
+  });
 
 
   login(): void {
