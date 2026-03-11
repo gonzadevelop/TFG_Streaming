@@ -6,7 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tfg.streamingbackend.model.CrearCancionDTO;
+import tfg.streamingbackend.model.ArtistaDTO;
+import tfg.streamingbackend.model.CrearAlbumDTO;
+import tfg.streamingbackend.model.CrearSencilloDTO;
 import tfg.streamingbackend.services.ArtistaService;
 
 @RestController
@@ -20,9 +22,19 @@ public class ArtistaController {
     @PreAuthorize("hasRole('ARTISTA')")
     public ResponseEntity<Void> subirSencillo(
             @RequestHeader("Authorization") String token,
-            @ModelAttribute CrearCancionDTO dto) {
+            @ModelAttribute CrearSencilloDTO dto) {
         // substring(7) para eliminar "Bearer " del token
         artistaService.subirSencillo(dto, token.substring(7));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping(value = "/subir-album", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ARTISTA')")
+    public ResponseEntity<Void> subirAlbum(
+            @RequestHeader("Authorization") String token,
+            @ModelAttribute CrearAlbumDTO dto) {
+        // substring(7) para eliminar "Bearer " del token
+        artistaService.subirAlbum(dto, token.substring(7));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -34,5 +46,12 @@ public class ArtistaController {
         // substring(7) para eliminar "Bearer " del token
         artistaService.eliminarSencillo(sencilloId, token.substring(7));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/info-artista/{username}")
+    public ResponseEntity<ArtistaDTO> obtenerInfoArtista(
+            @PathVariable String username,
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(artistaService.obtenerInfoArtista(username, token.substring(7)));
     }
 }

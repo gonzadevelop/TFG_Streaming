@@ -1,0 +1,7 @@
+### Obtener info artista
+GET http://localhost:8080/api/artistas/info-artista/{{username}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+# Devuelve ArtistaDTO
+

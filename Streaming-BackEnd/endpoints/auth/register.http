@@ -1,26 +1,13 @@
-### Registro de usuario (rol: USER)
+### Register
 POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
-  "username": "nuevoUsuario",
-  "password": "contraseña123",
-  "email": "nuevo@ejemplo.com",
-  "nombre": "Nombre",
-  "apellidos": "Apellidos",
-  "rol": "USER"
-}
-
-### Registro de artista (rol: ARTISTA)
-POST http://localhost:8080/api/auth/register
-Content-Type: application/json
-
-{
-  "username": "nuevoArtista",
-  "password": "contraseña123",
-  "email": "artista@ejemplo.com",
-  "nombre": "Nombre Artista",
-  "apellidos": "Apellidos Artista",
-  "rol": "ARTISTA"
+  "username": "{{username}}",
+  "password": "{{password}}",
+  "email": "{{email}}",
+  "nombre": "{{nombre}}",
+  "apellidos": "{{apellidos}}",
+  "rol": "{{rol}}"
 }
 

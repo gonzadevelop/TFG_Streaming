@@ -1,37 +1,22 @@
-### Crear playlist (sin foto de portada)
+### Crear playlist (multipart/form-data)
 POST http://localhost:8080/api/usuarios/crear-playlist
-Authorization: Bearer (tokenUsuario)
-Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer {{tokenUsuario}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
---boundary
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="nombrePlaylist"
 
-Mi Playlist
---boundary
+{{nombrePlaylist}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="esPublica"
 
-true
---boundary--
+{{true|false}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="fotoPortada"; filename="portada.png"
+Content-Type: image/png
 
-###
+< {{rutaDeLaPortada}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 
-### Crear playlist (con foto de portada)
-POST http://localhost:8080/api/usuarios/crear-playlist
-Authorization: Bearer (tokenUsuario)
-Content-Type: multipart/form-data; boundary=boundary
-
---boundary
-Content-Disposition: form-data; name="nombrePlaylist"
-
-Mi Playlist Rock
---boundary
-Content-Disposition: form-data; name="esPublica"
-
-true
---boundary
-Content-Disposition: form-data; name="fotoPortada"; filename="portada.jpg"
-Content-Type: image/jpeg
-
-< /home/gonza/Descargas/images.jpeg
---boundary--
+# Respuesta esperada: 201 Created
 

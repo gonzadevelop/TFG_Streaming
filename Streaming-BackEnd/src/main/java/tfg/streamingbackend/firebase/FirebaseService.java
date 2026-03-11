@@ -3,23 +3,29 @@ package tfg.streamingbackend.firebase;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
+import io.netty.handler.codec.http.multipart.FileUpload;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import tfg.streamingbackend.exception.cancion.FileUploadException;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class FirebaseService {
 
-    public void subirArchivo(MultipartFile archivo, String nombreDestino) throws IOException {
+    public String subirArchivo(MultipartFile archivo, String nombreDestino) {
         // Obtener el bucket configurado en FirebaseConfig
+        String nombreFinal = nombreDestino + "_" + UUID.randomUUID().toString();
         Bucket bucket = StorageClient.getInstance().bucket();
 
-        if (bucket == null) {
-            throw new IOException("El bucket por defecto no está configurado. Revisa FirebaseConfig.");
+        try {
+            bucket.create(nombreDestino, archivo.getBytes(), archivo.getContentType());
+        } catch (IOException e) {
+            throw new FileUploadException();
         }
 
-        bucket.create(nombreDestino, archivo.getBytes(), archivo.getContentType());
+        return nombreFinal;
     }
 
     public void borrarArchivo(String nombreArchivo) {

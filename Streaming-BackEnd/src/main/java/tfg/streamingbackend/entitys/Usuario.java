@@ -53,6 +53,7 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "rol_id")
     private Rol rol;
 
+    // ARTISTAS!!!!
     @ManyToMany
     @JoinTable(name = "cancion_artista",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -63,13 +64,17 @@ public class Usuario implements UserDetails {
     @JoinTable(name = "favoritos",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "lanzamiento_cancion_id"))
-    private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
+    private Set<LanzamientoCancion> favoritos = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "usuario")
     private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "propietario")
     private Set<Playlist> playlists = new LinkedHashSet<>();
+
+    // ARTISTAS!!!!
+    @OneToMany(mappedBy = "usuario")
+    private Set<Lanzamiento> lanzamientos = new LinkedHashSet<>();
 
     // COMPROBAR QUE SEGUIDORES Y SEGUIDOS ESTÁ CORRECTAMENTE.
 
@@ -79,10 +84,7 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "seguido_id"))
     private Set<Usuario> seguidores = new LinkedHashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "seguidores",
-            joinColumns = @JoinColumn(name = "seguido_id"),
-            inverseJoinColumns = @JoinColumn(name = "seguidor_id"))
+    @ManyToMany(mappedBy = "seguidores")
     private Set<Usuario> seguidos = new LinkedHashSet<>();
 
 
