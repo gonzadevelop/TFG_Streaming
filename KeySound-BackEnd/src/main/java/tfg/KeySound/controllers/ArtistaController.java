@@ -12,7 +12,7 @@ import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
 import tfg.KeySound.services.ArtistaService;
 
 @RestController
-@RequestMapping("/api/artistas")
+@RequestMapping("/artistas")
 @RequiredArgsConstructor
 public class ArtistaController {
 

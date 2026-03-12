@@ -12,7 +12,7 @@ import tfg.KeySound.model.usuario.ResponseUsuarioDTO;
 import tfg.KeySound.services.UsuarioService;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/usuarios")
 @RequiredArgsConstructor
 public class UsuarioController {
 

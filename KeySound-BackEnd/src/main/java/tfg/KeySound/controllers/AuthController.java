@@ -13,7 +13,7 @@ import tfg.KeySound.model.auth.RegisterRequestDTO;
 import tfg.KeySound.services.AuthService;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
