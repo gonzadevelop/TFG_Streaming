@@ -6,22 +6,12 @@ import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.LanzamientoCancion;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
-import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
 import tfg.KeySound.model.cancion.ResponseCancionLanzamientoDTO;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface CancionMapper {
-
-    @Mapping(source = "dto.nombreSencillo", target = "titulo")
-    @Mapping(source = "archivoCancion", target = "archivoCancion")
-    @Mapping(source = "usuarios", target = "usuarios")
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "cancionProductores", ignore = true)
-    @Mapping(target = "lanzamientoCanciones", ignore = true)
-    Cancion toEntity(RequestSencilloDTO dto, String archivoCancion, Set<Usuario> usuarios);
 
     @Mapping(target = "idLanzamiento", source = "id")
     @Mapping(target = "titulo", source = "cancion.titulo")

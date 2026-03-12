@@ -3,7 +3,7 @@ package tfg.KeySound.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Lanzamiento;
-import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
+import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.model.lanzamiento.ResponseLanzamientoArtistaDTO;
 import tfg.KeySound.model.lanzamiento.ResponseLanzamientoDTO;
 import tfg.KeySound.model.cancion.ResponseCancionLanzamientoDTO;
@@ -13,14 +13,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", imports = LocalDate.class)
 public interface LanzamientoMapper {
-
-    @Mapping(source = "dto.nombreSencillo", target = "titulo")
-    @Mapping(source = "archivoPortada", target = "archivoPortada")
-    @Mapping(target = "tipo", constant = "sencillo")
-    @Mapping(target = "fechaLanzamiento", expression = "java(LocalDate.now())")
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lanzamientoCanciones", ignore = true)
-    Lanzamiento toEntity(RequestSencilloDTO dto, String archivoPortada);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "titulo", source = "titulo")
@@ -34,10 +26,11 @@ public interface LanzamientoMapper {
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "archivoPortada", source = "archivoPortada")
     @Mapping(target = "fechaLanzamiento", expression = "java(LocalDate.now())")
-    @Mapping(target = "tipo", constant = "album")
+    @Mapping(target = "tipo", source = "tipo")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lanzamientoCanciones", ignore = true)
-    Lanzamiento createAlbum(String titulo, String archivoPortada);
+    @Mapping(target = "usuario", source = "usuario")
+    Lanzamiento createLanzamiento(String titulo, String archivoPortada, String tipo, Usuario usuario);
 
     @Mapping(target = "nombreLanzamiento", source = "lanzamiento.titulo")
     @Mapping(target = "portada", source = "urlPortada")
@@ -46,5 +39,6 @@ public interface LanzamientoMapper {
     @Mapping(target = "numCanciones", expression = "java(canciones == null ? 0 : canciones.size())")
     @Mapping(target = "tipo", source = "lanzamiento.tipo")
     @Mapping(target = "canciones", source = "canciones")
+    @Mapping(target = "artista", source = "lanzamiento.usuario.username")
     ResponseLanzamientoDTO toResponseDto(Lanzamiento lanzamiento, List<ResponseCancionLanzamientoDTO> canciones, String urlPortada);
 }

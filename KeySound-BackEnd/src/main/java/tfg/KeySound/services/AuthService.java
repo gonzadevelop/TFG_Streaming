@@ -24,8 +24,9 @@ import tfg.KeySound.services.external.JwtService;
 @RequiredArgsConstructor
 public class AuthService {
 
-
-    // --------------- INYECCIONES POR CONSTRUCTOR ---------------
+    /**
+     * Inyecciones por constructor
+     */
     private final UsuarioMapper usuarioMapper;
     private final UsuarioRepository usuarioRepository;
 
@@ -33,8 +34,9 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final RolRepository rolRepository;
 
-    // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
-
+    /**
+     * Metodos llamados por endpoints
+     */
     public LoginResponseDTO login(LoginRequestDTO request) {
 
 
