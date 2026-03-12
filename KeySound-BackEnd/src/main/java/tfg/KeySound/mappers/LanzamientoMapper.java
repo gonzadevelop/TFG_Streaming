@@ -5,6 +5,8 @@ import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Lanzamiento;
 import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
 import tfg.KeySound.model.lanzamiento.ResponseLanzamientoArtistaDTO;
+import tfg.KeySound.model.lanzamiento.ResponseLanzamientoDTO;
+import tfg.KeySound.model.cancion.ResponseCancionLanzamientoDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,4 +38,13 @@ public interface LanzamientoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lanzamientoCanciones", ignore = true)
     Lanzamiento createAlbum(String titulo, String archivoPortada);
+
+    @Mapping(target = "nombreLanzamiento", source = "lanzamiento.titulo")
+    @Mapping(target = "portada", source = "urlPortada")
+    @Mapping(target = "anioLanzamiento", expression = "java(lanzamiento.getFechaLanzamiento() != null ? lanzamiento.getFechaLanzamiento().getYear() : 0)")
+    @Mapping(target = "duracionTotalSegundos", expression = "java(canciones == null ? 0 : canciones.stream().mapToInt(c -> c.getDuracionSegundos()).sum())")
+    @Mapping(target = "numCanciones", expression = "java(canciones == null ? 0 : canciones.size())")
+    @Mapping(target = "tipo", source = "lanzamiento.tipo")
+    @Mapping(target = "canciones", source = "canciones")
+    ResponseLanzamientoDTO toResponseDto(Lanzamiento lanzamiento, List<ResponseCancionLanzamientoDTO> canciones, String urlPortada);
 }

@@ -2,27 +2,28 @@ package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tfg.KeySound.entitys.LanzamientoCancion;
-import tfg.KeySound.entitys.Playlist;
-import tfg.KeySound.entitys.PlaylistLanzamientoCancion;
-import tfg.KeySound.entitys.Usuario;
+import tfg.KeySound.entitys.*;
 import tfg.KeySound.entitys.embeddedids.PlaylistLanzamientoCancionId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.lanzamiento.LanzamientoCancionNotFoundException;
 import tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException;
 import tfg.KeySound.exception.playlist.OwnershipRequiredException;
 import tfg.KeySound.exception.playlist.PlaylistNotFoundException;
+import tfg.KeySound.mappers.CancionMapper;
+import tfg.KeySound.mappers.LanzamientoMapper;
+import tfg.KeySound.model.cancion.ResponseCancionLanzamientoDTO;
+import tfg.KeySound.model.lanzamiento.ResponseLanzamientoDTO;
+import tfg.KeySound.repositorys.*;
 import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.mappers.UsuarioMapper;
 import tfg.KeySound.model.cancion.RequestCancionesPlaylistDTO;
 import tfg.KeySound.model.playlist.RequestPlaylistDTO;
 import tfg.KeySound.model.usuario.ResponseUsuarioDTO;
-import tfg.KeySound.repositorys.LanzamientoCancionRepository;
-import tfg.KeySound.repositorys.PlaylistLanzamientoCancionRepository;
-import tfg.KeySound.repositorys.PlaylistRepository;
-import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.JwtService;
+
+import java.util.List;
+import java.util.Comparator;
 
 @Service
 @RequiredArgsConstructor
@@ -35,10 +36,13 @@ public class UsuarioService {
 
     private final PlaylistLanzamientoCancionRepository playlistLanzamientoCancionRepository;
     private final PlaylistRepository playlistRepository;
+    private final LanzamientoRepository lanzamientoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     private final PlaylistMapper playlistMapper;
-    private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final CancionMapper cancionMapper;
+    private final LanzamientoMapper lanzamientoMapper;
 
     // -------------- MÉTODOS LLAMADOS POR ENDPOINTS --------------
 
@@ -130,5 +134,30 @@ public class UsuarioService {
                 "https://ui-avatars.com/api/?name=" + usuario.getUsername().charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
 
         return usuarioMapper.toDto(usuario, urlAvatar);
+    }
+
+    public ResponseLanzamientoDTO visualizarLanzamiento(Long lanzamientoId) {
+        // Buscar el lanzamiento por su ID
+        Lanzamiento lanzamiento = lanzamientoRepository.findById(lanzamientoId)
+                .orElseThrow(() -> new LanzamientoCancionNotFoundException(lanzamientoId));
+
+        // Obtener la URL de la portada del lanzamiento desde Firebase Storage o usar una imagen por defecto si no tiene portada
+        String urlPortada = !lanzamiento.getArchivoPortada().isEmpty() ?
+                firebaseService.obtenerUrlArchivo(lanzamiento.getArchivoPortada()) :
+                "https://ui-avatars.com/api/?name=" + lanzamiento.getTitulo().charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
+
+        // Mapear el lanzamiento a un DTO y obtener la URL de la portada ordenados por el número de pista
+        List <ResponseCancionLanzamientoDTO> cancionesDto = lanzamiento
+                .getLanzamientoCanciones()
+                .stream()
+                .map(lanzamientoCancion -> {
+                    String urlCancion = firebaseService.obtenerUrlArchivo(lanzamientoCancion.getCancion().getArchivoCancion());
+                    ResponseCancionLanzamientoDTO cancionDto = cancionMapper.toLanzamientoDto(lanzamientoCancion, urlCancion);
+                    return cancionDto;
+                })
+                .sorted(Comparator.comparingInt(ResponseCancionLanzamientoDTO::getNumeroPista))
+                .toList();
+
+        return lanzamientoMapper.toResponseDto(lanzamiento, cancionesDto, urlPortada);
     }
 }

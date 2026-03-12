@@ -7,6 +7,7 @@ import tfg.KeySound.entitys.LanzamientoCancion;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
 import tfg.KeySound.model.lanzamiento.RequestSencilloDTO;
+import tfg.KeySound.model.cancion.ResponseCancionLanzamientoDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -41,4 +42,12 @@ public interface CancionMapper {
     @Mapping(target = "historialReproducciones", ignore = true)
     @Mapping(target = "duracionSegundos", source = "duracionSegundos")
     Cancion fromData(String titulo, String archivo, List<Usuario> usuarios, Integer duracionSegundos);
+
+    @Mapping(target = "titulo", source = "lanzamientoCancion.cancion.titulo")
+    @Mapping(target = "artistas", expression = "java(lanzamientoCancion.getCancion() == null || lanzamientoCancion.getCancion().getUsuarios() == null ? java.util.Collections.emptyList() : lanzamientoCancion.getCancion().getUsuarios().stream().map(u -> u.getUsername()).toList())")
+    @Mapping(target = "urlCancion", source = "url")
+    @Mapping(target = "reproducciones", expression = "java((long) (lanzamientoCancion.getCancion() != null && lanzamientoCancion.getCancion().getHistorialReproducciones() != null ? lanzamientoCancion.getCancion().getHistorialReproducciones().size() : 0))")
+    @Mapping(target = "duracionSegundos", expression = "java(lanzamientoCancion.getCancion() != null && lanzamientoCancion.getCancion().getDuracionSegundos() != null ? lanzamientoCancion.getCancion().getDuracionSegundos() : 0)")
+    @Mapping(target = "numeroPista", expression = "java(lanzamientoCancion.getNumeroPista() == null ? 0 : lanzamientoCancion.getNumeroPista())")
+    ResponseCancionLanzamientoDTO toLanzamientoDto(LanzamientoCancion lanzamientoCancion, String url);
 }

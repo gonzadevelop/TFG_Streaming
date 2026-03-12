@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tfg.KeySound.model.cancion.RequestCancionesPlaylistDTO;
+import tfg.KeySound.model.lanzamiento.ResponseLanzamientoDTO;
 import tfg.KeySound.model.playlist.RequestPlaylistDTO;
 import tfg.KeySound.model.usuario.ResponseUsuarioDTO;
 import tfg.KeySound.services.UsuarioService;
@@ -72,5 +73,15 @@ public class UsuarioController {
     @GetMapping("/info-usuario/{username}")
     public ResponseEntity<ResponseUsuarioDTO> obtenerInfoUsuario(@PathVariable String username) {
         return ResponseEntity.ok(usuarioService.obtenerInfoUsuario(username));
+    }
+
+    /**
+     * Endpoint para que un usuario visualice la información de un lanzamiento (álbum o sencillo).
+     * @param lanzamientoId {@link Long}
+     * @return {@link ResponseEntity}&lt;{@link ResponseLanzamientoDTO}&gt; Devuelve un status 200 (OK) con la información del lanzamiento
+     */
+    @GetMapping("/visualizar-lanzamiento/{lanzamientoId}")
+    public ResponseEntity<ResponseLanzamientoDTO> visualizarLanzamiento(@PathVariable Long lanzamientoId) {
+        return ResponseEntity.ok(usuarioService.visualizarLanzamiento(lanzamientoId));
     }
 }

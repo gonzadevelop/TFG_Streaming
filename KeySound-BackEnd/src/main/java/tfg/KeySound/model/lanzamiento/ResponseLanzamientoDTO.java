@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class ResponseLanzamientoDTO {
     private String nombreLanzamiento;
-    private MultipartFile portada;
+    private String portada;
     private int anioLanzamiento;
     private int duracionTotalSegundos;
     private int numCanciones;
