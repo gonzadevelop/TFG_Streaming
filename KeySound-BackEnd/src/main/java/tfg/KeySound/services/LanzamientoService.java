@@ -7,6 +7,7 @@ import tfg.KeySound.entitys.Lanzamiento;
 import tfg.KeySound.entitys.LanzamientoCancion;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
+import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.exception.lanzamiento.*;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.LanzamientoCancionMapper;
@@ -82,7 +83,7 @@ public class LanzamientoService {
                     // Si se ha proporcionado un ID de canción existente, devolverla
                     if (rc.getIdCancionExistente() != null) {
                         return cancionRepository.findById(rc.getIdCancionExistente())
-                                .orElseThrow(() -> new RuntimeException("ID de canción existente no encontrado: " + rc.getIdCancionExistente()));
+                                .orElseThrow(() -> new CancionNotFoundException(rc.getIdCancionExistente()));
                     }
 
                     // comprobar cuanto dura el archivo de audio (en segundos)

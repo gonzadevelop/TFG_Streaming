@@ -12,7 +12,6 @@ import tfg.KeySound.mappers.UsuarioMapper;
 import tfg.KeySound.model.usuario.ResponseUsuarioDTO;
 import tfg.KeySound.services.external.JwtService;
 
-
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {

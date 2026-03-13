@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import tfg.KeySound.entitys.embeddedids.UsuarioCancionId;
 
 import java.time.LocalDateTime;
 
@@ -14,15 +13,14 @@ import java.time.LocalDateTime;
 @Setter
 public class HistorialReproducciones {
 
-    @EmbeddedId
-    private UsuarioCancionId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @MapsId("usuarioId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @MapsId("cancionId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cancion_id", nullable = false)
     private Cancion cancion;
