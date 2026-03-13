@@ -1,0 +1,3 @@
+GET http://localhost:8080/v3/api-docs
+
+# Swagger UI: http://localhost:8080/swagger-ui/index.html#/ (url para ver de forma visual la documentación de la API)
