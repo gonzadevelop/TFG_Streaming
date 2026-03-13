@@ -1,6 +1,0 @@
-### Reproducir canción
-POST http://localhost:8080/api/canciones/reproducir
-Authorization: Bearer {{tokenUsuario}}
-Content-Type: application/json
-
-{{lanzamientoCancionId}}

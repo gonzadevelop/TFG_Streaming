@@ -1,5 +1,0 @@
-### Visualizar lanzamiento
-GET http://localhost:8080/api/lanzamientos/visualizar/{{lanzamientoId}}
-Accept: application/json
-
-# Devuelve ResponseLanzamientoDTO
