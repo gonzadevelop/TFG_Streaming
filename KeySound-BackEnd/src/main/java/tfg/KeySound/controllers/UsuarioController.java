@@ -44,4 +44,20 @@ public class UsuarioController {
     public ResponseEntity<ResponseUsuarioDTO> obtenerInfoUsuario(@PathVariable String username) {
         return ResponseEntity.ok(usuarioService.obtenerInfoUsuario(username));
     }
+
+    /**
+     * Endpoint para que un usuario siga a otro usuario.
+     * @param username {@link String} nombre de usuario del usuario a seguir
+     * @param token {@link String} token JWT del usuario autenticado
+     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si el usuario se sigue correctamente
+     * @apiNote {@code POST /api/usuarios/seguir}
+     */
+    @PostMapping("/seguir")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> seguirUsuario(
+            @RequestBody String username,
+            @RequestHeader ("Authorization") String token) {
+        usuarioService.seguirUsuario(username, token.substring(7));
+        return ResponseEntity.ok().build();
+    }
 }

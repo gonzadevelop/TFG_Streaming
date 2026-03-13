@@ -43,7 +43,7 @@ public class ArtistaService {
 
         // Buscar el usuario que hace la peticion en la bd (si viene el header) para contar cuántas canciones del artista tiene en favoritos
         int cancionesEnFavoritos = 0;
-        if (token != null) {
+        if (!token.isEmpty()) {
             String usernameToken = jwtService.extractUsername(token);
             Usuario usuarioToken = usuarioRepository.findByUsernameIgnoreCase(usernameToken)
                     .orElseThrow(() -> new UsernameNotFoundException(usernameToken));

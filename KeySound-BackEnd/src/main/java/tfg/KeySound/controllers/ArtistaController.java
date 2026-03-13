@@ -26,7 +26,7 @@ public class ArtistaController {
     @GetMapping("/visualizar/{username}")
     public ResponseEntity<ResponseArtistaDTO> obtenerInfoArtista(
             @PathVariable String username,
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(value = "Authorization", defaultValue = "1234567") String token) {
         return ResponseEntity.ok(artistaService.obtenerInfoArtista(username, token.substring(7)));
     }
 }
