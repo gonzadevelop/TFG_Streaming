@@ -11,5 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class RequestPlaylistDTO {
     private String nombrePlaylist;
     private Boolean esPublica;
+    private String descripcion;
     private MultipartFile fotoPortada;
 }

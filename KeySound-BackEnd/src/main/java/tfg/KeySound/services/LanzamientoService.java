@@ -25,6 +25,7 @@ import tfg.KeySound.utils.ArtistaUtils;
 import tfg.KeySound.utils.AudioUtils;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -73,9 +74,7 @@ public class LanzamientoService {
         // Crear la entidad album sin canciones (se añaden más tarde)
         Lanzamiento album = lanzamientoMapper.createLanzamiento(dto.getNombreAlbum(), nombreArchivoPortada, tipo, artista);
 
-        /*
-            -------------- CANCIONES -------------
-         */
+        // Mapear cada canción del DTO a entidad, subiendo el archivo de audio a Firebase Storage y obteniendo colaboradores y duración
         List<Cancion> canciones = dto.getCanciones()
                 .stream()
                 .peek(rc -> ArtistaUtils.validarFormatoArchivo(rc.getArchivo().getContentType()))
@@ -100,16 +99,12 @@ public class LanzamientoService {
                 })
                 .toList();
 
-        /*
-            -------------- GUARDAR EN BASE DE DATOS -------------
-         */
-
-        // Guardar primero el álbum para generar su ID y luego las canciones y la relación
+        // Guardar primero en la bd el álbum para generar su ID y luego las canciones y la relación
         lanzamientoRepository.saveAndFlush(album);
         cancionRepository.saveAllAndFlush(canciones);
 
         // Crear las relaciones LanzamientoCancion de forma funcional, preservando el orden y el número de pista (1-based)
-        List<LanzamientoCancion> lanzamientoCanciones = java.util.stream.IntStream.range(0, canciones.size())
+        List<LanzamientoCancion> lanzamientoCanciones = IntStream.range(0, canciones.size())
                 .mapToObj(i -> lanzamientoCancionMapper.toEntity(canciones.get(i), album, i + 1))
                 .collect(java.util.stream.Collectors.toList());
 
@@ -122,17 +117,15 @@ public class LanzamientoService {
                 .orElseThrow(() -> new LanzamientoCancionNotFoundException(lanzamientoId));
 
         // Obtener la URL de la portada del lanzamiento desde Firebase Storage o usar una imagen por defecto si no tiene portada
-        String urlPortada = !lanzamiento.getArchivoPortada().isEmpty() ?
-                firebaseService.obtenerUrlArchivo(lanzamiento.getArchivoPortada()) :
-                "https://ui-avatars.com/api/?name=" + lanzamiento.getTitulo().charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
+        String urlPortada = firebaseService.obtenerUrlArchivoImagen(lanzamiento.getArchivoPortada(), lanzamiento.getTitulo());
 
         // Mapear el lanzamiento a un DTO y obtener la URL de la portada ordenados por el número de pista
         List <ResponseCancionLanzamientoDTO> cancionesDto = lanzamiento
                 .getLanzamientoCanciones()
                 .stream()
-                .map(lanzamientoCancion -> {
-                    String urlCancion = firebaseService.obtenerUrlArchivo(lanzamientoCancion.getCancion().getArchivoCancion());
-                    return cancionMapper.toLanzamientoDto(lanzamientoCancion, urlCancion);
+                .map(lc -> {
+                    String urlCancion = firebaseService.obtenerUrlArchivoAudio(lc.getCancion().getArchivoCancion());
+                    return cancionMapper.toLanzamientoDto(lc, urlCancion);
                 })
                 .sorted(Comparator.comparingInt(ResponseCancionLanzamientoDTO::getNumeroPista))
                 .toList();

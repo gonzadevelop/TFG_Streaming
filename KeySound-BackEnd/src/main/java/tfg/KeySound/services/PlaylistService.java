@@ -44,13 +44,10 @@ public class PlaylistService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        // Subir la foto de portada a Firebase Storage y obtener el nombre del archivo
-        String nombreArchivo = null;
-        if (dto.getFotoPortada() != null) {
-            String nombre = "playlists_" + usuario.getId() + "_" + dto.getNombrePlaylist();
-
-            nombreArchivo = firebaseService.subirArchivo(dto.getFotoPortada() , nombre);
-        }
+        // Subir la foto de portada a Firebase Storage y obtener el nombre del archivo o usar una imagen por defecto si no se proporciona una foto de portada
+        String nombreArchivo = dto.getFotoPortada() != null ?
+                firebaseService.subirArchivo(dto.getFotoPortada() , "playlist_" + usuario.getId() + "_" + dto.getNombrePlaylist() + "_")
+                : "";
 
         // Mapear el DTO a la entidad Playlist y establecer el propietario
         Playlist playlist = playlistMapper.toEntity(dto, usuario, nombreArchivo);

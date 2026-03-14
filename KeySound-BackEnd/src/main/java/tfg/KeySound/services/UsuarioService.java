@@ -6,11 +6,16 @@ import tfg.KeySound.entitys.*;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.lanzamiento.LanzamientoCancionNotFoundException;
 import tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException;
+import tfg.KeySound.mappers.PlaylistMapper;
+import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import tfg.KeySound.repositorys.*;
 import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.mappers.UsuarioMapper;
 import tfg.KeySound.model.usuario.ResponseUsuarioDTO;
 import tfg.KeySound.services.external.JwtService;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
     private final UsuarioMapper usuarioMapper;
+    private final PlaylistMapper playlistMapper;
 
     /**
      * Metodos llamados por endpoints
@@ -50,16 +56,33 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    // más adelante añadir playlists de usuario, canciones favoritas, etc.
     public ResponseUsuarioDTO obtenerInfoUsuario(String username) {
+        // Buscar el usuario en la base de datos
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        String urlAvatar = usuario.getArchivoAvatar() != null ?
-                firebaseService.obtenerUrlArchivo(usuario.getArchivoAvatar()) :
-                "https://ui-avatars.com/api/?name=" + usuario.getUsername().charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
+        // Obtener la URL del avatar del usuario
+        String urlAvatar = firebaseService.obtenerUrlArchivoImagen(usuario.getArchivoAvatar(), usuario.getUsername());
 
-        return usuarioMapper.toDto(usuario, urlAvatar);
+        List<ResponsePlaylistDTO> playlists = Stream.concat(
+                // Añadir la "playlist" de favoritos del usuario a la lista de playlists, con un nombre fijo y la portada por defecto.
+                Stream.of(ResponsePlaylistDTO.builder()
+                        .id(0L)
+                        .nombre("Favoritos")
+                        .descripcion("Canciones que " + usuario.getUsername() + " ha añadido a favoritos")
+                        .urlPortada(firebaseService.obtenerUrlArchivoImagen("KeySound_Favoritos_82343704-6207-4d1d-b810-a1941cdcce78", ""))
+                        .build()),
+
+                // Añadimos las playlists del usuario a la lista de playlists.
+                usuario.getPlaylists().stream()
+                        .map(playlist -> {
+                            String url = firebaseService.obtenerUrlArchivoImagen(playlist.getFotoPortada(), playlist.getNombre());
+                            return playlistMapper.toDto(playlist, url);
+                        })
+        ).toList();
+
+        // Mapear el usuario a ResponseUsuarioDTO y devolverlo
+        return usuarioMapper.toDto(usuario, urlAvatar, playlists);
     }
 
     public void seguirUsuario(String username, String substring) {

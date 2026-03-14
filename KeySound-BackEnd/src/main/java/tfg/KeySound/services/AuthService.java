@@ -81,6 +81,7 @@ public class AuthService {
 
 
         user.setRol(rolRepository.findByNombre(rol));
+        user.setArchivoAvatar("");
 
         usuarioRepository.save(user);
     }
