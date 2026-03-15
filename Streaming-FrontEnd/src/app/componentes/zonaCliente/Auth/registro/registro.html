@@ -1,178 +1,260 @@
-<h3 class="fw-bold">CREAR CUENTA</h3>
-<p class="text-muted">Complete los siguientes datos para crear su cuenta con el correo electrónico <strong>{{email()}}</strong></p>
+<!-- Fondo animado -->
+<div class="login-bg">
+  <div class="login-blob login-blob--1"></div>
+  <div class="login-blob login-blob--2"></div>
+  <div class="login-blob login-blob--3"></div>
+</div>
 
-<form [formGroup]="registroForm" class="mt-4" (ngSubmit)="registrar()">
-  <!-- Username -->
-  <div class="mb-3">
-    <label for="username" class="form-label">Nombre de usuario <span class="text-danger">*</span></label>
-    <input
-      type="text"
-      class="form-control"
-      id="username"
-      formControlName="username"
-      required
-      [class.is-invalid]="registroForm.get('username')?.invalid && registroForm.get('username')?.touched"
-    >
-    @if (registroForm.get('username')?.invalid && registroForm.get('username')?.touched) {
-      <div class="invalid-feedback">
-        @if (registroForm.get('username')?.errors?.['required']) {
-          El nombre de usuario es requerido
-        }
-        @if (registroForm.get('username')?.errors?.['minlength']) {
-          El nombre de usuario debe tener al menos 3 caracteres
+<!-- Contenido centrado -->
+<div class="d-flex justify-content-center align-items-center min-vh-100 py-4 login-content">
+  <div class="card shadow-lg login-card p-4 p-md-5">
+
+    <!-- Cabecera -->
+    <div class="text-center mb-4">
+      <img class="login-icon" src="/img/KeySound_logo_definitive.png" alt="KeySound logo">
+      <h3 class="fw-bold mb-1">CREATE UNA CUENTA PARA OBTENER LA LLAVE DEL SONIDO.</h3>
+      <p class="text-muted small mb-0">
+        Complete los datos para registrarse con <strong>{{ email() }}</strong>
+      </p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="registroForm" (ngSubmit)="registrar()">
+
+      <!-- Nombre y Apellidos -->
+      <div class="row mb-3">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <label for="nombre" class="form-label fw-semibold small">
+            Nombre <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            [class.is-invalid]="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched"
+            id="nombre"
+            formControlName="nombre"
+            autocomplete="given-name"
+            required
+          >
+          @if (registroForm.get('nombre')?.touched && registroForm.get('nombre')?.errors?.['required']) {
+            <div class="invalid-feedback d-block small mt-1">El nombre es requerido.</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label for="apellidos" class="form-label fw-semibold small">
+            Apellidos <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            [class.is-invalid]="registroForm.get('apellidos')?.invalid && registroForm.get('apellidos')?.touched"
+            id="apellidos"
+            formControlName="apellidos"
+            autocomplete="family-name"
+            required
+          >
+          @if (registroForm.get('apellidos')?.touched && registroForm.get('apellidos')?.errors?.['required']) {
+            <div class="invalid-feedback d-block small mt-1">Los apellidos son requeridos.</div>
+          }
+        </div>
+      </div>
+
+      <!-- Username -->
+      <div class="mb-3">
+        <label for="username" class="form-label fw-semibold small">
+          Usuario <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          [class.is-invalid]="registroForm.get('username')?.invalid && registroForm.get('username')?.touched"
+          id="username"
+          formControlName="username"
+          autocomplete="username"
+          required
+        >
+        @if (registroForm.get('username')?.touched) {
+          @if (registroForm.get('username')?.errors?.['required']) {
+            <div class="invalid-feedback d-block small mt-1">El nombre de usuario es requerido.</div>
+          } @else if (registroForm.get('username')?.errors?.['minlength']) {
+            <div class="invalid-feedback d-block small mt-1">El nombre de usuario debe tener al menos 3 caracteres.</div>
+          }
         }
       </div>
-    }
-  </div>
 
-  <!-- Password -->
-  <div class="mb-3">
-    <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
-    <div class="input-group">
-      <input
-        [type]="mostrarPassword() ? 'text' : 'password'"
-        class="form-control"
-        id="password"
-        formControlName="password"
-        placeholder="••••••••"
-        required
-        [class.is-invalid]="registroForm.get('password')?.invalid && registroForm.get('password')?.touched"
+      <!-- Contraseña -->
+      <div class="mb-3">
+        <label for="password" class="form-label fw-semibold small">
+          Contraseña <span class="text-danger">*</span>
+        </label>
+        <div class="input-group">
+          <input
+            [type]="mostrarPassword() ? 'text' : 'password'"
+            class="form-control"
+            [class.is-invalid]="registroForm.get('password')?.invalid && registroForm.get('password')?.touched"
+            id="password"
+            formControlName="password"
+            placeholder=""
+            autocomplete="new-password"
+            required
+          >
+          <button
+            type="button"
+            class="btn border-start-0"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            @if (mostrarPassword()) {
+              <i class="bi bi-eye-slash"></i>
+            } @else {
+              <i class="bi bi-eye"></i>
+            }
+          </button>
+        </div>
+        @if (registroForm.get('password')?.touched) {
+          @if (registroForm.get('password')?.errors?.['required']) {
+            <div class="invalid-feedback d-block small mt-1">La contraseña es requerida.</div>
+          } @else if (registroForm.get('password')?.errors?.['minlength']) {
+            <div class="invalid-feedback d-block small mt-1">La contraseña debe tener al menos 6 caracteres.</div>
+          }
+        }
+      </div>
+
+      <!-- confirmar contraseña -->
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label fw-semibold small">
+          Confirmar contraseña <span class="text-danger">*</span>
+        </label>
+        <div class="input-group">
+          <input
+            [type]="mostrarPassword() ? 'text' : 'password'"
+            class="form-control"
+            [class.is-invalid]="(registroForm.get('confirmPassword')?.invalid && registroForm.get('confirmPassword')?.touched) || (registroForm.errors?.['passwordsMismatch'] && registroForm.get('confirmPassword')?.touched)"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            placeholder=""
+            autocomplete="new-password"
+            required
+          >
+          <button
+            type="button"
+            class="btn border-start-0"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            @if (mostrarPassword()) {
+              <i class="bi bi-eye-slash"></i>
+            } @else {
+              <i class="bi bi-eye"></i>
+            }
+          </button>
+        </div>
+        @if (registroForm.get('confirmPassword')?.touched) {
+          @if (registroForm.get('confirmPassword')?.errors?.['required']) {
+            <div class="invalid-feedback d-block small mt-1">Debes confirmar la contraseña.</div>
+          } @else if (registroForm.errors?.['passwordsMismatch']) {
+            <div class="invalid-feedback d-block small mt-1">
+              <i class="bi bi-exclamation-circle me-1"></i>Las contraseñas no coinciden.
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Género -->
+      <div class="mb-3">
+        <label for="genero" class="form-label fw-semibold small">
+          Género <span class="text-danger">*</span>
+        </label>
+        <select
+          class="form-select"
+          [class.is-invalid]="registroForm.get('genero')?.invalid && registroForm.get('genero')?.touched"
+          id="genero"
+          formControlName="genero"
+          required
+        >
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="masculino">Masculino</option>
+          <option value="femenino">Femenino</option>
+          <option value="otro">Otro</option>
+          <option value="femenino">Prefiero no decirlo</option>
+        </select>
+        @if (registroForm.get('genero')?.touched && registroForm.get('genero')?.errors?.['required']) {
+          <div class="invalid-feedback d-block small mt-1">El género es requerido.</div>
+        }
+      </div>
+
+      <!-- DNI y Teléfono -->
+      <div class="row mb-3">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <label for="dni" class="form-label fw-semibold small">DNI</label>
+          <input
+            type="text"
+            maxlength="9"
+            class="form-control"
+            [class.is-invalid]="registroForm.get('dni')?.invalid && registroForm.get('dni')?.touched"
+            id="dni"
+            formControlName="dni"
+            autocomplete="off"
+            required
+          >
+          @if (registroForm.get('dni')?.touched && registroForm.get('dni')?.errors?.['pattern']) {
+            <div class="invalid-feedback d-block small mt-1">El DNI debe tener 8 números seguidos de una letra.</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label for="telefono" class="form-label fw-semibold small">Teléfono de contacto</label>
+          <input
+            type="tel"
+            [maxLength]="9"
+            class="form-control"
+            [class.is-invalid]="registroForm.get('telefono')?.invalid && registroForm.get('telefono')?.touched"
+            id="telefono"
+            formControlName="telefono"
+            autocomplete="tel"
+          >
+          @if (registroForm.get('telefono')?.touched && registroForm.get('telefono')?.errors?.['pattern']) {
+            <div class="invalid-feedback d-block small mt-1">El teléfono debe tener 9 dígitos.</div>
+          }
+        </div>
+      </div>
+
+      <!-- Botón crear cuenta -->
+      <button
+        type="submit"
+        class="btn btn-submit w-100 py-2 mb-3"
+        [disabled]="registroForm.invalid"
       >
+        Crear cuenta
+      </button>
+
+      <!-- Divisor -->
+      <div class="divider my-3" role="separator" aria-orientation="horizontal">
+        <span class="divider-text">o bien</span>
+      </div>
+
+      <!-- Botón volver -->
       <button
         type="button"
-        class="btn btn-outline-secondary"
-        (click)="togglePasswordVisibility()"
-        aria-label="Mostrar/Ocultar contraseña"
+        class="btn-back w-100 py-2"
+        (click)="goBack()"
+        aria-label="Volver atrás"
       >
-        <span [innerHTML]="mostrarPassword() ? '&#128065;' : '&#128586;'"></span>
+        ← Volver
       </button>
-    </div>
-    @if (registroForm.get('password')?.invalid && registroForm.get('password')?.touched) {
-      <div class="invalid-feedback d-block">
-        @if (registroForm.get('password')?.errors?.['required']) {
-          La contraseña es requerida
-        }
-        @if (registroForm.get('password')?.errors?.['minlength']) {
-          La contraseña debe tener al menos 6 caracteres
-        }
-      </div>
-    }
+    </form>
+
+    <p class="text-center text-muted small mt-4 mb-0">
+      ¿Ya tienes una cuenta?
+      <a routerLink="/login" class="text-decoration-none fw-semibold forgot-link">Inicia sesión.</a>
+    </p>
+
+    <p class="text-center text-muted small mt-4 mb-0">
+      Al crear una cuenta, aceptas las
+      <a href="#" class="text-decoration-none fw-semibold forgot-link">Condiciones de uso</a>
+      y la
+      <a href="#" class="text-decoration-none fw-semibold forgot-link">Política de Privacidad</a>.
+    </p>
+
   </div>
+</div>
 
-  <!-- Nombre y Apellidos -->
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
-      <input
-        type="text"
-        class="form-control"
-        id="nombre"
-        formControlName="nombre"
-        required
-        [class.is-invalid]="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched"
-      >
-      @if (registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched) {
-        <div class="invalid-feedback">
-          @if (registroForm.get('nombre')?.errors?.['required']) {
-            El nombre es requerido
-          }
-        </div>
-      }
-    </div>
-    <div class="col-md-6">
-      <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
-      <input
-        type="text"
-        class="form-control"
-        id="apellidos"
-        formControlName="apellidos"
-        required
-        [class.is-invalid]="registroForm.get('apellidos')?.invalid && registroForm.get('apellidos')?.touched"
-      >
-      @if (registroForm.get('apellidos')?.invalid && registroForm.get('apellidos')?.touched) {
-        <div class="invalid-feedback">
-          @if (registroForm.get('apellidos')?.errors?.['required']) {
-            Los apellidos son requeridos
-          }
-        </div>
-      }
-    </div>
-  </div>
-
-  <!-- Género -->
-  <div class="mb-3">
-    <label for="genero" class="form-label">Género <span class="text-danger">*</span></label>
-    <select
-      class="form-select"
-      id="genero"
-      formControlName="genero"
-      required
-      [class.is-invalid]="registroForm.get('genero')?.invalid && registroForm.get('genero')?.touched"
-    >
-      <option value="" disabled selected>Seleccione una opción</option>
-      <option value="masculino">Masculino</option>
-      <option value="femenino">Femenino</option>
-      <option value="otro">Otro</option>
-    </select>
-    @if (registroForm.get('genero')?.invalid && registroForm.get('genero')?.touched) {
-      <div class="invalid-feedback">
-        @if (registroForm.get('genero')?.errors?.['required']) {
-          El género es requerido
-        }
-      </div>
-    }
-  </div>
-
-  <!-- DNI y Teléfono (Opcionales) -->
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <label for="dni" class="form-label">DNI </label>
-      <input
-        type="text"
-        class="form-control"
-        id="dni"
-        formControlName="dni"
-        [class.is-invalid]="registroForm.get('dni')?.invalid && registroForm.get('dni')?.touched"
-      >
-      @if (registroForm.get('dni')?.invalid && registroForm.get('dni')?.touched) {
-        <div class="invalid-feedback">
-          @if (registroForm.get('dni')?.errors?.['pattern']) {
-            El DNI debe tener 8 números seguidos de una letra
-          }
-        </div>
-      }
-    </div>
-    <div class="col-md-6">
-      <label for="telefono" class="form-label">Teléfono de contacto</label>
-      <input
-        type="tel"
-        class="form-control"
-        id="telefono"
-        formControlName="telefono"
-        [class.is-invalid]="registroForm.get('telefono')?.invalid && registroForm.get('telefono')?.touched"
-      >
-      @if (registroForm.get('telefono')?.invalid && registroForm.get('telefono')?.touched) {
-        <div class="invalid-feedback">
-          @if (registroForm.get('telefono')?.errors?.['pattern']) {
-            El teléfono debe tener 9 dígitos
-          }
-        </div>
-      }
-    </div>
-  </div>
-  <br>
-  <button type="submit" class="btn btn-secondary w-100 py-2 mb-3" [disabled]="registroForm.invalid">
-    Crear Cuenta
-  </button>
-
-  <!-- Separador entre botones -->
-  <div role="separator" aria-orientation="horizontal" class="separator"></div>
-
-  <button type="button" class="btn-back w-100 py-2 mb-3" (click)="goBack()" aria-label="Volver">
-    Volver
-  </button>
-</form>
-
-<p class="small text-muted text-center">
-  Al crear una cuenta, aceptas las <a href="#" class="text-decoration-none">Condiciones de uso</a> y la <a href="#" class="text-decoration-none">Política de Privacidad</a>.
-</p>

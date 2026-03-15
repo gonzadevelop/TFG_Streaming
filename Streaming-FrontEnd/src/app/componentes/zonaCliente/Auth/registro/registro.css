@@ -1,30 +1,253 @@
-button[type="submit"] {
-  background-color: #FF0000;
-  border-color: #FF0000;
-  color: #ffffff;
+/* ══════════════════════════════════════════
+   Fondo animado – gris claro / azul cielo
+   ══════════════════════════════════════════ */
+
+:host {
+  display: block;
 }
 
-button[type="submit"]:hover,
-button[type="submit"]:focus {
-  background-color: #cc0000;
-  border-color: #cc0000;
+.login-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e0e4e8 0%, #cee0f2 40%, #b8d4ec 70%, #d5dbe1 100%);
+  background-size: 400% 400%;
+  animation: bg-shift 10s ease infinite;
+}
+
+@keyframes bg-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Blobs flotantes */
+.login-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.login-blob--1 {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, #33708a, #a4d4e4);
+  top: -12%;
+  left: -10%;
+  animation: blob-1 15s ease-in-out infinite;
+}
+
+.login-blob--2 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #c8ced6, #83898d);
+  bottom: -14%;
+  right: -8%;
+  animation: blob-2 13s ease-in-out infinite;
+}
+
+.login-blob--3 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, #78bfda, #787b7e);
+  top: 45%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  animation: blob-3 17s ease-in-out infinite;
+}
+
+@keyframes blob-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%      { transform: translate(70px, 50px) scale(1.1); }
+  50%      { transform: translate(30px, 90px) scale(0.95); }
+  75%      { transform: translate(-50px, 40px) scale(1.06); }
+}
+
+@keyframes blob-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%      { transform: translate(-60px, -40px) scale(1.08); }
+  50%      { transform: translate(-25px, -80px) scale(0.93); }
+  75%      { transform: translate(40px, -35px) scale(1.04); }
+}
+
+@keyframes blob-3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33%      { transform: translate(-42%, -58%) scale(1.12); }
+  66%      { transform: translate(-56%, -44%) scale(0.9); }
+}
+
+/* ══════════════════════════════════════════
+   Contenido sobre el fondo
+   ══════════════════════════════════════════ */
+
+.login-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════════
+   Card principal
+   ══════════════════════════════════════════ */
+
+.login-card {
+  width: 520px;
+  max-width: 94vw;
+  border: none;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ══════════════════════════════════════════
+   Cabecera
+   ══════════════════════════════════════════ */
+
+.login-icon {
+  display: block;
+  width: 250px;
+  height: auto;
+  margin: 0 auto 0.75rem auto;
+  object-fit: contain;
+}
+
+/* ══════════════════════════════════════════
+   Enlace condiciones / privacidad
+   ══════════════════════════════════════════ */
+
+.forgot-link {
+  color: #0b75c0;
+  font-weight: 500;
+  transition: color 160ms ease;
+}
+
+.forgot-link:hover {
+  color: #1f9ed7;
+  text-decoration: underline !important;
+}
+
+.forgot-link:focus-visible {
+  outline: 2px solid #0b75c0;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ══════════════════════════════════════════
+   Botón principal – Crear Cuenta
+   ══════════════════════════════════════════ */
+
+.btn-submit {
+  background: #0b75c0;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  transition: background 160ms ease, box-shadow 160ms ease, transform 80ms ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #1f9ed7;
+  box-shadow: 0 4px 14px rgba(11, 117, 192, 0.35);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-submit:focus-visible {
   outline: none;
-  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(11, 117, 192, 0.4);
 }
 
-button[type="submit"]:focus-visible {
-  box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25);
-}
-
-button[type="submit"]:disabled {
-  background-color: #6c757d;
-  border-color: #6c757d;
-  color: #ffffff;
+.btn-submit:disabled {
+  background: #ced4da;
+  color: #868e96;
   cursor: not-allowed;
-  opacity: 0.65;
+  box-shadow: none;
 }
 
-/* Botón de ver/ocultar contraseña */
+/* ══════════════════════════════════════════
+   Divisor
+   ══════════════════════════════════════════ */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #dee2e6;
+}
+
+.divider-text {
+  font-size: 0.8rem;
+  color: #adb5bd;
+  font-weight: 500;
+}
+
+/* ══════════════════════════════════════════
+   Botón volver
+   ══════════════════════════════════════════ */
+
+.btn-back {
+  background: transparent;
+  border: 1.5px solid #dee2e6;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6c757d;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.btn-back:hover {
+  background: #fff5f5;
+  border-color: #1f9ed7;
+  color: #0b75c0;
+}
+
+.btn-back:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(11, 117, 192, 0.22);
+}
+
+.btn-back:active {
+  background: #fce8e8;
+}
+
+/* ══════════════════════════════════════════
+   Override Bootstrap input-group focus
+   ══════════════════════════════════════════ */
+
+.input-group .form-control:focus,
+.input-group .input-group-text {
+  border-color: #dee2e6;
+}
+
+.input-group .form-control:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 0.2rem rgba(11, 117, 192, 0.15);
+}
+
+.input-group-text {
+  font-size: 1rem;
+  border-color: #dee2e6;
+}
+
+/* ══════════════════════════════════════════
+   Botón ver/ocultar contraseña
+   ══════════════════════════════════════════ */
+
 .btn-outline-secondary {
   border-color: #ced4da;
   color: #6c757d;
@@ -44,46 +267,4 @@ button[type="submit"]:disabled {
   background-color: #e9ecef;
   border-color: #ced4da;
   color: #495057;
-}
-
-/* Separador entre botones (mismo estilo que se usaba inline) */
-.separator {
-  height: 1px;
-  background: rgba(0, 0, 0, 0.06);
-  margin: 0.5rem 0 0.75rem;
-  width: 100%;
-  border-radius: 1px;
-}
-
-/* Asegurar que el botón 'Volver' hereda estilos globales (.btn-back está definido en login.css) */
-.btn-back {
-  display: block;
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: #6c757d; /* texto atenuado por defecto */
-  padding: 0.6rem 0; /* consistente con botones grandes */
-  cursor: pointer;
-  font-size: 0.95rem;
-  text-align: center;
-  border-radius: 0.375rem;
-  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
-}
-
-.btn-back:hover {
-  background-color: rgba(220, 53, 69, 0.20); /* rojo más intenso */
-  color: #8b1a20; /* texto más oscuro/rojizo */
-}
-
-.btn-back:focus {
-  outline: none;
-}
-
-.btn-back:active {
-  background-color: rgba(220, 53, 69, 0.24);
-  color: #7a1519;
-}
-
-.btn-back:focus-visible {
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.22);
 }

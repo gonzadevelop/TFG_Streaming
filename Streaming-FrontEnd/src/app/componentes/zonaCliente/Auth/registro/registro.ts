@@ -12,10 +12,11 @@ import {
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ServApiSpring} from '../../../../services/ServApiSpring';
 import ILoginRequest from '../../../../model/ILoginRequest';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
@@ -29,12 +30,13 @@ export class Registro implements OnInit, OnDestroy {
 
   protected registroForm:FormGroup = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$')]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$')]),
+    confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$')]),
     nombre: new FormControl('', [Validators.required]),
     apellidos: new FormControl('', [Validators.required]),
     genero: new FormControl('', [Validators.required]),
-    dni: new FormControl('', [Validators.pattern(/^[0-9]{8}[A-Za-z]$/)]),
-    telefono: new FormControl('', [Validators.pattern(/^[0-9]{9}$/)])
+    dni: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{8}[A-Za-z]$/)]),
+    telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)])
   });
 
 
