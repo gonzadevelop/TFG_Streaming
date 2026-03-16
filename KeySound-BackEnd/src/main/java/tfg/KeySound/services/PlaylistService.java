@@ -3,9 +3,9 @@ package tfg.KeySound.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
-import tfg.KeySound.entitys.embeddedids.PlaylistLanzamientoCancionId;
+import tfg.KeySound.entitys.embeddedids.PlaylistPistaId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
-import tfg.KeySound.exception.lanzamiento.LanzamientoCancionNotFoundException;
+import tfg.KeySound.exception.lanzamiento.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.OwnershipRequiredException;
 import tfg.KeySound.exception.playlist.PlaylistNotFoundException;
 import tfg.KeySound.mappers.PlaylistMapper;
@@ -24,9 +24,9 @@ public class PlaylistService {
      */
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
-    private final LanzamientoCancionRepository lanzamientoCancionRepository;
+    private final PistaRepository pistaRepository;
 
-    private final PlaylistLanzamientoCancionRepository playlistLanzamientoCancionRepository;
+    private final PlaylistPistaRepository playlistPistaRepository;
     private final PlaylistRepository playlistRepository;
     private final UsuarioRepository usuarioRepository;
 
@@ -73,18 +73,18 @@ public class PlaylistService {
             throw new OwnershipRequiredException();
         }
 
-        dto.getLanzamientoCancionIds().stream()
-                .map(id -> lanzamientoCancionRepository.findById(id) // Buscar el lanzamiento de canción por su ID
-                        .orElseThrow(() -> new LanzamientoCancionNotFoundException(id)))
-                .filter(lanzamientoCancion -> !playlistLanzamientoCancionRepository // Evitar agregar canciones duplicadas a la playlist
-                        .existsByPlaylistIdAndLanzamientoCancionId(playlist.getId(), lanzamientoCancion.getId()))
-                .map(lanzamientoCancion -> { // Crear la relación entre la playlist y el lanzamiento de canción
-                    PlaylistLanzamientoCancion relacion = new PlaylistLanzamientoCancion();
-                    relacion.setId(new PlaylistLanzamientoCancionId()); // El ID se generará automáticamente al guardar la entidad
+        dto.getPistaIds().stream()
+                .map(id -> pistaRepository.findById(id) // Buscar el lanzamiento de canción por su ID
+                        .orElseThrow(() -> new PistaNotFoundException(id)))
+                .filter(pista -> !playlistPistaRepository // Evitar agregar canciones duplicadas a la playlist
+                        .existsByPlaylistIdAndPistaId(playlist.getId(), pista.getId()))
+                .map(pista -> { // Crear la relación entre la playlist y el lanzamiento de canción
+                    PlaylistPista relacion = new PlaylistPista();
+                    relacion.setId(new PlaylistPistaId()); // El ID se generará automáticamente al guardar la entidad
                     relacion.setPlaylist(playlist);
-                    relacion.setLanzamientoCancion(lanzamientoCancion);
+                    relacion.setPista(pista);
                     return relacion;
                 })
-                .forEach(playlistLanzamientoCancionRepository::save); // Guardar la relación en la base de datos
+                .forEach(playlistPistaRepository::save); // Guardar la relación en la base de datos
     }
 }

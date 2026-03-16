@@ -8,7 +8,7 @@ import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.repositorys.HistorialReproduccionesRepository;
-import tfg.KeySound.repositorys.LanzamientoCancionRepository;
+import tfg.KeySound.repositorys.PistaRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.JwtService;
 
@@ -24,11 +24,11 @@ public class CancionService {
      */
     private final JwtService jwtService;
 
-    private final LanzamientoCancionRepository lanzamientoCancionRepository;
+    private final PistaRepository pistaRepository;
     private final UsuarioRepository usuarioRepository;
     private final HistorialReproduccionesRepository historialReproduccionesRepository;
 
-    public void reproducir(Long lanzamientoCancionId, String substring) {
+    public void reproducir(Long pistaId, String substring) {
         // Extraer el nombre de usuario del token JWT
         String username = jwtService.extractUsername(substring);
 
@@ -36,8 +36,8 @@ public class CancionService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        Cancion cancion = lanzamientoCancionRepository.findById(lanzamientoCancionId)
-                .orElseThrow(() -> new CancionNotFoundException(lanzamientoCancionId))
+        Cancion cancion = pistaRepository.findById(pistaId)
+                .orElseThrow(() -> new CancionNotFoundException(pistaId))
                 .getCancion();
 
         // Crear una nueva entrada en el historial de reproducciones

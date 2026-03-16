@@ -28,7 +28,7 @@ public interface LanzamientoMapper {
     @Mapping(target = "fechaLanzamiento", expression = "java(LocalDate.now())")
     @Mapping(target = "tipo", source = "tipo")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lanzamientoCanciones", ignore = true)
+    @Mapping(target = "pistas", ignore = true)
     @Mapping(target = "usuario", source = "usuario")
     Lanzamiento createLanzamiento(String titulo, String archivoPortada, String tipo, Usuario usuario);
 

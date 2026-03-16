@@ -38,7 +38,7 @@ public class Cancion {
     private Set<CancionProductor> cancionProductores = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "cancion")
-    private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
+    private Set<Pista> pistas = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "cancion")
     private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();

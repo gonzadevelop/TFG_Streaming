@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
-import tfg.KeySound.exception.lanzamiento.LanzamientoCancionNotFoundException;
+import tfg.KeySound.exception.lanzamiento.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
@@ -27,7 +27,7 @@ public class UsuarioService {
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
 
-    private final LanzamientoCancionRepository lanzamientoCancionRepository;
+    private final PistaRepository pistaRepository;
     private final UsuarioRepository usuarioRepository;
 
     private final UsuarioMapper usuarioMapper;
@@ -36,7 +36,7 @@ public class UsuarioService {
     /**
      * Metodos llamados por endpoints
      */
-    public void agregarCancionAFavoritos(Long lanzamientoCancionId, String token) {
+    public void agregarCancionAFavoritos(Long pistaId, String token) {
 
         // Extraer el nombre de usuario del token JWT
         String username = jwtService.extractUsername(token);
@@ -45,8 +45,8 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        LanzamientoCancion lanzamiento = lanzamientoCancionRepository.findById(lanzamientoCancionId)
-                .orElseThrow(() -> new LanzamientoCancionNotFoundException(lanzamientoCancionId));
+        Pista lanzamiento = pistaRepository.findById(pistaId)
+                .orElseThrow(() -> new PistaNotFoundException(pistaId));
 
         // Verificar si la canción ya está en favoritos del usuario
         if (usuario.getFavoritos().contains(lanzamiento)) throw new FavoriteAlreadyExistsException();

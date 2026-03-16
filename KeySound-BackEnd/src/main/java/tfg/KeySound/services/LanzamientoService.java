@@ -4,19 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Lanzamiento;
-import tfg.KeySound.entitys.LanzamientoCancion;
+import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.exception.lanzamiento.*;
 import tfg.KeySound.mappers.CancionMapper;
-import tfg.KeySound.mappers.LanzamientoCancionMapper;
+import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.LanzamientoMapper;
 import tfg.KeySound.model.cancion.ResponseCancionLanzamientoDTO;
 import tfg.KeySound.model.lanzamiento.RequestAlbumDTO;
 import tfg.KeySound.model.lanzamiento.ResponseLanzamientoDTO;
 import tfg.KeySound.repositorys.CancionRepository;
-import tfg.KeySound.repositorys.LanzamientoCancionRepository;
+import tfg.KeySound.repositorys.PistaRepository;
 import tfg.KeySound.repositorys.LanzamientoRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.FirebaseService;
@@ -25,6 +25,7 @@ import tfg.KeySound.utils.ArtistaUtils;
 import tfg.KeySound.utils.AudioUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -40,11 +41,11 @@ public class LanzamientoService {
     private final UsuarioRepository usuarioRepository;
     private final CancionRepository cancionRepository;
     private final LanzamientoRepository lanzamientoRepository;
-    private final LanzamientoCancionRepository lanzamientoCancionRepository;
+    private final PistaRepository pistaRepository;
 
     private final CancionMapper cancionMapper;
     private final LanzamientoMapper lanzamientoMapper;
-    private final LanzamientoCancionMapper lanzamientoCancionMapper;
+    private final PistaMapper pistaMapper;
 
     /**
      * Metodos llamados por endpoints
@@ -103,29 +104,29 @@ public class LanzamientoService {
         lanzamientoRepository.saveAndFlush(album);
         cancionRepository.saveAllAndFlush(canciones);
 
-        // Crear las relaciones LanzamientoCancion de forma funcional, preservando el orden y el número de pista (1-based)
-        List<LanzamientoCancion> lanzamientoCanciones = IntStream.range(0, canciones.size())
-                .mapToObj(i -> lanzamientoCancionMapper.toEntity(canciones.get(i), album, i + 1))
-                .collect(java.util.stream.Collectors.toList());
+        // Crear las relaciones de pista de forma funcional, preservando el orden y el número de pista (1-based)
+        List<Pista> pistas = IntStream.range(0, canciones.size())
+                .mapToObj(i -> pistaMapper.toEntity(canciones.get(i), album, i + 1))
+                .collect(Collectors.toList());
 
-        lanzamientoCancionRepository.saveAll(lanzamientoCanciones);
+        pistaRepository.saveAll(pistas);
     }
 
     public ResponseLanzamientoDTO visualizarLanzamiento(Long lanzamientoId) {
         // Buscar el lanzamiento por su ID
         Lanzamiento lanzamiento = lanzamientoRepository.findById(lanzamientoId)
-                .orElseThrow(() -> new LanzamientoCancionNotFoundException(lanzamientoId));
+                .orElseThrow(() -> new PistaNotFoundException(lanzamientoId));
 
         // Obtener la URL de la portada del lanzamiento desde Firebase Storage o usar una imagen por defecto si no tiene portada
         String urlPortada = firebaseService.obtenerUrlArchivoImagen(lanzamiento.getArchivoPortada(), lanzamiento.getTitulo());
 
         // Mapear el lanzamiento a un DTO y obtener la URL de la portada ordenados por el número de pista
         List <ResponseCancionLanzamientoDTO> cancionesDto = lanzamiento
-                .getLanzamientoCanciones()
+                .getPistas()
                 .stream()
-                .map(lc -> {
-                    String urlCancion = firebaseService.obtenerUrlArchivoAudio(lc.getCancion().getArchivoCancion());
-                    return cancionMapper.toLanzamientoDto(lc, urlCancion);
+                .map(p -> {
+                    String urlCancion = firebaseService.obtenerUrlArchivoAudio(p.getCancion().getArchivoCancion());
+                    return cancionMapper.toLanzamientoDto(p, urlCancion);
                 })
                 .sorted(Comparator.comparingInt(ResponseCancionLanzamientoDTO::getNumeroPista))
                 .toList();

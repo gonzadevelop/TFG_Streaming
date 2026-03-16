@@ -3,7 +3,7 @@ package tfg.KeySound.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.Lanzamiento;
-import tfg.KeySound.entitys.LanzamientoCancion;
+import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.mappers.ArtistaMapper;
@@ -51,8 +51,8 @@ public class ArtistaService {
             cancionesEnFavoritos = usuarioToken
                     .getFavoritos()
                     .stream()
-                    .filter(lanzamientoCancion -> lanzamientoCancion.getCancion().getUsuarios().contains(artista))
-                    .mapToInt(lanzamientoCancion -> 1)
+                    .filter(pista -> pista.getCancion().getUsuarios().contains(artista))
+                    .mapToInt(pista -> 1)
                     .sum();
         }
 
@@ -62,12 +62,13 @@ public class ArtistaService {
                 .toList();
 
         // Buscar las 10 canciones más populares del artista, ordenadas por número de reproducciones (historialReproducciones)
-        List<LanzamientoCancion> cancionesPopulares = artista.getCanciones().stream()
+        List<Pista> cancionesPopulares = artista.getCanciones()
+                .stream()
                 .sorted((c1, c2) -> Integer.compare(
                         c2.getHistorialReproducciones() != null ? c2.getHistorialReproducciones().size() : 0,
                         c1.getHistorialReproducciones() != null ? c1.getHistorialReproducciones().size() : 0))
                 .limit(10)
-                .map(cancion -> cancion.getLanzamientoCanciones().stream().findFirst().orElse(null))
+                .map(cancion -> cancion.getPistas().stream().findFirst().orElse(null))
                 .filter(Objects::nonNull)
                 .toList();
 

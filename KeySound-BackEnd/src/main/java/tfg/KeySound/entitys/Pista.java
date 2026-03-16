@@ -9,10 +9,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "lanzamiento_canciones")
+@Table(name = "pistas")
 @Getter
 @Setter
-public class LanzamientoCancion {
+public class Pista {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +31,6 @@ public class LanzamientoCancion {
     @Column(name = "numero_pista")
     private Integer numeroPista;
 
-    @OneToMany(mappedBy = "lanzamientoCancion")
-    private Set<PlaylistLanzamientoCancion> playlistLanzamientoCanciones = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "pista")
+    private Set<PlaylistPista> playlistPistas = new LinkedHashSet<>();
 }
