@@ -9,5 +9,5 @@ import java.util.List;
 @Builder
 public class RequestCancionesPlaylistDTO {
     private Long playlistId;
-    private List<Long> lanzamientoCancionIds;
+    private List<Long> pistaIds;
 }

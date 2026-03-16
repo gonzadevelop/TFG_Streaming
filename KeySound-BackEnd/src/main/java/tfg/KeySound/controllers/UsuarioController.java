@@ -20,7 +20,7 @@ public class UsuarioController {
     /**
      * Endpoint para que un usuario agregue una canción a su lista de favoritos.
      * Se puede agregar una canción a favoritos, siempre que no esté ya en favoritos
-     * @param lanzamientoCancionId {@link Long}
+     * @param pistaId {@link Long}
      * @param token {@link String} token JWT del usuario autenticado
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si la canción se agrega correctamente a favoritos
      * @apiNote {@code POST /api/usuarios/agregar-cancion-favoritos}
@@ -28,9 +28,9 @@ public class UsuarioController {
     @PostMapping("/agregar-cancion-favoritos")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> agregarCancionAFavoritos(
-            @RequestBody Long lanzamientoCancionId,
+            @RequestBody Long pistaId,
             @RequestHeader ("Authorization") String token) {
-        usuarioService.agregarCancionAFavoritos(lanzamientoCancionId, token.substring(7));
+        usuarioService.agregarCancionAFavoritos(pistaId, token.substring(7));
         return ResponseEntity.ok().build();
     }
 

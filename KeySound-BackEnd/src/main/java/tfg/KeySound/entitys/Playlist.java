@@ -40,5 +40,5 @@ public class Playlist {
     private LocalDate fechaCreacion;
 
     @OneToMany(mappedBy = "playlist")
-    private Set<PlaylistLanzamientoCancion> playlistLanzamientoCanciones = new LinkedHashSet<>();
+    private Set<PlaylistPista> playlistPistas = new LinkedHashSet<>();
 }

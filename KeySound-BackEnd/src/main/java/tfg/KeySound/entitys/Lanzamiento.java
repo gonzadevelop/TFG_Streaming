@@ -36,7 +36,7 @@ public class Lanzamiento {
     private String tipo;
 
     @OneToMany(mappedBy = "lanzamiento")
-    private Set<LanzamientoCancion> lanzamientoCanciones = new LinkedHashSet<>();
+    private Set<Pista> pistas = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")

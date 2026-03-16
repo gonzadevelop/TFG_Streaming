@@ -63,8 +63,8 @@ public class Usuario implements UserDetails {
     @ManyToMany
     @JoinTable(name = "favoritos",
             joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "lanzamiento_cancion_id"))
-    private Set<LanzamientoCancion> favoritos = new LinkedHashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "pista_id"))
+    private Set<Pista> favoritos = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "usuario")
     private Set<HistorialReproducciones> historialReproducciones = new LinkedHashSet<>();

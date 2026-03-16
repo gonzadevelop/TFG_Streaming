@@ -2,7 +2,7 @@ package tfg.KeySound.model.lanzamiento;
 
 import lombok.Builder;
 import lombok.Data;
-import tfg.KeySound.model.cancion.ResponseCancionLanzamientoDTO;
+import tfg.KeySound.model.pista.ResponsePistaDTO;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public class ResponseLanzamientoDTO {
     private int duracionTotalSegundos;
     private int numCanciones;
     private String tipo;
-    private List<ResponseCancionLanzamientoDTO> canciones;
+    private List<ResponsePistaDTO> canciones;
 }

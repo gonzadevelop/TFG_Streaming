@@ -17,7 +17,7 @@ public interface PlaylistMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "descripcion", source = "dto.descripcion", defaultValue = "")
     @Mapping(target = "fechaCreacion", expression = "java(java.time.LocalDate.now())")
-    @Mapping(target = "playlistLanzamientoCanciones", ignore = true)
+    @Mapping(target = "playlistPistas", ignore = true)
     Playlist toEntity(RequestPlaylistDTO dto, Usuario usuario, String nombreArchivo);
 
     @Mapping(source = "playlist.id", target = "id")
