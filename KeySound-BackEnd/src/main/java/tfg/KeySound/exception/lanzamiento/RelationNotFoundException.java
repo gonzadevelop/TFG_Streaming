@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.lanzamiento;
 
-public class RelationNotFoundException extends RuntimeException {
+import tfg.KeySound.exception.KeySoundException;
+import org.springframework.http.HttpStatus;
+
+public class RelationNotFoundException extends KeySoundException {
     public RelationNotFoundException() {
-        super("Relación entre lanzamiento y canción no encontrada");
+        super(HttpStatus.NOT_FOUND, "Relación entre lanzamiento y canción no encontrada");
     }
 }

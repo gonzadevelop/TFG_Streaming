@@ -1,6 +1,7 @@
 package tfg.KeySound.utils;
 
 import org.springframework.web.multipart.MultipartFile;
+import tfg.KeySound.exception.archivo.AudioProcessingException;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -27,15 +28,11 @@ public class AudioUtils {
 
             return obtenerDuracionSegundos(tmp);
         } catch (IOException e) {
-            throw new RuntimeException("Error al procesar el archivo de audio: " + e.getMessage(), e);
+            throw new AudioProcessingException(e.getMessage());
         }
     }
 
-    /**
-     * Obtiene la duración de un archivo de audio en segundos (entero).
-     * Soporta MP3 y WAV.
-     */
-    public static Integer obtenerDuracionSegundos(File file) throws IOException {
+    private static Integer obtenerDuracionSegundos(File file) throws IOException {
         if (file == null || !file.exists()) return null;
 
         String nameLower = file.getName().toLowerCase();

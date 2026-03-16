@@ -5,7 +5,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import tfg.KeySound.exception.cancion.FileUploadException;
+import tfg.KeySound.exception.archivo.FileUploadException;
 
 import java.io.IOException;
 import java.util.UUID;

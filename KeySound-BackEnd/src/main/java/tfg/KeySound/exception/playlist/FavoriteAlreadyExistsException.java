@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.playlist;
 
-public class FavoriteAlreadyExistsException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class FavoriteAlreadyExistsException extends KeySoundException {
     public FavoriteAlreadyExistsException() {
-        super("La canción ya está en favoritos." );
+        super(HttpStatus.CONFLICT, "La canción ya está en favoritos." );
     }
 }

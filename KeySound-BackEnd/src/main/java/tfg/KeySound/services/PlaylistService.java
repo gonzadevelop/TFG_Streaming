@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
 import tfg.KeySound.entitys.embeddedids.PlaylistPistaId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
-import tfg.KeySound.exception.lanzamiento.PistaNotFoundException;
+import tfg.KeySound.exception.pista.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.OwnershipRequiredException;
 import tfg.KeySound.exception.playlist.PlaylistNotFoundException;
 import tfg.KeySound.mappers.PlaylistMapper;

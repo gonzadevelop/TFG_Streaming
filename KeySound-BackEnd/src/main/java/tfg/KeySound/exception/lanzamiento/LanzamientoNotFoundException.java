@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.lanzamiento;
 
-public class LanzamientoNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class LanzamientoNotFoundException extends KeySoundException {
     public LanzamientoNotFoundException(Long id) {
-        super("El lanzamiento con id " + id + " no se ha encontrado.");
+        super(HttpStatus.NOT_FOUND, "El lanzamiento con id " + id + " no se ha encontrado.");
     }
 }

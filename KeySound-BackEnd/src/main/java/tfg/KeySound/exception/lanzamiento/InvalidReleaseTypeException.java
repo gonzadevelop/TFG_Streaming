@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.lanzamiento;
 
-public class InvalidReleaseTypeException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class InvalidReleaseTypeException extends KeySoundException {
     public InvalidReleaseTypeException(Long idSencillo) {
-        super("El lanzamiento con ID: " + idSencillo + " no es un sencillo");
+        super(HttpStatus.BAD_REQUEST, "El lanzamiento con ID: " + idSencillo + " no es un sencillo");
     }
 }
