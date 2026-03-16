@@ -21,6 +21,9 @@ Este proyecto constituye nuestro **Trabajo de Fin de Grado (TFG)**. Se trata de 
     </a> &nbsp;
     <a href="https://firebase.google.com/">
         <img src="https://www.svgrepo.com/show/373595/firebase.svg" width="50" />
+    </a> &nbsp;
+    <a href="https://console.cloud.google.com/sql">
+        <img src="https://www.svgrepo.com/show/375389/cloud-sql.svg" width="50" />
     </a>
 </p>
 

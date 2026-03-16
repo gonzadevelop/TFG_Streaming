@@ -1,6 +1,0 @@
-### Verificar si un email existe
-POST http://localhost:8080/api/auth/check-email
-Content-Type: application/json
-
-"usuario@ejemplo.com"
-
