@@ -1,76 +1,76 @@
-<!--<header class="app-header">-->
-<!--  &lt;!&ndash; Fila superior: Logo, Navegación, Avatar y Ajustes &ndash;&gt;-->
-<!--  <div class="header-top">-->
-<!--    &lt;!&ndash; Logo &ndash;&gt;-->
-<!--    <div class="header-logo">-->
-<!--      <a routerLink="/inicio">-->
-<!--        <img src="assets/images/logo.svg" alt="Logo" class="logo-image">-->
-<!--        <span class="logo-text">MusicStream</span>-->
-<!--      </a>-->
-<!--    </div>-->
+<header class="app-header">
+  <!-- Fila superior: Logo, Navegación, Avatar y Ajustes -->
+  <div class="header-top">
+    <!-- Logo -->
+    <div class="header-logo">
+      <a routerLink="/">
+        <img ngSrc="img/KeySound_logo_definitive.png" alt="KeySound logo" class="logo-image" width="120" height="40" priority>
+      </a>
+    </div>
 
-<!--    &lt;!&ndash; Navegación central &ndash;&gt;-->
-<!--    <nav class="header-nav">-->
-<!--      <ul class="nav-list">-->
-<!--        @for (item of navItems; track item.route) {-->
-<!--          <li class="nav-item">-->
-<!--            <a-->
-<!--              [routerLink]="item.route"-->
-<!--              routerLinkActive="active"-->
-<!--              class="nav-link">-->
-<!--              @if (item.icon) {-->
-<!--                <span class="material-icons nav-icon">{{ item.icon }}</span>-->
-<!--              }-->
-<!--              <span class="nav-label">{{ item.label }}</span>-->
-<!--            </a>-->
-<!--          </li>-->
-<!--        }-->
-<!--      </ul>-->
-<!--    </nav>-->
+    <!-- Navegación central -->
+    <nav class="header-nav">
+      <ul class="nav-list">
+        @for (item of navItems; track item.route) {
+          <li class="nav-item">
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              class="nav-link">
+              @if (item.icon) {
+                <span class="material-icons nav-icon">{{ item.icon }}</span>
+              }
+              <span class="nav-label">{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
 
-<!--    &lt;!&ndash; Sección derecha: Avatar y Ajustes &ndash;&gt;-->
-<!--    <div class="header-actions">-->
-<!--      &lt;!&ndash; Avatar del usuario &ndash;&gt;-->
-<!--      <button-->
-<!--        class="user-avatar"-->
-<!--        (click)="openProfile()"-->
-<!--        [attr.aria-label]="'Perfil de ' + currentUser().name">-->
-<!--        <img-->
-<!--          [src]="currentUser().avatar"-->
-<!--          [alt]="currentUser().name"-->
-<!--          class="avatar-image">-->
-<!--      </button>-->
+    <!-- Sección derecha: Avatar y Ajustes -->
+    <div class="header-actions">
+      <!-- Avatar del usuario -->
+      <button
+        class="user-avatar"
+        (click)="openProfile()"
+        [attr.aria-label]="'Perfil de ' + currentUser().name">
+        <img
+          [src]="currentUser().avatar"
+          [alt]="currentUser().name"
+          class="avatar-image">
+      </button>
 
-<!--      &lt;!&ndash; Icono de ajustes &ndash;&gt;-->
-<!--      <button-->
-<!--        class="settings-button"-->
-<!--        (click)="openSettings()"-->
-<!--        aria-label="Ajustes">-->
-<!--        <span class="material-icons">settings</span>-->
-<!--      </button>-->
-<!--    </div>-->
-<!--  </div>-->
+      <!-- Icono de ajustes -->
+      <button
+        class="settings-button"
+        (click)="openSettings()"
+        aria-label="Ajustes">
+        <span class="material-icons">settings</span>
+      </button>
+    </div>
+  </div>
 
-<!--  &lt;!&ndash; Barra de búsqueda &ndash;&gt;-->
-<!--  <div class="header-search">-->
-<!--    <div class="search-container">-->
-<!--      <span class="material-icons search-icon">search</span>-->
-<!--      <input-->
-<!--        type="text"-->
-<!--        class="search-input"-->
-<!--        placeholder="¿Qué quieres escuchar?"-->
-<!--        [(ngModel)]="searchTerm"-->
-<!--        (keyup.enter)="onSearch()"-->
-<!--        aria-label="Buscar música, artistas o podcasts">-->
+  <!-- Barra de búsqueda -->
+  <div class="header-search">
+    <div class="search-container">
+      <span class="material-icons search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="¿Qué quieres escuchar?"
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+        (keyup.enter)="onSearch()"
+        aria-label="Buscar música, artistas o podcasts">
 
-<!--      @if (searchTerm()) {-->
-<!--        <button-->
-<!--          class="clear-button"-->
-<!--          (click)="clearSearch()"-->
-<!--          aria-label="Limpiar búsqueda">-->
-<!--          <span class="material-icons">close</span>-->
-<!--        </button>-->
-<!--      }-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</header>-->
+      @if (searchTerm()) {
+        <button
+          class="clear-button"
+          (click)="clearSearch()"
+          aria-label="Limpiar búsqueda">
+          <span class="material-icons">close</span>
+        </button>
+      }
+    </div>
+  </div>
+</header>
