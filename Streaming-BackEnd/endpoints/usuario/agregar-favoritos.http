@@ -1,7 +1,0 @@
-### Agregar canción a favoritos
-POST http://localhost:8080/api/usuarios/agregar-favoritos
-Authorization: Bearer {tokenUsuario}
-Content-Type: application/json
-
-{{idLanzamientoCancion}}
-

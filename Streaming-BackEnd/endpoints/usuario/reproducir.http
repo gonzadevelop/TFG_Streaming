@@ -1,7 +1,0 @@
-### Reproducir canción
-GET http://localhost:8080/api/usuarios/reproducir/{{lanzamientoCancionId}}
-Authorization: Bearer {{tokenUsuario}}
-Accept: application/json
-
-# Devuelve ReproducirCancionDTO con url de audio y portada
-

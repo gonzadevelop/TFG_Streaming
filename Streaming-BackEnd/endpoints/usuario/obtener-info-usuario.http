@@ -1,4 +1,0 @@
-### Prueba para obtener información de usuario
-
-GET http://localhost:8080/api/usuarios/info-usuario/{{username}}
-Accept: application/json
