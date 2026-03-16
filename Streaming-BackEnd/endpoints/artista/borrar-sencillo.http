@@ -1,6 +1,0 @@
-### Borrar sencillo
-DELETE http://localhost:8080/api/artistas/borrar-sencillo/{{sencilloId}}
-Authorization: Bearer {{tokenArtista}}
-
-# Respuesta esperada: 204 No Content
-
