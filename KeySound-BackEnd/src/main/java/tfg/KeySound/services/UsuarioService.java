@@ -47,14 +47,14 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        Pista lanzamiento = pistaRepository.findById(pistaId)
+        Pista pista = pistaRepository.findById(pistaId)
                 .orElseThrow(() -> new PistaNotFoundException(pistaId));
 
         // Verificar si la canción ya está en favoritos del usuario
-        if (usuario.getFavoritos().contains(lanzamiento)) throw new FavoriteAlreadyExistsException();
+        if (usuario.getFavoritos().contains(pista)) throw new FavoriteAlreadyExistsException();
 
         // Agregar la canción a favoritos del usuario
-        usuario.getFavoritos().add(lanzamiento);
+        usuario.getFavoritos().add(pista);
         usuarioRepository.save(usuario);
     }
 

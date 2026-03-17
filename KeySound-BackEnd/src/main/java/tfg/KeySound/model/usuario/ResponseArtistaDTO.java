@@ -2,7 +2,7 @@ package tfg.KeySound.model.usuario;
 
 import lombok.Data;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
-import tfg.KeySound.model.lanzamiento.ResponseLanzamientoArtistaDTO;
+import tfg.KeySound.model.album.ResponseAlbumArtistaDTO;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ public class ResponseArtistaDTO {
     private int seguidores;
     private int cancionesEnFavoritos;
     private List<ResponseCancionArtistaDTO> canciones;
-    private List<ResponseLanzamientoArtistaDTO> lanzamientos;
+    private List<ResponseAlbumArtistaDTO> albums;
 }

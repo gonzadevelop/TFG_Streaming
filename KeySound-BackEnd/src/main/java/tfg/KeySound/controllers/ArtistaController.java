@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tfg.KeySound.model.lanzamiento.ResponseMiLanzamientoDTO;
+import tfg.KeySound.model.album.ResponseMiAlbumDTO;
 import tfg.KeySound.model.usuario.ResponseArtistaDTO;
 import tfg.KeySound.services.ArtistaService;
 
@@ -38,31 +38,31 @@ public class ArtistaController {
     }
 
     /**
-     * Endpoint para obtener los lanzamientos de un artista.
+     * Endpoint para obtener los albums de un artista.
      * @param token {@link String}
-     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseMiLanzamientoDTO}&gt;&gt; Devuelve un status 200 (OK)
-     * @apiNote {@code GET /api/artistas/mis-lanzamientos}
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseMiAlbumDTO}&gt;&gt; Devuelve un status 200 (OK)
+     * @apiNote {@code GET /api/artistas/mis-albums}
      */
-    @GetMapping("/mis-lanzamientos")
+    @GetMapping("/mis-albums")
     @PreAuthorize("hasRole('ARTISTA')")
-    public ResponseEntity<List<ResponseMiLanzamientoDTO>> obtenerMisLanzamientos(
+    public ResponseEntity<List<ResponseMiAlbumDTO>> obtenerMisAlbums(
             @RequestHeader(value = "Authorization") String token) {
-        return ResponseEntity.ok(artistaService.obtenerMisLanzamientos(token.substring(7)));
+        return ResponseEntity.ok(artistaService.obtenerMisAlbums(token.substring(7)));
     }
 
     /**
-     * Endpoint para publicar un lanzamiento.
-     * @param idLanzamiento {@link Long}
+     * Endpoint para publicar un album.
+     * @param idAlbum {@link Long}
      * @param token {@link String}
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK)
-     * @apiNote {@code PATCH /api/artistas/publicar/{idLanzamiento}}
+     * @apiNote {@code PATCH /api/artistas/publicar/{idAlbum}}
      */
-    @PatchMapping("/publicar/{idLanzamiento}")
+    @PatchMapping("/publicar/{idAlbum}")
     @PreAuthorize("hasRole('ARTISTA')")
-    public ResponseEntity<Void> publicarLanzamiento(
-            @PathVariable Long idLanzamiento,
+    public ResponseEntity<Void> publicarAlbum(
+            @PathVariable Long idAlbum,
             @RequestHeader(value = "Authorization") String token) {
-        artistaService.publicarLanzamiento(idLanzamiento, token.substring(7));
+        artistaService.publicarAlbum(idAlbum, token.substring(7));
         return ResponseEntity.ok().build();
     }
 }

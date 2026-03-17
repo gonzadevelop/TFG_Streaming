@@ -2,18 +2,18 @@ package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tfg.KeySound.entitys.Lanzamiento;
+import tfg.KeySound.entitys.Album;
 import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.CancionMapper;
-import tfg.KeySound.mappers.LanzamientoMapper;
+import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
-import tfg.KeySound.model.lanzamiento.ResponseLanzamientoArtistaDTO;
-import tfg.KeySound.model.lanzamiento.ResponseMiLanzamientoDTO;
+import tfg.KeySound.model.album.ResponseAlbumArtistaDTO;
+import tfg.KeySound.model.album.ResponseMiAlbumDTO;
 import tfg.KeySound.model.usuario.ResponseArtistaDTO;
-import tfg.KeySound.repositorys.LanzamientoRepository;
+import tfg.KeySound.repositorys.AlbumRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.services.external.JwtService;
@@ -32,10 +32,10 @@ public class ArtistaService {
     private final FirebaseService firebaseService;
 
     private final UsuarioRepository usuarioRepository;
-    private final LanzamientoRepository lanzamientoRepository;
+    private final AlbumRepository albumRepository;
 
     private final CancionMapper cancionMapper;
-    private final LanzamientoMapper lanzamientoMapper;
+    private final AlbumMapper albumMapper;
     private final ArtistaMapper artistaMapper;
 
     /**
@@ -62,13 +62,13 @@ public class ArtistaService {
                     .sum();
         }
 
-        // Sacar todos los lanzamientos del artista.
-        List<Lanzamiento> lanzamientos = artista
-                .getLanzamientos()
+        // Sacar todos los albums del artista.
+        List<Album> albums = artista
+                .getAlbums()
                 .stream()
-                .filter(l -> !l.getEsBorrador()
-                        && l.getFechaLanzamiento().isBefore(LocalDateTime.now())) // Filtrar los lanzamientos que no son borradores y con fecha de lanzamiento anterior a hoy
-                .sorted(Comparator.comparing(Lanzamiento::getFechaLanzamiento).reversed())
+                .filter(a -> !a.getEsBorrador()
+                        && a.getFechaLanzamiento().isBefore(LocalDateTime.now())) // Filtrar los albums que no son borradores y con fecha de lanzamiento anterior a hoy
+                .sorted(Comparator.comparing(Album::getFechaLanzamiento).reversed())
                 .toList();
 
         // Buscar las 10 canciones más populares del artista, ordenadas por número de reproducciones (historialReproducciones)
@@ -86,56 +86,56 @@ public class ArtistaService {
         String urlAvatar = firebaseService.obtenerUrlArchivoImagen(artista.getArchivoAvatar(), artista.getUsername());
 
         // Mapear a DTO
-        List<ResponseLanzamientoArtistaDTO> lanzamientosDTO = lanzamientoMapper.toDtos(lanzamientos);
+        List<ResponseAlbumArtistaDTO> albumsDTO = albumMapper.toDtos(albums);
         List<ResponseCancionArtistaDTO> cancionesPopularesDTO = cancionMapper.toDtos(cancionesPopulares);
-        return artistaMapper.toDto(artista, cancionesPopularesDTO, lanzamientosDTO, cancionesEnFavoritos, urlAvatar);
+        return artistaMapper.toDto(artista, cancionesPopularesDTO, albumsDTO, cancionesEnFavoritos, urlAvatar);
     }
 
-    public List<ResponseMiLanzamientoDTO> obtenerMisLanzamientos(String substring) {
+    public List<ResponseMiAlbumDTO> obtenerMisAlbums(String substring) {
         // obtener el artista a partir del token JWT
         Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(substring))
                 .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(substring)));
 
-        // sacar todos los lanzamientos del artista, ordenados por fecha de creación (los más recientes primero)
-        List<Lanzamiento> lanzamientos = artista
-                .getLanzamientos()
+        // sacar todos los albums del artista, ordenados por fecha de creación (los más recientes primero)
+        List<Album> albums = artista
+                .getAlbums()
                 .stream()
-                .sorted(Comparator.comparing(Lanzamiento::getFechaLanzamiento).reversed())
+                .sorted(Comparator.comparing(Album::getFechaLanzamiento).reversed())
                 .toList();
 
         // mapear a DTO
-        List<ResponseMiLanzamientoDTO> lanzamientosDTO = lanzamientoMapper.toMisLanzamientosDtos(lanzamientos);
+        List<ResponseMiAlbumDTO> albumsDTO = albumMapper.toMisAlbumsDtos(albums);
 
-        // obtener la URL de la portada de cada lanzamiento desde Firebase o de ui-avatars si no tiene portada
-        for (int i = 0; i < lanzamientos.size(); i++) {
-            String urlPortada = firebaseService.obtenerUrlArchivoImagen(lanzamientos.get(i).getArchivoPortada(), lanzamientos.get(i).getTitulo());
-            lanzamientosDTO.get(i).setPortada(urlPortada);
+        // obtener la URL de la portada de cada album desde Firebase o de ui-avatars si no tiene portada
+        for (int i = 0; i < albums.size(); i++) {
+            String urlPortada = firebaseService.obtenerUrlArchivoImagen(albums.get(i).getArchivoPortada(), albums.get(i).getTitulo());
+            albumsDTO.get(i).setPortada(urlPortada);
         }
 
-        return lanzamientosDTO;
+        return albumsDTO;
     }
 
-    public void publicarLanzamiento(Long idLanzamiento, String token) {
+    public void publicarAlbum(Long idAlbum, String token) {
         // obtener el artista a partir del JWT
         Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
                 .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(token)));
 
-        // buscar el lanzamiento por ID y comprobar que pertenece al artista
-        Lanzamiento lanzamiento = artista.getLanzamientos()
+        // buscar el album por ID y comprobar que pertenece al artista
+        Album album = artista.getAlbums()
                 .stream()
-                .filter(l -> l.getId().equals(idLanzamiento))
+                .filter(a -> a.getId().equals(idAlbum))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Lanzamiento no encontrado o no pertenece al artista"));
+                .orElseThrow(() -> new RuntimeException("Album no encontrado o no pertenece al artista"));
 
-        // comprobar que el lanzamiento tiene fecha de lanzamiento y portada
-        if (lanzamiento.getFechaLanzamiento() == null) throw new RuntimeException("El lanzamiento debe tener fecha de lanzamiento y portada para ser publicado");
+        // comprobar que el album tiene fecha de lanzamiento y portada
+        if (album.getFechaLanzamiento() == null) throw new RuntimeException("El album debe tener fecha de lanzamiento y portada para ser publicado");
 
-        // comprobar que la fecha de lanzamiento no es anterior a hoy
-        if (lanzamiento.getFechaLanzamiento().isBefore(LocalDateTime.now()) || lanzamiento.getFechaLanzamiento().equals(LocalDateTime.now()))
-            throw new RuntimeException("La fecha de lanzamiento debe ser posterior a hoy para ser publicado");
+        // comprobar que la fecha de album no es anterior a hoy
+        if (album.getFechaLanzamiento().isBefore(LocalDateTime.now()) || album.getFechaLanzamiento().equals(LocalDateTime.now()))
+            throw new RuntimeException("La fecha de album debe ser posterior a hoy para ser publicado");
 
-        // publicar el lanzamiento
-        lanzamiento.setEsBorrador(false);
-        lanzamientoRepository.save(lanzamiento);
+        // publicar el album
+        album.setEsBorrador(false);
+        albumRepository.save(album);
     }
 }

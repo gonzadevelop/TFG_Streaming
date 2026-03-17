@@ -13,9 +13,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CancionMapper {
 
-    @Mapping(target = "idLanzamiento", source = "id")
+    @Mapping(target = "idAlbum", source = "id")
     @Mapping(target = "titulo", source = "cancion.titulo")
-    @Mapping(target = "urlPortada", source = "lanzamiento.archivoPortada")
+    @Mapping(target = "urlPortada", source = "album.archivoPortada")
     @Mapping(target = "artistas", expression = "java(pista.getCancion().getUsuarios().stream().map(u -> u.getUsername()).toList())")
     @Mapping(target = "urlCancion", source = "cancion.archivoCancion")
     @Mapping(target = "reproducciones", expression = "java((long) (pista.getCancion().getHistorialReproducciones() != null ? pista.getCancion().getHistorialReproducciones().size() : 0))")
@@ -39,5 +39,5 @@ public interface CancionMapper {
     @Mapping(target = "reproducciones", expression = "java((long) (pista.getCancion() != null && pista.getCancion().getHistorialReproducciones() != null ? pista.getCancion().getHistorialReproducciones().size() : 0))")
     @Mapping(target = "duracionSegundos", expression = "java(pista.getCancion() != null && pista.getCancion().getDuracionSegundos() != null ? pista.getCancion().getDuracionSegundos() : 0)")
     @Mapping(target = "numeroPista", expression = "java(pista.getNumeroPista() == null ? 0 : pista.getNumeroPista())")
-    ResponsePistaDTO toLanzamientoDto(Pista pista, String url);
+    ResponsePistaDTO toAlbumDto(Pista pista, String url);
 }

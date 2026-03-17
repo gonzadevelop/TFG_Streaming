@@ -74,7 +74,7 @@ public class Usuario implements UserDetails {
 
     // ARTISTAS!!!!
     @OneToMany(mappedBy = "usuario")
-    private Set<Lanzamiento> lanzamientos = new LinkedHashSet<>();
+    private Set<Album> albums = new LinkedHashSet<>();
 
     // COMPROBAR QUE SEGUIDORES Y SEGUIDOS ESTÁ CORRECTAMENTE.
 

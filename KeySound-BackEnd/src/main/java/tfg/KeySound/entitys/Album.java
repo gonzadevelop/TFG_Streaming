@@ -6,16 +6,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "lanzamientos")
+@Table(name = "albums")
 @Getter
 @Setter
-public class Lanzamiento {
+public class Album {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +38,7 @@ public class Lanzamiento {
     @Column(name = "es_borrador")
     private Boolean esBorrador;
 
-    @OneToMany(mappedBy = "lanzamiento")
+    @OneToMany(mappedBy = "album")
     private Set<Pista> pistas = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

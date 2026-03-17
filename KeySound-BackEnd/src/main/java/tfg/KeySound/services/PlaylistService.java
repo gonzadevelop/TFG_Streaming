@@ -74,11 +74,11 @@ public class PlaylistService {
         }
 
         dto.getPistaIds().stream()
-                .map(id -> pistaRepository.findById(id) // Buscar el lanzamiento de canción por su ID
+                .map(id -> pistaRepository.findById(id) // Buscar el album de canción por su ID
                         .orElseThrow(() -> new PistaNotFoundException(id)))
                 .filter(pista -> !playlistPistaRepository // Evitar agregar canciones duplicadas a la playlist
                         .existsByPlaylistIdAndPistaId(playlist.getId(), pista.getId()))
-                .map(pista -> { // Crear la relación entre la playlist y el lanzamiento de canción
+                .map(pista -> { // Crear la relación entre la playlist y el album de canción
                     PlaylistPista relacion = new PlaylistPista();
                     relacion.setId(new PlaylistPistaId()); // El ID se generará automáticamente al guardar la entidad
                     relacion.setPlaylist(playlist);

@@ -6,22 +6,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tfg.KeySound.model.lanzamiento.RequestAlbumDTO;
-import tfg.KeySound.model.lanzamiento.ResponseLanzamientoDTO;
-import tfg.KeySound.services.LanzamientoService;
+import tfg.KeySound.model.album.RequestAlbumDTO;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
+import tfg.KeySound.services.AlbumService;
 
 @RestController
-@RequestMapping("/lanzamientos")
+@RequestMapping("/albums")
 @RequiredArgsConstructor
-public class LanzamientoController {
+public class AlbumController {
 
     /**
      * Servicio para gestionar la lógica de negocio.
      */
-    private final LanzamientoService lanzamientoService;
+    private final AlbumService albumService;
 
     /**
-     * Endpoint para que un artista suba un álbum. El artista debe enviar un multipart/form-data con los siguientes campos:
+     * Endpoint para que un artista cree un álbum. El artista debe enviar un multipart/form-data con los siguientes campos:
      * @param token {@link String}
      * @param dto {@link RequestAlbumDTO}
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 201 (CREATED) si se sube correctamente
@@ -33,18 +33,18 @@ public class LanzamientoController {
             @RequestHeader("Authorization") String token,
             @ModelAttribute RequestAlbumDTO dto) {
         // substring(7) para eliminar "Bearer " del token
-        lanzamientoService.subirAlbum(dto, token.substring(7));
+        albumService.subirAlbum(dto, token.substring(7));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * Endpoint para que un usuario visualice la información de un lanzamiento (álbum o sencillo).
-     * @param lanzamientoId {@link Long}
-     * @return {@link ResponseEntity}&lt;{@link ResponseLanzamientoDTO}&gt; Devuelve un status 200 (OK) con la información del lanzamiento
-     * @apiNote {@code GET /api/lanzamientos/visualizar/{lanzamientoId}}
+     * Endpoint para que un usuario visualice la información de un album (álbum o sencillo).
+     * @param albumId {@link Long}
+     * @return {@link ResponseEntity}&lt;{@link ResponseAlbumDTO}&gt; Devuelve un status 200 (OK) con la información del album
+     * @apiNote {@code GET /api/albums/visualizar/{albumId}}
      */
-    @GetMapping("/visualizar/{lanzamientoId}")
-    public ResponseEntity<ResponseLanzamientoDTO> visualizarLanzamiento(@PathVariable Long lanzamientoId) {
-        return ResponseEntity.ok(lanzamientoService.visualizarLanzamiento(lanzamientoId));
+    @GetMapping("/visualizar/{albumId}")
+    public ResponseEntity<ResponseAlbumDTO> visualizarAlbum(@PathVariable Long albumId) {
+        return ResponseEntity.ok(albumService.visualizarAlbum(albumId));
     }
 }

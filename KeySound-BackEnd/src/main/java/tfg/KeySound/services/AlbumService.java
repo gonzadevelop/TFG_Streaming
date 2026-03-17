@@ -2,22 +2,22 @@ package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tfg.KeySound.entitys.Album;
 import tfg.KeySound.entitys.Cancion;
-import tfg.KeySound.entitys.Lanzamiento;
 import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
-import tfg.KeySound.exception.pista.PistaNotFoundException;
+import tfg.KeySound.exception.album.AlbumNotFoundException;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.PistaMapper;
-import tfg.KeySound.mappers.LanzamientoMapper;
+import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
-import tfg.KeySound.model.lanzamiento.RequestAlbumDTO;
-import tfg.KeySound.model.lanzamiento.ResponseLanzamientoDTO;
+import tfg.KeySound.model.album.RequestAlbumDTO;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.repositorys.CancionRepository;
 import tfg.KeySound.repositorys.PistaRepository;
-import tfg.KeySound.repositorys.LanzamientoRepository;
+import tfg.KeySound.repositorys.AlbumRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.services.external.JwtService;
@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
-public class LanzamientoService {
+public class AlbumService {
 
     /**
      * Inyecciones por constructor
@@ -41,11 +41,11 @@ public class LanzamientoService {
 
     private final UsuarioRepository usuarioRepository;
     private final CancionRepository cancionRepository;
-    private final LanzamientoRepository lanzamientoRepository;
+    private final AlbumRepository albumRepository;
     private final PistaRepository pistaRepository;
 
     private final CancionMapper cancionMapper;
-    private final LanzamientoMapper lanzamientoMapper;
+    private final AlbumMapper albumMapper;
     private final PistaMapper pistaMapper;
 
     /**
@@ -78,7 +78,7 @@ public class LanzamientoService {
                 null;
 
         // Crear la entidad album sin canciones (se añaden más tarde)
-        Lanzamiento album = lanzamientoMapper.createLanzamiento(dto.getNombreAlbum(), nombreArchivoPortada, tipo, artista, fechaLanzamiento);
+        Album album = albumMapper.createAlbum(dto.getNombreAlbum(), nombreArchivoPortada, tipo, artista, fechaLanzamiento);
 
          /*
             -------------- CANCIONES --------------
@@ -110,7 +110,7 @@ public class LanzamientoService {
                 .toList();
 
         // Guardar primero en la bd el álbum para generar su ID y luego las canciones y la relación
-        lanzamientoRepository.saveAndFlush(album);
+        albumRepository.saveAndFlush(album);
         cancionRepository.saveAllAndFlush(canciones);
 
         // Crear las relaciones de pista de forma funcional, preservando el orden y el número de pista (1-based)
@@ -121,27 +121,27 @@ public class LanzamientoService {
         pistaRepository.saveAll(pistas);
     }
 
-    public ResponseLanzamientoDTO visualizarLanzamiento(Long lanzamientoId) {
-        // Buscar el lanzamiento por su ID
-        Lanzamiento lanzamiento = lanzamientoRepository.findById(lanzamientoId)
-                .orElseThrow(() -> new PistaNotFoundException(lanzamientoId));
+    public ResponseAlbumDTO visualizarAlbum(Long albumId) {
+        // Buscar el album por su ID
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(() -> new AlbumNotFoundException(albumId));
 
-        if (lanzamiento.getEsBorrador() || lanzamiento.getFechaLanzamiento().isAfter(LocalDateTime.now())) throw new RuntimeException("El lanzamiento no está disponible para su visualización");
+        if (album.getEsBorrador() || album.getFechaLanzamiento().isAfter(LocalDateTime.now())) throw new RuntimeException("El album no está disponible para su visualización");
 
-        // Obtener la URL de la portada del lanzamiento desde Firebase Storage o usar una imagen por defecto si no tiene portada
-        String urlPortada = firebaseService.obtenerUrlArchivoImagen(lanzamiento.getArchivoPortada(), lanzamiento.getTitulo());
+        // Obtener la URL de la portada del album desde Firebase Storage o usar una imagen por defecto si no tiene portada
+        String urlPortada = firebaseService.obtenerUrlArchivoImagen(album.getArchivoPortada(), album.getTitulo());
 
-        // Mapear el lanzamiento a un DTO y obtener la URL de la portada ordenados por el número de pista
-        List <ResponsePistaDTO> cancionesDto = lanzamiento
+        // Mapear el album a un DTO y obtener la URL de la portada ordenados por el número de pista
+        List <ResponsePistaDTO> cancionesDto = album
                 .getPistas()
                 .stream()
                 .map(p -> {
                     String urlCancion = firebaseService.obtenerUrlArchivoAudio(p.getCancion().getArchivoCancion());
-                    return cancionMapper.toLanzamientoDto(p, urlCancion);
+                    return cancionMapper.toAlbumDto(p, urlCancion);
                 })
                 .sorted(Comparator.comparingInt(ResponsePistaDTO::getNumeroPista))
                 .toList();
 
-        return lanzamientoMapper.toResponseDto(lanzamiento, cancionesDto, urlPortada);
+        return albumMapper.toResponseDto(album, cancionesDto, urlPortada);
     }
 }

@@ -1,4 +1,4 @@
-package tfg.KeySound.model.lanzamiento;
+package tfg.KeySound.model.album;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,8 +8,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class ResponseLanzamientoDTO {
-    private String nombreLanzamiento;
+public class ResponseAlbumDTO {
+    private String titulo;
     private String portada;
     private String artista;
     private int anioLanzamiento;
