@@ -45,4 +45,7 @@ public class Cancion {
 
     @Column(name = "duracion_segundos")
     private Integer duracionSegundos;
+
+    @OneToMany(mappedBy = "cancion")
+    private Set<TopMusicalDiario> topMusicalDiarios = new LinkedHashSet<>();
 }
