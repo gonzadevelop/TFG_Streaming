@@ -16,5 +16,6 @@ public interface ArtistaMapper {
     @Mapping(target = "lanzamientos", source = "lanzamientos")
     @Mapping(target = "seguidores", expression = "java(artista.getSeguidores() != null ? artista.getSeguidores().size() : 0)")
     @Mapping(target = "cancionesEnFavoritos", source = "cancionesEnFavoritos")
-    ResponseArtistaDTO toDto(Usuario artista, List<ResponseCancionArtistaDTO> canciones, List<ResponseLanzamientoArtistaDTO> lanzamientos, int cancionesEnFavoritos);
+    @Mapping(target = "urlAvatar", source = "urlAvatar")
+    ResponseArtistaDTO toDto(Usuario artista, List<ResponseCancionArtistaDTO> canciones, List<ResponseLanzamientoArtistaDTO> lanzamientos, int cancionesEnFavoritos, String urlAvatar);
 }

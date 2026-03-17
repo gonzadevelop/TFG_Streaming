@@ -50,7 +50,7 @@ public class FirebaseService {
     }
 
     public String obtenerUrlArchivoImagen(String nombreArchivo, String nombre) {
-        if (nombreArchivo.isEmpty()) return "https://ui-avatars.com/api/?name=" + nombre.charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
+        if (nombreArchivo == null || nombreArchivo.isEmpty()) return "https://ui-avatars.com/api/?name=" + nombre.charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
         Bucket bucket = StorageClient.getInstance().bucket();
 
         // Generar URL pública del archivo

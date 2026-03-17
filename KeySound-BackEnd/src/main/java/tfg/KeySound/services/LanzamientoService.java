@@ -24,6 +24,7 @@ import tfg.KeySound.services.external.JwtService;
 import tfg.KeySound.utils.ArtistaUtils;
 import tfg.KeySound.utils.AudioUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -72,8 +73,16 @@ public class LanzamientoService {
                 "Sencillo" :
                 "Album";
 
+        LocalDateTime fechaLanzamiento = dto.getFechaLanzamiento() != null ?
+                dto.getFechaLanzamiento() :
+                null;
+
         // Crear la entidad album sin canciones (se añaden más tarde)
-        Lanzamiento album = lanzamientoMapper.createLanzamiento(dto.getNombreAlbum(), nombreArchivoPortada, tipo, artista);
+        Lanzamiento album = lanzamientoMapper.createLanzamiento(dto.getNombreAlbum(), nombreArchivoPortada, tipo, artista, fechaLanzamiento);
+
+         /*
+            -------------- CANCIONES --------------
+         */
 
         // Mapear cada canción del DTO a entidad, subiendo el archivo de audio a Firebase Storage y obteniendo colaboradores y duración
         List<Cancion> canciones = dto.getCanciones()
@@ -116,6 +125,8 @@ public class LanzamientoService {
         // Buscar el lanzamiento por su ID
         Lanzamiento lanzamiento = lanzamientoRepository.findById(lanzamientoId)
                 .orElseThrow(() -> new PistaNotFoundException(lanzamientoId));
+
+        if (lanzamiento.getEsBorrador() || lanzamiento.getFechaLanzamiento().isAfter(LocalDateTime.now())) throw new RuntimeException("El lanzamiento no está disponible para su visualización");
 
         // Obtener la URL de la portada del lanzamiento desde Firebase Storage o usar una imagen por defecto si no tiene portada
         String urlPortada = firebaseService.obtenerUrlArchivoImagen(lanzamiento.getArchivoPortada(), lanzamiento.getTitulo());

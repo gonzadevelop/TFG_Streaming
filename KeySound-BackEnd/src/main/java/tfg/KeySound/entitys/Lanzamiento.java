@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -29,11 +30,14 @@ public class Lanzamiento {
     private String archivoPortada;
 
     @Column(name = "fecha_lanzamiento")
-    private LocalDate fechaLanzamiento;
+    private LocalDateTime fechaLanzamiento;
 
     @NotNull
     @Lob
     private String tipo;
+
+    @Column(name = "es_borrador")
+    private Boolean esBorrador;
 
     @OneToMany(mappedBy = "lanzamiento")
     private Set<Pista> pistas = new LinkedHashSet<>();
