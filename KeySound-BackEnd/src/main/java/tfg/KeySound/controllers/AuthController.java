@@ -51,7 +51,7 @@ public class AuthController {
      * @return {@link ResponseEntity}&lt;{@link Boolean}&gt; Devuelve true si el email ya existe, false si no existe
      * @apiNote {@code POST /api/auth/check-email}
      */
-    @PostMapping("check-email")
+    @PostMapping("/check-email")
     public ResponseEntity<Boolean> checkEmailExists(@RequestBody String email) {
         return ResponseEntity.ok(authService.checkEmailExists(email));
     }

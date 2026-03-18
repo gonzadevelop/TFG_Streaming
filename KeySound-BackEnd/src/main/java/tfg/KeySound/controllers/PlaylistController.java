@@ -9,6 +9,8 @@ import tfg.KeySound.model.cancion.RequestCancionesPlaylistDTO;
 import tfg.KeySound.model.playlist.RequestPlaylistDTO;
 import tfg.KeySound.services.PlaylistService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/playlists")
 @RequiredArgsConstructor
@@ -17,7 +19,7 @@ public class PlaylistController {
     /**
      * Servicio para gestionar la lógica de negocio.
      */
-    private final PlaylistService palylistService;
+    private final PlaylistService playlistService;
 
     /**
      * Endpoint para que un usuario cree una nueva playlist.
@@ -31,7 +33,7 @@ public class PlaylistController {
     public ResponseEntity<Void> crearPlaylist(
             @ModelAttribute RequestPlaylistDTO dto,
             @RequestHeader("Authorization") String token) {
-        palylistService.crearPlaylist(dto, token.substring(7));
+        playlistService.crearPlaylist(dto, token.substring(7));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -48,7 +50,7 @@ public class PlaylistController {
     public ResponseEntity<Void> agregarCancionAPlaylist(
             @RequestBody RequestCancionesPlaylistDTO dto,
             @RequestHeader ("Authorization") String token) {
-        palylistService.agregarCancionesAPlaylist(dto, token.substring(7));
+        playlistService.agregarCancionesAPlaylist(dto, token.substring(7));
         return ResponseEntity.ok().build();
     }
 }

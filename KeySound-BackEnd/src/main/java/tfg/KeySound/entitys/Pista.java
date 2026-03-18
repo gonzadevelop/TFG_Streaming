@@ -20,8 +20,8 @@ public class Pista {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lanzamiento_id")
-    private Lanzamiento lanzamiento;
+    @JoinColumn(name = "album_id")
+    private Album album;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -5,7 +5,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import tfg.KeySound.exception.cancion.FileUploadException;
+import tfg.KeySound.exception.archivo.FileUploadException;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -50,7 +50,7 @@ public class FirebaseService {
     }
 
     public String obtenerUrlArchivoImagen(String nombreArchivo, String nombre) {
-        if (nombreArchivo.isEmpty()) return "https://ui-avatars.com/api/?name=" + nombre.charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
+        if (nombreArchivo == null || nombreArchivo.isEmpty()) return "https://ui-avatars.com/api/?name=" + nombre.charAt(0) + "&background=0b75c0&bold=true&color=FFF&size=256";
         Bucket bucket = StorageClient.getInstance().bucket();
 
         // Generar URL pública del archivo
