@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.auth;
 
-public class EmailNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class EmailNotFoundException extends KeySoundException {
     public EmailNotFoundException(String email) {
-        super("El email '" + email + "' no se ha encontrado.");
+        super(HttpStatus.NOT_FOUND, "El email '" + email + "' no se ha encontrado.");
     }
 }

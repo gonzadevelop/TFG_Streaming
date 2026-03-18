@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.cancion;
 
-public class InvalidFormatFileException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class InvalidFormatFileException extends KeySoundException {
     public InvalidFormatFileException(String formato) {
-        super("El formato de archivo " + formato + " no es válido. Solo se permiten archivos de audio con formato MP3 o WAV.");
+        super(HttpStatus.BAD_REQUEST, "El formato de archivo " + formato + " no es válido. Solo se permiten archivos de audio con formato MP3 o WAV.");
     }
 }

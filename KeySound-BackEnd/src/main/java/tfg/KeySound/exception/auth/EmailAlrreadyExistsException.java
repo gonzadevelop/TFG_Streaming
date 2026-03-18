@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.auth;
 
-public class EmailAlrreadyExistsException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class EmailAlrreadyExistsException extends KeySoundException {
     public EmailAlrreadyExistsException(String email) {
-        super("El email " + email + " ya está registrado.");
+        super(HttpStatus.CONFLICT, "El email " + email + " ya está registrado.");
     }
 }
