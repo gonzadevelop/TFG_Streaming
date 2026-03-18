@@ -31,6 +31,7 @@ public interface CancionMapper {
     @Mapping(target = "pistas", ignore = true)
     @Mapping(target = "historialReproducciones", ignore = true)
     @Mapping(target = "duracionSegundos", source = "duracionSegundos")
+    @Mapping(target = "topMusicalDiarios", ignore = true)
     Cancion fromData(String titulo, String archivo, List<Usuario> usuarios, Integer duracionSegundos);
 
     @Mapping(target = "titulo", source = "pista.cancion.titulo")

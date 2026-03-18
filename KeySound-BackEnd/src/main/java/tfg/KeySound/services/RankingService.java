@@ -1,5 +1,6 @@
 package tfg.KeySound.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import tfg.KeySound.repositorys.HistorialReproduccionesRepository;
 import tfg.KeySound.repositorys.TopMusicalDiarioRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -16,13 +18,14 @@ import java.util.List;
  * Se ejecuta automáticamente cada día a las 00:00.
  */
 @Service
+@RequiredArgsConstructor
 public class RankingService {
 
     /**
      * Inyección de dependencias de los repositorios necesarios para acceder a los datos de canciones y reproducciones.
      */
-    private TopMusicalDiarioRepository topMusicalDiarioRepository;
-    private HistorialReproduccionesRepository historialReproduccionesRepository;
+    private final TopMusicalDiarioRepository topMusicalDiarioRepository;
+    private final HistorialReproduccionesRepository historialReproduccionesRepository;
 
     /**
      * Metodo programado para ejecutarse diariamente a las 00:00.
@@ -31,7 +34,7 @@ public class RankingService {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void updateDailyTop30() {
-        List<Cancion> topSongIds = historialReproduccionesRepository.findTopSongsSinceEntities(LocalDate.now().minusDays(1));
+        List<Cancion> topSongIds = historialReproduccionesRepository.findTopSongsSinceEntities(LocalDateTime.now().minusDays(1));
 
         List<TopMusicalDiario> topEntries = topSongIds.stream()
                 .limit(30)
@@ -39,13 +42,21 @@ public class RankingService {
                     TopMusicalDiario entry = new TopMusicalDiario();
                     entry.setCancion(c);
                     entry.setFecha(LocalDate.now());
-                    entry.setReproduccionesEnElDia(historialReproduccionesRepository.countReproductionsForSongSince(c.getId(), LocalDate.now().minusDays(1)));
+
+                    Long countLong = historialReproduccionesRepository.countReproductionsForSongSince(c.getId(), LocalDateTime.now().minusDays(1));
+                    int reproducciones = 0;
+                    if (countLong != null) {
+                        if (countLong > Integer.MAX_VALUE) reproducciones = Integer.MAX_VALUE;
+                        else reproducciones = countLong.intValue();
+                    }
+                    entry.setReproduccionesEnElDia(reproducciones);
+
                     entry.setPosicionEnElDia(topSongIds.indexOf(c) + 1);
                     return entry;
                 })
                 .toList();
 
-        // 2. Limpiar tabla anterior y guardar nueva
+        // Guardar el nuevo ranking diario en la base de datos
         topMusicalDiarioRepository.saveAll(topEntries);
     }
 
@@ -54,7 +65,7 @@ public class RankingService {
      * @return Lista de TopMusicalDiario con las canciones más escuchadas del día.
      */
     public List<TopMusicalDiario> getDailyTop30() {
-        return topMusicalDiarioRepository.findByFecha(LocalDate.now());
+        return topMusicalDiarioRepository.findByFecha(LocalDate.now().minusDays(1));
     }
 
     /**
@@ -63,9 +74,11 @@ public class RankingService {
      */
     public boolean isRankingOutdated() {
         // Obtener la fecha del último ranking
-        LocalDate lastRankingDate = topMusicalDiarioRepository.findTopByOrderByFechaDesc()
+        LocalDate lastRankingDate = topMusicalDiarioRepository
+                .findTopByOrderByFechaDesc()
                 .getFecha();
 
-        return lastRankingDate.isBefore(LocalDate.now());
+        // comprobar si la fecha del último ranking es anterior a la fecha actual
+        return lastRankingDate.isEqual(LocalDate.now().minusDays(1));
     }
 }

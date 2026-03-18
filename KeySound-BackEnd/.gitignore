@@ -35,3 +35,4 @@ build/
 firebase-account.json
 .env
 endpoints/
+FireBaseController.java

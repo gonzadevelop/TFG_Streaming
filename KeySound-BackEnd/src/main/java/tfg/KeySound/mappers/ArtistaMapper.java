@@ -3,9 +3,9 @@ package tfg.KeySound.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Usuario;
-import tfg.KeySound.model.usuario.ResponseArtistaDTO;
+import tfg.KeySound.model.artista.ResponseArtistaDTO;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
-import tfg.KeySound.model.album.ResponseAlbumArtistaDTO;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ public interface ArtistaMapper {
     @Mapping(target = "seguidores", expression = "java(artista.getSeguidores() != null ? artista.getSeguidores().size() : 0)")
     @Mapping(target = "cancionesEnFavoritos", source = "cancionesEnFavoritos")
     @Mapping(target = "urlAvatar", source = "urlAvatar")
-    ResponseArtistaDTO toDto(Usuario artista, List<ResponseCancionArtistaDTO> canciones, List<ResponseAlbumArtistaDTO> albums, int cancionesEnFavoritos, String urlAvatar);
+    ResponseArtistaDTO toDto(Usuario artista, List<ResponseCancionArtistaDTO> canciones, List<ResponseAlbumDTO> albums, int cancionesEnFavoritos, String urlAvatar);
 }

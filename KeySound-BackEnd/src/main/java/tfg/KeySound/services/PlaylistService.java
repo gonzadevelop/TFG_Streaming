@@ -46,7 +46,7 @@ public class PlaylistService {
 
         // Subir la foto de portada a Firebase Storage y obtener el nombre del archivo o usar una imagen por defecto si no se proporciona una foto de portada
         String nombreArchivo = dto.getFotoPortada() != null ?
-                firebaseService.subirArchivo(dto.getFotoPortada() , "playlist_" + usuario.getId() + "_" + dto.getNombrePlaylist() + "_")
+                firebaseService.subirArchivo(dto.getFotoPortada() , "playlist_" + usuario.getId() + "_" + dto.getNombre() + "_")
                 : "";
 
         // Mapear el DTO a la entidad Playlist y establecer el propietario

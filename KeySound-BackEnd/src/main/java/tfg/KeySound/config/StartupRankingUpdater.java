@@ -16,7 +16,7 @@ public class StartupRankingUpdater {
     /**
      * Inyección de dependencias del servicio de ranking para poder verificar y actualizar el ranking diario si es necesario.
      */
-    private RankingService rankingService;
+    private final RankingService rankingService;
 
     /**
      * Metodo que se ejecuta al iniciar la aplicación. Verifica si el ranking diario está desactualizado y, si es así, lo actualiza.

@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tfg.KeySound.model.album.ResponseMiAlbumDTO;
-import tfg.KeySound.model.usuario.ResponseArtistaDTO;
+import tfg.KeySound.model.artista.ResponseArtistaDTO;
 import tfg.KeySound.services.ArtistaService;
 
 import java.util.List;

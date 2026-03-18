@@ -14,7 +14,7 @@ import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.album.RequestAlbumDTO;
-import tfg.KeySound.model.album.ResponseAlbumDTO;
+import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.repositorys.CancionRepository;
 import tfg.KeySound.repositorys.PistaRepository;
 import tfg.KeySound.repositorys.AlbumRepository;
@@ -121,7 +121,7 @@ public class AlbumService {
         pistaRepository.saveAll(pistas);
     }
 
-    public ResponseAlbumDTO visualizarAlbum(Long albumId) {
+    public ResponseAlbumCompletoDTO visualizarAlbum(Long albumId) {
         // Buscar el album por su ID
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new AlbumNotFoundException(albumId));

@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestPlaylistDTO {
-    private String nombrePlaylist;
+    private String nombre;
     private Boolean esPublica;
     private String descripcion;
     private MultipartFile fotoPortada;

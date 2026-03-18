@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tfg.KeySound.model.album.RequestAlbumDTO;
-import tfg.KeySound.model.album.ResponseAlbumDTO;
+import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.services.AlbumService;
 
 @RestController
@@ -40,11 +40,11 @@ public class AlbumController {
     /**
      * Endpoint para que un usuario visualice la información de un album (álbum o sencillo).
      * @param albumId {@link Long}
-     * @return {@link ResponseEntity}&lt;{@link ResponseAlbumDTO}&gt; Devuelve un status 200 (OK) con la información del album
+     * @return {@link ResponseEntity}&lt;{@link ResponseAlbumCompletoDTO}&gt; Devuelve un status 200 (OK) con la información del album
      * @apiNote {@code GET /api/albums/visualizar/{albumId}}
      */
     @GetMapping("/visualizar/{albumId}")
-    public ResponseEntity<ResponseAlbumDTO> visualizarAlbum(@PathVariable Long albumId) {
+    public ResponseEntity<ResponseAlbumCompletoDTO> visualizarAlbum(@PathVariable Long albumId) {
         return ResponseEntity.ok(albumService.visualizarAlbum(albumId));
     }
 }

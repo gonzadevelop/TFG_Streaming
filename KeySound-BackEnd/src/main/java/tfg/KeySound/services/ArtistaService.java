@@ -10,9 +10,9 @@ import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
-import tfg.KeySound.model.album.ResponseAlbumArtistaDTO;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseMiAlbumDTO;
-import tfg.KeySound.model.usuario.ResponseArtistaDTO;
+import tfg.KeySound.model.artista.ResponseArtistaDTO;
 import tfg.KeySound.repositorys.AlbumRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.FirebaseService;
@@ -86,7 +86,7 @@ public class ArtistaService {
         String urlAvatar = firebaseService.obtenerUrlArchivoImagen(artista.getArchivoAvatar(), artista.getUsername());
 
         // Mapear a DTO
-        List<ResponseAlbumArtistaDTO> albumsDTO = albumMapper.toDtos(albums);
+        List<ResponseAlbumDTO> albumsDTO = albumMapper.toDtos(albums);
         List<ResponseCancionArtistaDTO> cancionesPopularesDTO = cancionMapper.toDtos(cancionesPopulares);
         return artistaMapper.toDto(artista, cancionesPopularesDTO, albumsDTO, cancionesEnFavoritos, urlAvatar);
     }

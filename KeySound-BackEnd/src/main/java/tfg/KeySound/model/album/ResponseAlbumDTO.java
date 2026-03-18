@@ -3,7 +3,7 @@ package tfg.KeySound.model.album;
 import lombok.Data;
 
 @Data
-public class ResponseAlbumArtistaDTO {
+public class ResponseAlbumDTO {
     private Long id;
     private String titulo;
     private String urlPortada;

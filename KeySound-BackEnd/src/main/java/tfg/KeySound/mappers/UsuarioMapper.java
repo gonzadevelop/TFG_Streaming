@@ -16,6 +16,8 @@ public interface UsuarioMapper {
     @Mapping(target = "email", source = "registerRequestDTO.email")
     @Mapping(target = "password", source = "registerRequestDTO.password")
     @Mapping(target = "rol", source = "rol")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "biografia", expression = "java(\"\")")
     Usuario toEntity(RegisterRequestDTO registerRequestDTO, Rol rol);
 
     @Mapping(target = "username", source = "usuario.username")

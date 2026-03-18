@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Album;
 import tfg.KeySound.entitys.Usuario;
-import tfg.KeySound.model.album.ResponseAlbumArtistaDTO;
+import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseMiAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
@@ -20,9 +20,9 @@ public interface AlbumMapper {
     @Mapping(target = "urlPortada", source = "archivoPortada")
     @Mapping(target = "anioLanzamiento", source = "album.fechaLanzamiento.year")
     @Mapping(target = "tipo", source = "tipo")
-    ResponseAlbumArtistaDTO toDto(Album album);
+    ResponseAlbumDTO toDto(Album album);
 
-    List<ResponseAlbumArtistaDTO> toDtos(List<Album> albums);
+    List<ResponseAlbumDTO> toDtos(List<Album> albums);
 
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "archivoPortada", source = "archivoPortada")
@@ -42,7 +42,7 @@ public interface AlbumMapper {
     @Mapping(target = "tipo", source = "album.tipo")
     @Mapping(target = "canciones", source = "canciones")
     @Mapping(target = "artista", source = "album.usuario.username")
-    ResponseAlbumDTO toResponseDto(Album album, List<ResponsePistaDTO> canciones, String urlPortada);
+    ResponseAlbumCompletoDTO toResponseDto(Album album, List<ResponsePistaDTO> canciones, String urlPortada);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "titulo", source = "titulo")
