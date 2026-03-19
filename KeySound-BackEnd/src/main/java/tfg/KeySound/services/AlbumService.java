@@ -145,4 +145,21 @@ public class AlbumService {
 
         return albumMapper.toResponseDto(album, cancionesDto, urlPortada);
     }
+
+    public void publicarAlbum(Long albumId, String token) {
+        // Buscar el album por su ID
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(() -> new AlbumNotFoundException(albumId));
+
+        // Verificar que el usuario autenticado es el artista del álbum
+        String username = jwtService.extractUsername(token);
+        if (!album.getUsuario().getUsername().equalsIgnoreCase(username)) throw new RuntimeException("No tienes permiso para publicar este álbum");
+
+        // Verificar que el álbum tiene al menos una canción
+        if (album.getPistas() == null || album.getPistas().isEmpty()) throw new RuntimeException("El álbum debe tener al menos una canción para ser publicado");
+
+        // Publicar el álbum estableciendo esBorrador a falso y guardarlo en la base de datos
+        album.setEsBorrador(false);
+        albumRepository.save(album);
+    }
 }

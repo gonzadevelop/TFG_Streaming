@@ -15,11 +15,11 @@ public class FirebaseService {
 
     public String subirArchivo(MultipartFile archivo, String nombreDestino) {
         // Obtener el bucket configurado en FirebaseConfig
-        String nombreFinal = nombreDestino + "_" + UUID.randomUUID().toString();
+        String nombreFinal = nombreDestino + "_" + UUID.randomUUID();
         Bucket bucket = StorageClient.getInstance().bucket();
 
         try {
-            bucket.create(nombreDestino, archivo.getBytes(), archivo.getContentType());
+            bucket.create(nombreFinal, archivo.getBytes(), archivo.getContentType());
         } catch (IOException e) {
             throw new FileUploadException();
         }
@@ -33,6 +33,18 @@ public class FirebaseService {
 
         Blob blob = bucket.get(nombreArchivo);
         if (blob != null) {
+            blob.delete();
+        }
+    }
+
+    public void renombrarArchivo(String nombreArchivo, String nuevoNombre) {
+        Bucket bucket = StorageClient.getInstance().bucket();
+
+        Blob blob = bucket.get(nombreArchivo);
+        if (blob != null) {
+            // Copiar el archivo con el nuevo nombre
+            Blob nuevoBlob = blob.copyTo(bucket.getName(), nuevoNombre).getResult();
+            // Eliminar el archivo original
             blob.delete();
         }
     }

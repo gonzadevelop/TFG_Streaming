@@ -25,11 +25,13 @@ public class AlbumController {
     private final AlbumService albumService;
 
     /**
-     * Endpoint para que un artista cree un álbum. El artista debe enviar un multipart/form-data con los siguientes campos:
+     * Endpoint para que un artista suba un álbum (álbum o sencillo). El álbum se crea en estado "borrador" y debe ser publicado posteriormente.
      * @param token {@link String}
-     * @param dto {@link RequestAlbumDTO}
-     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 201 (CREATED) si se sube correctamente
-     * @apiNote {@code POST /api/artistas/crear}
+     * @param dto {@link RequestAlbumDTO} con los datos del álbum a subir
+     * @param portada {@link MultipartFile} con la imagen de portada del álbum
+     * @param archivos {@link List}&lt;{@link MultipartFile}&gt; con las pistas de audio del álbum
+     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 201 (Created) si se sube correctamente
+     * @apiNote {@code POST /api/albums/crear}
      */
     @PostMapping(value = "/crear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ARTISTA')")
@@ -51,5 +53,21 @@ public class AlbumController {
     @GetMapping("/visualizar/{albumId}")
     public ResponseEntity<ResponseAlbumCompletoDTO> visualizarAlbum(@PathVariable Long albumId) {
         return ResponseEntity.ok(albumService.visualizarAlbum(albumId));
+    }
+
+    /**
+     * Endpoint para que un artista publique un álbum. El álbum debe estar previamente subido y en estado "borrador".
+     * @param token {@link String}
+     * @param albumId {@link Long}
+     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si se publica correctamente
+     * @apiNote {@code PUT /api/albums/publicar/{albumId}}
+     */
+    @PutMapping("/publicar/{albumId}")
+    @PreAuthorize("hasRole('ARTISTA')")
+    public ResponseEntity<Void> publicarAlbum(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long albumId) {
+        albumService.publicarAlbum(albumId, token.substring(7));
+        return ResponseEntity.ok().build();
     }
 }
