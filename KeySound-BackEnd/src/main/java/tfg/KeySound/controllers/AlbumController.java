@@ -1,14 +1,18 @@
 package tfg.KeySound.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.services.AlbumService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/albums")
@@ -31,9 +35,10 @@ public class AlbumController {
     @PreAuthorize("hasRole('ARTISTA')")
     public ResponseEntity<Void> subirAlbum(
             @RequestHeader("Authorization") String token,
-            @ModelAttribute RequestAlbumDTO dto) {
-        // substring(7) para eliminar "Bearer " del token
-        albumService.subirAlbum(dto, token.substring(7));
+            @RequestPart("datos") RequestAlbumDTO dto,
+            @RequestPart("portada") MultipartFile portada,
+            @RequestPart("archivos") List<MultipartFile> archivos) {
+        albumService.subirAlbum(dto, portada, archivos, token.substring(7));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

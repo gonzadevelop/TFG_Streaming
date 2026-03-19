@@ -2,6 +2,7 @@ package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import tfg.KeySound.entitys.Album;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Pista;
@@ -51,7 +52,7 @@ public class AlbumService {
     /**
      * Metodos llamados por endpoints
      */
-    public void subirAlbum(RequestAlbumDTO dto, String token) {
+    public void subirAlbum(RequestAlbumDTO dto, MultipartFile portada, List<MultipartFile> archivos, String token) {
 
         // obtener el artista que sube el álbum a partir del token JWT
         Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
@@ -61,12 +62,12 @@ public class AlbumService {
             -------------- PORTADA Y ALBUM --------------
          */
         // Validar el formato de la portada
-        ArtistaUtils.validarFormatoImagen(dto.getPortada().getContentType());
+        ArtistaUtils.validarFormatoImagen(portada.getContentType());
 
         // Crear nombres únicos para la portada y subirla a Firebase Storage
 
-        String nombreArchivoPortada  = dto.getPortada() != null
-                ? firebaseService.subirArchivo(dto.getPortada(), artista.getUsername() + "_" + dto.getNombreAlbum() + "_portada")
+        String nombreArchivoPortada  = portada != null
+                ? firebaseService.subirArchivo(portada, artista.getUsername() + "_" + dto.getNombreAlbum() + "_portada")
                 : "";
 
         String tipo = dto.getCanciones().size() == 1 ?
@@ -85,27 +86,27 @@ public class AlbumService {
          */
 
         // Mapear cada canción del DTO a entidad, subiendo el archivo de audio a Firebase Storage y obteniendo colaboradores y duración
-        List<Cancion> canciones = dto.getCanciones()
-                .stream()
-                .peek(rc -> ArtistaUtils.validarFormatoArchivo(rc.getArchivo().getContentType()))
+        Iterator<MultipartFile> archivoIt = archivos.iterator();
+
+        List<Cancion> canciones = dto.getCanciones().stream()
                 .map(rc -> {
-                    // Si se ha proporcionado un ID de canción existente, devolverla
+                    // Si la canción ya existe, la recuperamos y no consumimos archivo de la lista
                     if (rc.getIdCancionExistente() != null) {
                         return cancionRepository.findById(rc.getIdCancionExistente())
                                 .orElseThrow(() -> new CancionNotFoundException(rc.getIdCancionExistente()));
                     }
 
-                    // comprobar cuanto dura el archivo de audio (en segundos)
-                    Integer duracionSegundos = AudioUtils.obtenerDuracionSegundos(rc.getArchivo());
+                    // Si es nueva, extraemos el siguiente binario de la lista recibida
+                    MultipartFile archivoActual = archivoIt.next();
 
-                    // obtener colaboradores
+                    // Validaciones y obtención de metadatos del binario
+                    ArtistaUtils.validarFormatoArchivo(archivoActual.getContentType());
+                    Integer duracionSegundos = AudioUtils.obtenerDuracionSegundos(archivoActual);
                     List<Usuario> colaboradores = ArtistaUtils.obtenerColaboradores(rc.getIdArtistas(), artista, usuarioRepository);
 
-                    // Crear un nombre único para el archivo de audio y subirlo a Firebase
-                    String nombreArchivoAudio = firebaseService.subirArchivo(rc.getArchivo(), artista.getUsername() + "_" + rc.getTitulo());
-
-                    // Mapear a entidad y devolverla
-                    return cancionMapper.fromData(rc.getTitulo(), nombreArchivoAudio, colaboradores, duracionSegundos);
+                    // Subida a Firebase y mapeo a entidad
+                    String urlAudio = firebaseService.subirArchivo(archivoActual, artista.getUsername() + "_" + rc.getTitulo());
+                    return cancionMapper.fromData(rc.getTitulo(), urlAudio, colaboradores, duracionSegundos);
                 })
                 .toList();
 

@@ -12,7 +12,6 @@ import java.util.List;
 @Builder
 public class RequestAlbumDTO {
     private String nombreAlbum;
-    private MultipartFile portada;
     private List<RequestCancionAlbumDTO> canciones;
     private LocalDateTime fechaLanzamiento;
 }
