@@ -13,6 +13,7 @@ import tfg.KeySound.exception.album.AlbumNotFoundException;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.AlbumMapper;
+import tfg.KeySound.model.artista.MiniArtistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -138,7 +140,22 @@ public class AlbumService {
                 .stream()
                 .map(p -> {
                     String urlCancion = firebaseService.obtenerUrlArchivoAudio(p.getCancion().getArchivoCancion());
-                    return cancionMapper.toAlbumDto(p, urlCancion);
+
+                    List<MiniArtistaDTO> artistas = Stream.concat(
+                            Stream.of(MiniArtistaDTO.builder()
+                                    .id(album.getUsuario().getId())
+                                    .username(album.getUsuario().getUsername())
+                                    .build()),
+
+                            p.getCancion().getUsuarios().stream()
+                                    .filter(u -> !u.getId().equals(album.getUsuario().getId()))
+                                    .map(u -> MiniArtistaDTO.builder()
+                                            .id(u.getId())
+                                            .username(u.getUsername())
+                                            .build())
+                    ).toList();
+
+                    return cancionMapper.toAlbumDto(p, urlCancion, artistas);
                 })
                 .sorted(Comparator.comparingInt(ResponsePistaDTO::getNumeroPista))
                 .toList();
