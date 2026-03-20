@@ -1,8 +1,9 @@
 import {Component, inject, OnDestroy, output, OutputEmitterRef} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ServApiSpring} from '../../../../services/ServApiSpring';
 import {Subscription} from 'rxjs';
+import {AuthService} from '../../../../services/authService';
 import {HttpResponse} from '@angular/common/http';
+import {ICheckEmailResponse} from '../../../../model/IAuth';
 
 @Component({
   selector: 'app-comprobacion-email',
@@ -16,7 +17,7 @@ export class ComprobacionEmail implements OnDestroy {
   public emailChecked:OutputEmitterRef<boolean> = output<boolean>();
   public email:OutputEmitterRef<string> = output<string>();
 
-  private servApiSpring:ServApiSpring = inject( ServApiSpring );
+  private auth: AuthService = inject( AuthService );
   private suscripcionComprobarEmail?: Subscription;
 
   registroForm: FormGroup = new FormGroup(
@@ -27,22 +28,20 @@ export class ComprobacionEmail implements OnDestroy {
 
   comprobarEmail():void {
     console.log(this.registroForm.value.email);
-    this.suscripcionComprobarEmail = this.servApiSpring
-      .checkResitro( this.registroForm.value.email )
+    this.suscripcionComprobarEmail = this.auth
+      .checkEmail( this.registroForm.value.email )
       .subscribe({
-        next: ( response:HttpResponse<boolean> ):void => {
+        next: ( response:ICheckEmailResponse ): void => {
           console.log('Respuesta completa:', response);
 
-          if (response.status === 200 && response.body !== null) {
-            if (response.body) {
-              this.onEmailChecked(true);
-              this.onEmailSubmit(this.registroForm.value.email);
-              console.log('El email está registrado.');
-            } else {
+          if (response.registered) {
+            this.onEmailChecked(true);
+            this.onEmailSubmit(this.registroForm.value.email);
+            console.log('El email está registrado.');
+          } else {
               this.onEmailChecked(false);
               this.onEmailSubmit(this.registroForm.value.email);
               console.log('El email no está registrado.');
-            }
           }
         },
         error: (error:Error):void => {
