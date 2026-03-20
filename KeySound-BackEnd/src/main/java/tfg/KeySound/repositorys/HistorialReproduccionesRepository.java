@@ -27,4 +27,12 @@ public interface HistorialReproduccionesRepository extends JpaRepository<Histori
             WHERE hr.cancion.id = :songId AND hr.fechaReproduccion >= :since
     """)
     Long countReproductionsForSongSince(@Param("songId") Long songId, @Param("since") LocalDateTime since);
+
+    @Query("""
+            SELECT hr.cancion
+            FROM HistorialReproducciones hr
+            WHERE hr.usuario.id = :usuarioId
+            ORDER BY hr.fechaReproduccion DESC
+    """)
+    List<Cancion> findTop10ByUsuarioOrderByFechaReproduccionDesc(Long usuarioId);
 }

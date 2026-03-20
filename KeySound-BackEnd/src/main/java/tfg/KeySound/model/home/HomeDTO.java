@@ -1,5 +1,6 @@
 package tfg.KeySound.model.home;
 
+import lombok.Builder;
 import lombok.Data;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.artista.ResponseArtistaHomeDTO;
@@ -10,10 +11,11 @@ import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import java.util.List;
 
 @Data
+@Builder
 public class HomeDTO {
     private List<ResponseKeySoundPlaylistDTO> keySoundPlaylists;
     private List<ResponseArtistaHomeDTO> artistasSeguidos;
-    private List<ResponseAlbumDTO> albumsSeguidos;
+    private List<ResponseAlbumDTO> novedadesDeLaSemana;
     private List<ResponseAlbumDTO> proximosLanzmientos;
     private List<ResponsePistaHomeDTO> cancionesMasEscuchadas;
 }
