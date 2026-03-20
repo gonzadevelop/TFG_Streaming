@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.services.AlbumService;
 
 import java.util.List;
@@ -69,5 +70,15 @@ public class AlbumController {
             @PathVariable Long albumId) {
         albumService.publicarAlbum(albumId, token.substring(7));
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Endpoint para obtener los próximos lanzamientos de álbumes (álbumes o sencillos) ordenados por fecha de lanzamiento. Solo se muestran los álbumes que no son borradores y con fecha de lanzamiento en el futuro.
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseAlbumDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de próximos lanzamientos
+     * @apiNote {@code GET /api/albums/proximos-lanzamientos}
+     */
+    @GetMapping("/proximos-lanzamientos")
+    public ResponseEntity<List<ResponseAlbumDTO>> obtenerProximosLanzamientos() {
+        return ResponseEntity.ok(albumService.obtenerProximosLanzamientos());
     }
 }

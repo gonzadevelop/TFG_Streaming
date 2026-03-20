@@ -14,6 +14,7 @@ import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.AlbumMapper;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.artista.MiniArtistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.album.RequestAlbumDTO;
@@ -169,5 +170,12 @@ public class AlbumService {
         // Publicar el álbum estableciendo esBorrador a falso y guardarlo en la base de datos
         album.setEsBorrador(false);
         albumRepository.save(album);
+    }
+
+    public List<ResponseAlbumDTO> obtenerProximosLanzamientos() {
+        // Obtener los próximos lanzamientos ordenados por fecha de lanzamiento (solo álbumes que no son borradores y con fecha de lanzamiento en el futuro)
+        List<Album> proximosLanzamientos = albumRepository.findByEsBorradorFalseAndFechaLanzamientoAfterOrderByFechaLanzamientoAsc(LocalDateTime.now());
+
+        return albumMapper.toDtos(proximosLanzamientos);
     }
 }
