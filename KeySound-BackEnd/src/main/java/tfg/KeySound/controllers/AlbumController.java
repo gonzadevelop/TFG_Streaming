@@ -81,4 +81,14 @@ public class AlbumController {
     public ResponseEntity<List<ResponseAlbumDTO>> obtenerProximosLanzamientos() {
         return ResponseEntity.ok(albumService.obtenerProximosLanzamientos());
     }
+
+    /**
+     * Endpoint para obtener las novedades de la semana en álbumes (álbumes o sencillos) ordenados por fecha de lanzamiento. Solo se muestran los álbumes que no son borradores y con fecha de lanzamiento en el pasado o presente, y que se hayan lanzado en la última semana.
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseAlbumDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de novedades de la semana
+     * @apiNote {@code GET /api/albums/novedades-semana}
+     */
+    @GetMapping("/novedades-semana")
+    public ResponseEntity<List<ResponseAlbumDTO>> obtenerNovedades() {
+        return ResponseEntity.ok(albumService.obtenerNovedades());
+    }
 }

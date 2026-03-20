@@ -178,4 +178,12 @@ public class AlbumService {
 
         return albumMapper.toDtos(proximosLanzamientos);
     }
+
+    public List<ResponseAlbumDTO> obtenerNovedades() {
+        // Obtener los álbumes más recientes ordenados por fecha de lanzamiento (solo álbumes que no son borradores y con fecha de lanzamiento en el pasado o presente)
+        // Y que su fecha de lanzamiento sea posterior a hace 7 días, es decir, que se hayan lanzado en la última semana
+        List<Album> novedades = albumRepository.findByEsBorradorFalseAndFechaLanzamientoAfterOrderByFechaLanzamientoAsc(LocalDateTime.now().minusDays(7));
+
+        return albumMapper.toDtos(novedades);
+    }
 }
