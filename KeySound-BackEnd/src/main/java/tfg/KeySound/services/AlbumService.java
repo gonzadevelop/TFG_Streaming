@@ -10,6 +10,7 @@ import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.exception.album.AlbumNotFoundException;
+import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.AlbumMapper;
@@ -41,6 +42,7 @@ public class AlbumService {
      */
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
+    private final CancionService cancionService;
 
     private final UsuarioRepository usuarioRepository;
     private final CancionRepository cancionRepository;
@@ -50,6 +52,7 @@ public class AlbumService {
     private final CancionMapper cancionMapper;
     private final AlbumMapper albumMapper;
     private final PistaMapper pistaMapper;
+    private final ArtistaMapper artistaMapper;
 
     /**
      * Metodos llamados por endpoints
@@ -141,19 +144,7 @@ public class AlbumService {
                 .map(p -> {
                     String urlCancion = firebaseService.obtenerUrlArchivoAudio(p.getCancion().getArchivoCancion());
 
-                    List<MiniArtistaDTO> artistas = Stream.concat(
-                            Stream.of(MiniArtistaDTO.builder()
-                                    .id(album.getUsuario().getId())
-                                    .username(album.getUsuario().getUsername())
-                                    .build()),
-
-                            p.getCancion().getUsuarios().stream()
-                                    .filter(u -> !u.getId().equals(album.getUsuario().getId()))
-                                    .map(u -> MiniArtistaDTO.builder()
-                                            .id(u.getId())
-                                            .username(u.getUsername())
-                                            .build())
-                    ).toList();
+                    List<MiniArtistaDTO> artistas = artistaMapper.toMiniDtos(cancionService.obtenerArtistasDeCancion(p.getCancion().getId()));
 
                     return cancionMapper.toAlbumDto(p, urlCancion, artistas);
                 })

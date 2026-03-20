@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tfg.KeySound.model.album.ResponseMiAlbumDTO;
 import tfg.KeySound.model.artista.ResponseArtistaDTO;
+import tfg.KeySound.model.artista.ResponseArtistaHomeDTO;
 import tfg.KeySound.services.ArtistaService;
 
 import java.util.List;
@@ -64,5 +65,18 @@ public class ArtistaController {
             @RequestHeader(value = "Authorization") String token) {
         artistaService.publicarAlbum(idAlbum, token.substring(7));
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Endpoint para obtener los artistas que sigo.
+     * @param token {@link String}
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseArtistaHomeDTO}&gt;&gt; Devuelve un status 200 (OK)
+     * @apiNote {@code GET /api/artistas/artistas-que-sigo}
+     */
+    @GetMapping("/artistas-que-sigo")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<ResponseArtistaHomeDTO>> obtenerArtistasQueSigo(
+            @RequestHeader(value = "Authorization") String token) {
+        return ResponseEntity.ok(artistaService.obtenerArtistasQueSigo(token.substring(7)));
     }
 }

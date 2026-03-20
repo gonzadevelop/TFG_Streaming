@@ -55,9 +55,9 @@ public class UsuarioController {
     @PostMapping("/seguir")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> seguirUsuario(
-            @RequestBody String username,
+            @RequestBody Long id,
             @RequestHeader ("Authorization") String token) {
-        usuarioService.seguirUsuario(username, token.substring(7));
+        usuarioService.seguirUsuario(id, token.substring(7));
         return ResponseEntity.ok().build();
     }
 }

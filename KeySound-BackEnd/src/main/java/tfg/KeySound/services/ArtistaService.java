@@ -9,6 +9,7 @@ import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.AlbumMapper;
+import tfg.KeySound.model.artista.ResponseArtistaHomeDTO;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseMiAlbumDTO;
@@ -137,5 +138,30 @@ public class ArtistaService {
         // publicar el album
         album.setEsBorrador(false);
         albumRepository.save(album);
+    }
+
+    public List<ResponseArtistaHomeDTO> obtenerArtistasQueSigo(String token) {
+        // obtener el usuario a partir del JWT
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
+                .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(token)));
+
+        // sacar los artistas que sigue el usuario
+        List<Usuario> artistasQueSigo = usuario.getSeguidos().stream()
+                .filter(u -> "ROLE_ARTISTA".equals(u.getRol().getNombre()))
+                .toList();
+
+        // mapear a DTO
+        List<ResponseArtistaHomeDTO> artistasDTO = artistasQueSigo
+                .stream()
+                .map(artistaMapper::toHomeDto)
+                .toList();
+
+        // obtener la URL del avatar de cada artista desde Firebase o de ui-avatars si no tiene avatar
+        for (int i = 0; i < artistasQueSigo.size(); i++) {
+            String urlAvatar = firebaseService.obtenerUrlArchivoImagen(artistasQueSigo.get(i).getArchivoAvatar(), artistasQueSigo.get(i).getUsername());
+            artistasDTO.get(i).setUrlAvatar(urlAvatar);
+        }
+
+        return artistasDTO;
     }
 }

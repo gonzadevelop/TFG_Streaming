@@ -87,7 +87,7 @@ public class UsuarioService {
         return usuarioMapper.toDto(usuario, urlAvatar, playlists);
     }
 
-    public void seguirUsuario(String username, String substring) {
+    public void seguirUsuario(Long id, String substring) {
         // Extraer el nombre de usuario del token JWT
         String usernameSeguidor = jwtService.extractUsername(substring);
 
@@ -99,8 +99,8 @@ public class UsuarioService {
 
 
         // Buscar el usuario que se quiere seguir en la base de datos
-        Usuario usuarioASeguir = usuarioRepository.findByUsernameIgnoreCase(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+        Usuario usuarioASeguir = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException(id));
 
         if (usuario.equals(usuarioASeguir)) throw new SelfFollowException();
 
@@ -108,7 +108,7 @@ public class UsuarioService {
         if (usuario.getSeguidores().contains(usuarioASeguir)) throw new SelfFollowException();
 
         // Agregar el seguidor a la lista de seguidores del usuario a seguir
-        usuario.getSeguidores().add(usuarioASeguir);
+        usuario.getSeguidos().add(usuarioASeguir);
         usuarioRepository.save(usuarioASeguir);
     }
 }
