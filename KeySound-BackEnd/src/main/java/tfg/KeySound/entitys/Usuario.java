@@ -74,18 +74,20 @@ public class Usuario implements UserDetails {
 
     // ARTISTAS!!!!
     @OneToMany(mappedBy = "usuario")
-    private Set<Lanzamiento> lanzamientos = new LinkedHashSet<>();
+    private Set<Album> albums = new LinkedHashSet<>();
 
     // COMPROBAR QUE SEGUIDORES Y SEGUIDOS ESTÁ CORRECTAMENTE.
 
     @ManyToMany
-    @JoinTable(name = "seguidores",
+    @JoinTable(
+            name = "seguidores",
             joinColumns = @JoinColumn(name = "seguidor_id"),
-            inverseJoinColumns = @JoinColumn(name = "seguido_id"))
-    private Set<Usuario> seguidores = new LinkedHashSet<>();
-
-    @ManyToMany(mappedBy = "seguidores")
+            inverseJoinColumns = @JoinColumn(name = "seguido_id")
+    )
     private Set<Usuario> seguidos = new LinkedHashSet<>();
+
+    @ManyToMany(mappedBy = "seguidos") // Referencia al campo de arriba
+    private Set<Usuario> seguidores = new LinkedHashSet<>();
 
 
     // metodos de UserDetails
@@ -108,5 +110,4 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() { return true; }
-
 }

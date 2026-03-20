@@ -1,13 +1,14 @@
-package tfg.KeySound.model.cancion;
+package tfg.KeySound.model.pista;
 
 import lombok.Data;
+import tfg.KeySound.model.artista.MiniArtistaDTO;
 
 import java.util.List;
 
 @Data
-public class ResponseCancionLanzamientoDTO {
+public class ResponsePistaDTO {
     private String titulo;
-    private List<String> artistas;
+    private List<MiniArtistaDTO> artistas;
     private String urlCancion;
     private Long reproducciones;
     private int duracionSegundos;

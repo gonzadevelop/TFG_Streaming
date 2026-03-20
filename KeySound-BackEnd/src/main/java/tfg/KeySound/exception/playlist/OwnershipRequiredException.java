@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.playlist;
 
-public class OwnershipRequiredException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class OwnershipRequiredException extends KeySoundException {
     public OwnershipRequiredException() {
-        super("No tienes permiso para eliminar esta playlist.");
+        super(HttpStatus.FORBIDDEN, "No tienes permiso para eliminar esta playlist.");
     }
 }

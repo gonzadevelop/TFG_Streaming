@@ -3,9 +3,11 @@ package tfg.KeySound.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
+import tfg.KeySound.exception.artista.FollowRestrictionException;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
-import tfg.KeySound.exception.lanzamiento.PistaNotFoundException;
+import tfg.KeySound.exception.pista.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException;
+import tfg.KeySound.exception.usuario.SelfFollowException;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import tfg.KeySound.repositorys.*;
@@ -45,14 +47,14 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        Pista lanzamiento = pistaRepository.findById(pistaId)
+        Pista pista = pistaRepository.findById(pistaId)
                 .orElseThrow(() -> new PistaNotFoundException(pistaId));
 
         // Verificar si la canción ya está en favoritos del usuario
-        if (usuario.getFavoritos().contains(lanzamiento)) throw new FavoriteAlreadyExistsException();
+        if (usuario.getFavoritos().contains(pista)) throw new FavoriteAlreadyExistsException();
 
         // Agregar la canción a favoritos del usuario
-        usuario.getFavoritos().add(lanzamiento);
+        usuario.getFavoritos().add(pista);
         usuarioRepository.save(usuario);
     }
 
@@ -85,7 +87,7 @@ public class UsuarioService {
         return usuarioMapper.toDto(usuario, urlAvatar, playlists);
     }
 
-    public void seguirUsuario(String username, String substring) {
+    public void seguirUsuario(Long id, String substring) {
         // Extraer el nombre de usuario del token JWT
         String usernameSeguidor = jwtService.extractUsername(substring);
 
@@ -93,20 +95,20 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(usernameSeguidor)
                 .orElseThrow(() -> new UsernameNotFoundException(usernameSeguidor));
 
-        if (usuario.getRol().getNombre().equals("ROLE_ARTISTA")) throw new RuntimeException("Los artistas no pueden seguir a otros usuarios");
+        if (usuario.getRol().getNombre().equals("ROLE_ARTISTA")) throw new FollowRestrictionException();
 
 
         // Buscar el usuario que se quiere seguir en la base de datos
-        Usuario usuarioASeguir = usuarioRepository.findByUsernameIgnoreCase(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+        Usuario usuarioASeguir = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException(id));
 
-        if (usuario.equals(usuarioASeguir)) throw new RuntimeException("No puedes seguirte a ti mismo");
+        if (usuario.equals(usuarioASeguir)) throw new SelfFollowException();
 
         // Verificar si el seguidor ya sigue al usuario y si le sigue, no hacer nada
-        if (usuario.getSeguidores().contains(usuarioASeguir)) throw new RuntimeException("Ya sigues a este usuario");
+        if (usuario.getSeguidores().contains(usuarioASeguir)) throw new SelfFollowException();
 
         // Agregar el seguidor a la lista de seguidores del usuario a seguir
-        usuario.getSeguidores().add(usuarioASeguir);
+        usuario.getSeguidos().add(usuarioASeguir);
         usuarioRepository.save(usuarioASeguir);
     }
 }

@@ -10,7 +10,7 @@ import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 @Mapper(componentModel = "spring")
 public interface PlaylistMapper {
 
-    @Mapping(source = "dto.nombrePlaylist", target = "nombre")
+    @Mapping(source = "dto.nombre", target = "nombre")
     @Mapping(source = "dto.esPublica", target = "esPublica")
     @Mapping(source = "usuario", target = "propietario")
     @Mapping(source = "nombreArchivo", target = "fotoPortada", defaultValue = "")

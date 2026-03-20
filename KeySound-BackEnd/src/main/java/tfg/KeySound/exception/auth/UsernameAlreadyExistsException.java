@@ -1,7 +1,10 @@
 package tfg.KeySound.exception.auth;
 
-public class UsernameAlreadyExistsException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import tfg.KeySound.exception.KeySoundException;
+
+public class UsernameAlreadyExistsException extends KeySoundException {
     public UsernameAlreadyExistsException(String username) {
-        super("El nombre de usuario " + username + " ya está registrado.");
+        super(HttpStatus.CONFLICT, "El nombre de usuario " + username + " ya está registrado.");
     }
 }

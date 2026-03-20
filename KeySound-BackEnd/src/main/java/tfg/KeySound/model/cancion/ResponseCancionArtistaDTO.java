@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class ResponseCancionArtistaDTO { // Implementar segundos...
-    private Long idLanzamiento;
+    private Long idAlbum;
     private String titulo;
     private String urlPortada;
     private List<String> artistas;

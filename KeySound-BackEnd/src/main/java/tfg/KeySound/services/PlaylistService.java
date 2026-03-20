@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
 import tfg.KeySound.entitys.embeddedids.PlaylistPistaId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
-import tfg.KeySound.exception.lanzamiento.PistaNotFoundException;
+import tfg.KeySound.exception.pista.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.OwnershipRequiredException;
 import tfg.KeySound.exception.playlist.PlaylistNotFoundException;
 import tfg.KeySound.mappers.PlaylistMapper;
@@ -46,7 +46,7 @@ public class PlaylistService {
 
         // Subir la foto de portada a Firebase Storage y obtener el nombre del archivo o usar una imagen por defecto si no se proporciona una foto de portada
         String nombreArchivo = dto.getFotoPortada() != null ?
-                firebaseService.subirArchivo(dto.getFotoPortada() , "playlist_" + usuario.getId() + "_" + dto.getNombrePlaylist() + "_")
+                firebaseService.subirArchivo(dto.getFotoPortada() , "playlist_" + usuario.getId() + "_" + dto.getNombre() + "_")
                 : "";
 
         // Mapear el DTO a la entidad Playlist y establecer el propietario
@@ -74,11 +74,11 @@ public class PlaylistService {
         }
 
         dto.getPistaIds().stream()
-                .map(id -> pistaRepository.findById(id) // Buscar el lanzamiento de canción por su ID
+                .map(id -> pistaRepository.findById(id) // Buscar el album de canción por su ID
                         .orElseThrow(() -> new PistaNotFoundException(id)))
                 .filter(pista -> !playlistPistaRepository // Evitar agregar canciones duplicadas a la playlist
                         .existsByPlaylistIdAndPistaId(playlist.getId(), pista.getId()))
-                .map(pista -> { // Crear la relación entre la playlist y el lanzamiento de canción
+                .map(pista -> { // Crear la relación entre la playlist y el album de canción
                     PlaylistPista relacion = new PlaylistPista();
                     relacion.setId(new PlaylistPistaId()); // El ID se generará automáticamente al guardar la entidad
                     relacion.setPlaylist(playlist);

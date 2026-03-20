@@ -42,7 +42,6 @@ export class Login implements OnInit, OnDestroy {
     password: new FormControl('', [Validators.minLength(8)]),
   });
 
-
   login(): void {
     console.log('Iniciando sesión con:', this.email(), this.loginForm.value.password);
     const request: ILoginRequest = {
