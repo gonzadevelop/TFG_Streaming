@@ -7,4 +7,8 @@ public class UsernameNotFoundException extends KeySoundException {
     public UsernameNotFoundException(String username) {
         super(HttpStatus.NOT_FOUND, "El username " + username + " no se ha encontrado.");
     }
+
+    public UsernameNotFoundException(Long id) {
+        super(HttpStatus.NOT_FOUND, "El usuario con id " + id + " no se ha encontrado.");
+    }
 }
