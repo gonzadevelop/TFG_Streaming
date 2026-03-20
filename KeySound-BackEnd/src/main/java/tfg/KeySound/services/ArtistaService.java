@@ -141,6 +141,9 @@ public class ArtistaService {
     }
 
     public List<ResponseArtistaHomeDTO> obtenerArtistasQueSigo(String token) {
+        // si el token es vacío, devolver una lista vacía
+        if (token.isEmpty()) return List.of();
+
         // obtener el usuario a partir del JWT
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
                 .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(token)));

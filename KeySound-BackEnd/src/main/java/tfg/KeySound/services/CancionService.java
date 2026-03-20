@@ -66,6 +66,9 @@ public class CancionService {
     }
 
     public List<ResponsePistaHomeDTO> obtenerMisCancionesMasReproducidas(String token) {
+        // Si el token está vacío, devolver una lista vacía
+        if (token.isEmpty()) return List.of();
+
         // Extraer el nombre de usuario del token JWT
         String username = jwtService.extractUsername(token);
 
