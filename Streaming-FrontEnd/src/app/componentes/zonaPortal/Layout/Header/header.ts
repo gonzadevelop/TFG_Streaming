@@ -1,6 +1,7 @@
 import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
+import { Footer } from './footer';
 
 interface NavItem {
   route: string;
@@ -15,7 +16,7 @@ interface User {
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, NgOptimizedImage],
+  imports: [RouterLink, RouterLinkActive, NgOptimizedImage, Footer],
   templateUrl: './header.html',
   styleUrl: './header.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,9 +24,9 @@ interface User {
 export class Header {
 
   readonly navItems: NavItem[] = [
-    { route: '/inicio', label: 'Inicio', icon: 'home' },
-    { route: '/explorar', label: 'Explorar', icon: 'explore' },
-    { route: '/biblioteca', label: 'Mi Biblioteca', icon: 'library_music' },
+    { route: '/header', label: 'Inicio', icon: 'home' },
+    { route: '/login', label: 'Login', icon: 'login' },
+    { route: '/register', label: 'Registro', icon: 'person_add' },
   ];
 
   readonly currentUser = signal<User>({
