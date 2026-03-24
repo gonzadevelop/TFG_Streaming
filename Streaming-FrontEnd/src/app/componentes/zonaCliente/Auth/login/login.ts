@@ -11,11 +11,10 @@ import {ChangeDetectionStrategy,
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {RouterLink} from '@angular/router';
-import {ServApiSpring} from '../../../../services/ServApiSpring';
-import {HttpResponse} from '@angular/common/http';
-import ILoginResponse from '../../../../model/ILoginResponse';
-import ILoginRequest from '../../../../model/ILoginRequest';
 import {Subscription} from 'rxjs';
+import {AuthService} from '../../../../services/authService';
+import {IAuthResponse} from '../../../../model/IAuth';
+import {IUserLogin} from '../../../../model/IUser';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +27,7 @@ import {Subscription} from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login implements OnInit, OnDestroy {
-  private servApiSpring:ServApiSpring = inject( ServApiSpring );
+  private auth: AuthService = inject( AuthService );
   private suscripcionLogin?: Subscription;
 
 
@@ -44,19 +43,16 @@ export class Login implements OnInit, OnDestroy {
 
   login(): void {
     console.log('Iniciando sesión con:', this.email(), this.loginForm.value.password);
-    const request: ILoginRequest = {
+    const request: IUserLogin = {
       email: this.email(),
       password: this.loginForm.value.password
     };
-    this.suscripcionLogin = this.servApiSpring.login(request).subscribe(
-      (response: HttpResponse<ILoginResponse>):void => {{
-          if (response.status === 200) {
-            const token = response.body?.token || '';
-            console.log('Inicio de sesión exitoso. Token:', token);
-          }
-        }
+    this.suscripcionLogin = this.auth.login(request).subscribe({
+      next: (response: IAuthResponse): void => {
+        const token = response.token || '';
+        console.log('Inicio de sesión exitoso. Token:', token);
       }
-    )
+    });
   }
 
   togglePasswordVisibility(): void {

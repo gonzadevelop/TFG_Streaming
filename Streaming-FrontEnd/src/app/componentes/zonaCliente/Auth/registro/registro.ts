@@ -10,9 +10,9 @@ import {
   WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ServApiSpring} from '../../../../services/ServApiSpring';
-import ILoginRequest from '../../../../model/ILoginRequest';
 import {RouterLink} from '@angular/router';
+import {AuthService} from '../../../../services/authService';
+import {IUserLogin} from '../../../../model/IUser';
 
 @Component({
   selector: 'app-registro',
@@ -21,7 +21,7 @@ import {RouterLink} from '@angular/router';
   styleUrl: './registro.css',
 })
 export class Registro implements OnInit, OnDestroy {
-  private servApiSpring:ServApiSpring = inject( ServApiSpring );
+  private authService: AuthService = inject( AuthService );
 
   public email:InputSignal<string> = input<string>('');
   public atras:OutputEmitterRef<void> = output<void>();
@@ -43,7 +43,7 @@ export class Registro implements OnInit, OnDestroy {
 
   registrar(): void {
     if (this.registroForm.valid) {
-      const registroData:ILoginRequest = {
+      const registroData: IUserLogin = {
         email: this.email(),
         password: this.registroForm.value
       };
