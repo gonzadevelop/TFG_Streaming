@@ -1,10 +1,22 @@
 <header class="app-header">
   <div class="header-inner">
     <div class="header-top">
-      <div class="header-logo">
+      <div class="header-left">
+        <button
+          type="button"
+          class="sidebar-toggle"
+          (click)="toggleSidebar()"
+          [attr.aria-expanded]="isSidebarOpen()"
+          aria-controls="artist-sidebar"
+          aria-label="Mostrar u ocultar menu lateral">
+          <span class="material-icons" aria-hidden="true">menu</span>
+        </button>
+
+        <div class="header-logo">
         <a routerLink="/header" aria-label="Ir al inicio">
           <img ngSrc="/img/KeySound_logo_definitive.png" alt="KeySound logo" class="logo-image" width="132" height="44" priority>
         </a>
+      </div>
       </div>
 
       <nav class="header-nav" aria-label="Navegacion principal">
@@ -21,16 +33,6 @@
           }
         </ul>
       </nav>
-
-      <div class="header-actions">
-        <button class="user-avatar" (click)="openProfile()" [attr.aria-label]="'Perfil de ' + currentUser().name">
-          <img [src]="currentUser().avatar" [alt]="currentUser().name" class="avatar-image">
-        </button>
-
-        <button class="settings-button" (click)="openSettings()" aria-label="Ajustes">
-          <span class="material-icons" aria-hidden="true">settings</span>
-        </button>
-      </div>
     </div>
 
     <div class="header-search">
@@ -59,7 +61,46 @@
   </div>
 </header>
 
-<main class="page-content" aria-label="Contenido principal de ejemplo"></main>
+<div class="layout-shell" [class.sidebar-collapsed]="!isSidebarOpen()">
+  <aside id="artist-sidebar" class="side-menu" [attr.aria-hidden]="!isSidebarOpen()">
+    <div class="profile-block">
+      <button
+        type="button"
+        class="profile-trigger"
+        (click)="toggleUserMenu()"
+        [attr.aria-expanded]="isUserMenuOpen()"
+        aria-label="Abrir menu de usuario">
+        <img [src]="currentUser().avatar" [alt]="currentUser().name" class="avatar-image">
+        <span class="profile-name">{{ currentUser().name }}</span>
+        <span class="material-icons" aria-hidden="true">expand_more</span>
+      </button>
+
+      <p class="profile-greeting">{{ greetingMessage() }}, {{ currentUser().name }}</p>
+
+      @if (isUserMenuOpen()) {
+        <div class="profile-dropdown" role="menu" aria-label="Opciones de perfil">
+          <button type="button" class="dropdown-item" (click)="openSettings()">
+            <span class="material-icons" aria-hidden="true">settings</span>
+            Configuracion de cuenta
+          </button>
+        </div>
+      }
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Menu lateral artista">
+      @for (item of sidebarItems; track item.label) {
+        <a [routerLink]="item.route" routerLinkActive="active" class="sidebar-link">
+          <span class="material-icons" aria-hidden="true">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <main class="page-content" aria-label="Contenido principal">
+    <router-outlet></router-outlet>
+  </main>
+</div>
 
 <app-footer class="page-footer"></app-footer>
 
