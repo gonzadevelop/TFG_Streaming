@@ -13,4 +13,5 @@ public class ResponsePistaHomeDTO {
     private String urlPortada;
     private List<MiniArtistaDTO> artistas;
     private int duracionSegundos;
+    private int reproduccionesDelUsuario;
 }

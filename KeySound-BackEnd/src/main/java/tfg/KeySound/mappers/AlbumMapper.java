@@ -7,6 +7,7 @@ import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseMiAlbumDTO;
+import tfg.KeySound.model.album.ResponseProximoAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 
 import java.time.LocalDateTime;
@@ -54,4 +55,13 @@ public interface AlbumMapper {
     ResponseMiAlbumDTO toMiAlbumDto(Album album);
 
     List<ResponseMiAlbumDTO> toMisAlbumsDtos(List<Album> albums);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "titulo", source = "titulo")
+    @Mapping(target = "urlPortada", source = "archivoPortada")
+    @Mapping(target = "fechaLanzamiento", source = "album.fechaLanzamiento")
+    @Mapping(target = "tipo", source = "tipo")
+    ResponseProximoAlbumDTO toProximoAlbumDto(Album album);
+
+    List<ResponseProximoAlbumDTO> toProximosAlbumsDtos(List<Album> albums);
 }

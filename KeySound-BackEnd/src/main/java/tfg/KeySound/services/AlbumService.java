@@ -15,6 +15,7 @@ import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
+import tfg.KeySound.model.album.ResponseProximoAlbumDTO;
 import tfg.KeySound.model.artista.MiniArtistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.album.RequestAlbumDTO;
@@ -76,9 +77,9 @@ public class AlbumService {
                 ? firebaseService.subirArchivo(portada, artista.getUsername() + "_" + dto.getNombreAlbum() + "_portada")
                 : "";
 
-        String tipo = dto.getCanciones().size() == 1 ?
-                "Sencillo" :
-                "Album";
+        String tipo = dto.getCanciones().size() == 1
+                ? "Sencillo"
+                : "Album";
 
         LocalDateTime fechaLanzamiento = dto.getFechaLanzamiento() != null ?
                 dto.getFechaLanzamiento() :
@@ -172,11 +173,11 @@ public class AlbumService {
         albumRepository.save(album);
     }
 
-    public List<ResponseAlbumDTO> obtenerProximosLanzamientos() {
+    public List<ResponseProximoAlbumDTO> obtenerProximosLanzamientos() {
         // Obtener los próximos lanzamientos ordenados por fecha de lanzamiento (solo álbumes que no son borradores y con fecha de lanzamiento en el futuro)
         List<Album> proximosLanzamientos = albumRepository.findByEsBorradorFalseAndFechaLanzamientoAfterOrderByFechaLanzamientoAsc(LocalDateTime.now());
 
-        return albumMapper.toDtos(proximosLanzamientos);
+        return albumMapper.toProximosAlbumsDtos(proximosLanzamientos);
     }
 
     public List<ResponseAlbumDTO> obtenerNovedades() {

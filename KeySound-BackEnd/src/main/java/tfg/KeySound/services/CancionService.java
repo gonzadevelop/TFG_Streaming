@@ -1,6 +1,7 @@
 package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.HistorialReproducciones;
@@ -20,6 +21,8 @@ import tfg.KeySound.services.external.JwtService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -76,17 +79,25 @@ public class CancionService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        List<Cancion> canciones = historialReproduccionesRepository.findTop10ByUsuarioOrderByFechaReproduccionDesc(usuario.getId());
+        List<Cancion> canciones = historialReproduccionesRepository.findTop10MostPlayed(usuario.getId());
 
-        List<ResponsePistaHomeDTO> pistaDto = pistaMapper.toDtos(canciones);
+        List<ResponsePistaHomeDTO> pistaDto = pistaMapper.toDtos(canciones)
+                .stream()
+                 .peek(p -> {
+                         p.setReproduccionesDelUsuario(
+                            historialReproduccionesRepository.countReproduccionesByUsuarioAndCancion(usuario.getId(), p.getCancionId())
+                         );
+                        p.setArtistas(
+                                artistaMapper.toMiniDtos(obtenerArtistasDeCancion(p.getCancionId()))
+                        );
+                 })
+                .toList();
 
         for (int i = 0; i < pistaDto.size(); i++) {
             pistaDto.get(i).setUrlPortada(firebaseService.obtenerUrlArchivoImagen(
                     canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getArchivoPortada(),
                     canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getTitulo())
             );
-
-            pistaDto.get(i).setArtistas(artistaMapper.toMiniDtos(obtenerArtistasDeCancion(pistaDto.get(i).getCancionId())));
 
             pistaDto.get(i)
                     .setAlbumId(
