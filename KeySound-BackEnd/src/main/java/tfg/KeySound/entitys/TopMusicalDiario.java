@@ -34,3 +34,5 @@ public class TopMusicalDiario {
     @ManyToOne(fetch = FetchType.LAZY)
     private Cancion cancion;
 }
+
+

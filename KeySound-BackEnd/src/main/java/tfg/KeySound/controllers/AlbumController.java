@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
+import tfg.KeySound.model.album.ResponseProximoAlbumDTO;
 import tfg.KeySound.services.AlbumService;
 
 import java.util.List;
@@ -78,7 +79,7 @@ public class AlbumController {
      * @apiNote {@code GET /api/albums/proximos-lanzamientos}
      */
     @GetMapping("/proximos-lanzamientos")
-    public ResponseEntity<List<ResponseAlbumDTO>> obtenerProximosLanzamientos() {
+    public ResponseEntity<List<ResponseProximoAlbumDTO>> obtenerProximosLanzamientos() {
         return ResponseEntity.ok(albumService.obtenerProximosLanzamientos());
     }
 

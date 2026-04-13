@@ -1,0 +1,12 @@
+<footer class="app-footer">
+  <div class="footer-inner">
+    <p class="footer-copy">&copy; {{ year }} KeySound. Todos los derechos reservados.</p>
+
+    <nav class="footer-nav" aria-label="Enlaces del pie de pagina">
+      @for (item of links; track item.label) {
+        <a [href]="item.href" class="footer-link">{{ item.label }}</a>
+      }
+    </nav>
+  </div>
+</footer>
+
