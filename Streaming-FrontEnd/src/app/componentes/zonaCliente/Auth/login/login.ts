@@ -10,8 +10,9 @@ import {ChangeDetectionStrategy,
   signal, WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {RouterLink} from '@angular/router';
+import {Router,RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
+import {TokenService} from '../../../../services/tokenService';
 import {AuthService} from '../../../../services/authService';
 import {IAuthResponse} from '../../../../model/IAuth';
 import {IUserLogin} from '../../../../model/IUser';
@@ -29,12 +30,15 @@ import {IUserLogin} from '../../../../model/IUser';
 export class Login implements OnInit, OnDestroy {
   private auth: AuthService = inject( AuthService );
   private suscripcionLogin?: Subscription;
-
+  private router: Router = inject(Router);
+  private tokenService: TokenService = inject(TokenService);
 
   public email:InputSignal<string> = input<string>('');
   public atras:OutputEmitterRef<void> = output<void>();
 
   protected mostrarPassword:WritableSignal<boolean> = signal<boolean>(false);
+  protected errorMessage: WritableSignal<string> = signal<string>('');
+  protected isLoading: WritableSignal<boolean> = signal<boolean>(false);
 
   protected loginForm: FormGroup = new FormGroup({
     user: new FormControl('', [Validators.email]),
@@ -42,15 +46,16 @@ export class Login implements OnInit, OnDestroy {
   });
 
   login(): void {
-    console.log('Iniciando sesión con:', this.email(), this.loginForm.value.password);
     const request: IUserLogin = {
-      email: this.email(),
+      email: this.loginForm.value.user,
       password: this.loginForm.value.password
     };
     this.suscripcionLogin = this.auth.login(request).subscribe({
       next: (response: IAuthResponse): void => {
         const token = response.token || '';
-        console.log('Inicio de sesión exitoso. Token:', token);
+        this.tokenService.setToken(token);
+        console.log('Login exitoso. Token guardado:', token);
+        this.router.navigate(['/']);
       }
     });
   }

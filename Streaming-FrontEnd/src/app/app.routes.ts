@@ -28,6 +28,13 @@ export const routes: Routes = [
     canActivate: [publicGuard]
   },
   {
+    path: 'verificar-email',
+    title: 'Verifica tu correo | KeySound',
+    loadComponent: () =>
+      import('./componentes/zonaCliente/Auth/email-verification/email-verification')
+        .then(m => m.EmailVerification),
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full',
