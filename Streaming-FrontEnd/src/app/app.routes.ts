@@ -60,6 +60,13 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'verificar-email',
+    title: 'Verifica tu correo | KeySound',
+    loadComponent: () =>
+      import('./componentes/zonaCliente/Auth/email-verification/email-verification')
+        .then(m => m.EmailVerification),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },
