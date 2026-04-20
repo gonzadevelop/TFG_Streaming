@@ -1,1 +1,153 @@
-<p>player works!</p>
+<!-- Botón flotante para mostrar el player cuando está oculto -->
+@if (!isVisible()) {
+  <button
+    class="player-show-btn"
+    (click)="toggleVisible()"
+    aria-label="Mostrar reproductor">
+    <span class="material-icons">queue_music</span>
+  </button>
+}
+
+<!-- Vista expandida (portada grande) -->
+@if (isExpanded() && isVisible()) {
+  <div class="player-expanded" role="region" aria-label="Reproductor expandido">
+    <div class="player-expanded__cover">
+      @if (currentSong().cover) {
+        <img [src]="currentSong().cover" [alt]="currentSong().title" class="player-expanded__img" />
+      } @else {
+        <div class="player-expanded__cover-placeholder" aria-hidden="true">
+          <span class="material-icons">album</span>
+        </div>
+      }
+    </div>
+    <div class="player-expanded__info">
+      <span class="player-expanded__title">{{ currentSong().title }}</span>
+      <span class="player-expanded__artist">{{ currentSong().artist }}</span>
+    </div>
+  </div>
+}
+
+<!-- Barra del reproductor principal -->
+@if (isVisible()) {
+  <div
+    class="player-bar"
+    [class.player-bar--expanded]="isExpanded()"
+    role="region"
+    aria-label="Reproductor de música">
+
+    <!-- Acciones de la barra (ocultar / expandir) -->
+    <div class="player-bar__actions">
+      <button
+        class="player-btn player-btn--xs"
+        (click)="toggleExpanded()"
+        [attr.aria-label]="isExpanded() ? 'Reducir reproductor' : 'Ampliar reproductor'"
+        [attr.aria-pressed]="isExpanded()">
+        <span class="material-icons">{{ isExpanded() ? 'expand_more' : 'expand_less' }}</span>
+      </button>
+      <button
+        class="player-btn player-btn--xs"
+        (click)="toggleVisible()"
+        aria-label="Ocultar reproductor">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Canción actual -->
+    <div class="player-song">
+      <div class="player-cover" aria-hidden="true">
+        @if (currentSong().cover) {
+          <img [src]="currentSong().cover" [alt]="currentSong().title" />
+        } @else {
+          <span class="material-icons player-cover__icon">music_note</span>
+        }
+      </div>
+      <div class="player-song__info">
+        <span class="player-song__title">{{ currentSong().title }}</span>
+        <span class="player-song__artist">{{ currentSong().artist }}</span>
+      </div>
+    </div>
+
+    <!-- Controles centrales -->
+    <div class="player-controls">
+      <div class="player-controls__buttons">
+        <button
+          class="player-btn player-btn--sm"
+          [class.player-btn--active]="isShuffled()"
+          (click)="toggleShuffle()"
+          [attr.aria-label]="isShuffled() ? 'Desactivar aleatorio' : 'Activar aleatorio'"
+          [attr.aria-pressed]="isShuffled()">
+          <span class="material-icons">shuffle</span>
+        </button>
+
+        <button class="player-btn player-btn--sm" aria-label="Canción anterior">
+          <span class="material-icons">skip_previous</span>
+        </button>
+
+        <button
+          class="player-btn player-btn--play"
+          (click)="togglePlay()"
+          [attr.aria-label]="isPlaying() ? 'Pausar' : 'Reproducir'">
+          <span class="material-icons">{{ isPlaying() ? 'pause' : 'play_arrow' }}</span>
+        </button>
+
+        <button class="player-btn player-btn--sm" aria-label="Siguiente canción">
+          <span class="material-icons">skip_next</span>
+        </button>
+
+        <button
+          class="player-btn player-btn--sm"
+          [class.player-btn--active]="repeatMode() !== 'none'"
+          (click)="toggleRepeat()"
+          [attr.aria-label]="'Repetir: ' + repeatMode()"
+          [attr.aria-pressed]="repeatMode() !== 'none'">
+          <span class="material-icons">{{ repeatIcon() }}</span>
+          @if (repeatMode() === 'one') {
+            <span class="player-btn__badge">1</span>
+          }
+        </button>
+      </div>
+
+      <!-- Barra de progreso -->
+      <div class="player-progress" role="group" aria-label="Progreso de reproducción">
+        <span class="player-progress__time" aria-label="Tiempo actual">{{ formattedCurrent() }}</span>
+        <div
+          class="player-progress__bar"
+          role="slider"
+          [attr.aria-valuenow]="currentTime()"
+          [attr.aria-valuemin]="0"
+          [attr.aria-valuemax]="duration()"
+          [attr.aria-valuetext]="formattedCurrent() + ' de ' + formattedDuration()"
+          tabindex="0"
+          (click)="onProgressClick($event)">
+          <div class="player-progress__fill" [style.width.%]="progressPercent()">
+            <div class="player-progress__thumb"></div>
+          </div>
+        </div>
+        <span class="player-progress__time" aria-label="Duración total">{{ formattedDuration() }}</span>
+      </div>
+    </div>
+
+    <!-- Volumen -->
+    <div class="player-volume">
+      <button
+        class="player-btn player-btn--sm"
+        (click)="toggleMute()"
+        [attr.aria-label]="isMuted() ? 'Activar sonido' : 'Silenciar'"
+        [attr.aria-pressed]="isMuted()">
+        <span class="material-icons">
+          {{ isMuted() || volume() === 0 ? 'volume_off' : volume() < 50 ? 'volume_down' : 'volume_up' }}
+        </span>
+      </button>
+      <input
+        type="range"
+        class="player-volume__slider"
+        min="0"
+        max="100"
+        [value]="volume()"
+        (input)="onVolumeChange($event)"
+        aria-label="Volumen"
+        [attr.aria-valuenow]="volume()" />
+    </div>
+
+  </div>
+}

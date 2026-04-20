@@ -15,7 +15,7 @@ import {Subscription} from 'rxjs';
 import {TokenService} from '../../../../services/tokenService';
 import {AuthService} from '../../../../services/authService';
 import {IAuthResponse} from '../../../../model/IAuth';
-import {IUserLogin} from '../../../../model/IUser';
+import {IUserLogin} from '../../../../model/IUserLogin';
 
 @Component({
   selector: 'app-login',
@@ -46,6 +46,11 @@ export class Login implements OnInit, OnDestroy {
   });
 
   login(): void {
+    if (this.loginForm.invalid) return;
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
     const request: IUserLogin = {
       email: this.loginForm.value.user,
       password: this.loginForm.value.password
@@ -54,8 +59,13 @@ export class Login implements OnInit, OnDestroy {
       next: (response: IAuthResponse): void => {
         const token = response.token || '';
         this.tokenService.setToken(token);
-        console.log('Login exitoso. Token guardado:', token);
-        this.router.navigate(['/']);
+        this.isLoading.set(false);
+        this.router.navigate(['/home']);
+      },
+      error: (): void => {
+        this.isLoading.set(false);
+        this.errorMessage.set('Usuario o contraseña incorrectos. Inténtalo de nuevo.');
+        setTimeout(() => this.errorMessage.set(''), 5000);
       }
     });
   }

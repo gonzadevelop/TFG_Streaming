@@ -13,7 +13,7 @@ import {AuthService} from '../../../../services/authService';
 import {TokenService} from '../../../../services/tokenService';
 import {Subscription} from 'rxjs';
 import {IAuthResponse} from '../../../../model/IAuth';
-import {IUserRegister} from '../../../../model/IUser';
+import {IUserRegister} from '../../../../model/IUserRegister';
 
 function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
   const password = group.get('password')?.value;

@@ -1,4 +1,5 @@
-import IUser, {IUserLogin, IUserRegister} from '../model/IUser';
+import {IUserLogin} from '../model/IUserLogin';
+import {IUserRegister} from '../model/IUserRegister';
 import {Injectable, inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
@@ -11,29 +12,29 @@ import {IAuthResponse, ICheckEmailResponse} from '../model/IAuth';
 
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly baseURL = `${environment.apiURL}/auth`;
+  private readonly baseURL = `${environment.apiURL}`;
 
   login(credentials: IUserLogin): Observable<IAuthResponse> {
     return this.http.post<IAuthResponse>(
-      `${this.baseURL}/login`,
+      `${this.baseURL}/auth/login`,
       credentials);
   }
 
   register(userData: IUserRegister): Observable<IAuthResponse> {
     return this.http.post<IAuthResponse>(
-      `${this.baseURL}/register`,
+      `${this.baseURL}/auth/register`,
       userData);
   }
 
   checkEmail(email: string): Observable<ICheckEmailResponse> {
     return this.http.post<ICheckEmailResponse>(
-      `${this.baseURL}/check-email`,
+      `${this.baseURL}/auth/check-email`,
       { email });
   }
 
   resendVerificationEmail(email: string): Observable<void> {
     return this.http.post<void>(
-      `${this.baseURL}/resend-verification-email`,
+      `${this.baseURL}/auth/resend-verification-email`,
       { email }
     );
   }

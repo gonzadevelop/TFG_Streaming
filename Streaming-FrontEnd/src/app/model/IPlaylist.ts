@@ -5,7 +5,7 @@ export default interface IPlaylist {
   esPublica: boolean;
   nombre: string;
   propietario_id: IUser;
-  descripción?: string;
+  descripcion?: string;
   fecha_creacion: Date;
   foto_portada?: string;
 }

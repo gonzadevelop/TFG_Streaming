@@ -1,0 +1,139 @@
+:host {
+  display: block;
+  width: 220px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  background: linear-gradient(135deg, #e0e4e8 0%, #cee0f2 40%, #b8d4ec 70%, #d5dbe1 100%);
+  background-size: 400% 400%;
+  animation: sidebar-bg-shift 10s ease infinite;
+}
+
+@keyframes sidebar-bg-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.side-menu {
+  position: fixed;
+  top: 100px;
+  width: 220px;
+  background: linear-gradient(135deg, #e0e4e8 0%, #cee0f2 40%, #b8d4ec 70%, #d5dbe1 100%);
+  background-size: 400% 400%;
+  animation: sidebar-bg-shift 10s ease infinite;
+  border: 1px solid rgba(11, 117, 192, 0.15);
+  border-radius: 14px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(11, 117, 192, 0.08);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.side-menu--hidden {
+  display: none;
+}
+
+/* ── Bienvenida ───────────────────────── */
+
+.sidebar-welcome {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(11, 117, 192, 0.15);
+  margin-bottom: 0.75rem;
+}
+
+.welcome-inner {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 4px 24px rgba(11, 117, 192, 0.1);
+}
+
+.welcome-avatar {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0b75c0, #78bfda);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(11, 117, 192, 0.3);
+}
+
+.welcome-avatar-letter {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.welcome-saludo {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.welcome-nombre {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1a2a38;
+  letter-spacing: -0.02em;
+}
+
+.welcome-sub {
+  font-size: 0.75rem;
+  color: #0b75c0;
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+.welcome-login-link {
+  color: #0b75c0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.welcome-login-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Navegación ───────────────────────── */
+
+.sidebar-nav {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: #3a5a78;
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: rgba(11, 117, 192, 0.12);
+  color: #1a2a38;
+}
+
+.sidebar-link.active .material-icons {
+  color: #0b75c0;
+}
+
+/* ── Accesibilidad ────────────────────── */
+
+.sidebar-link:focus-visible {
+  outline: 2px solid #0b75c0;
+  outline-offset: 2px;
+}

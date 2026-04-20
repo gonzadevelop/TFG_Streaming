@@ -1,0 +1,45 @@
+<aside
+  id="artist-sidebar"
+  class="side-menu"
+  [attr.aria-hidden]="!isOpen()">
+
+  <!-- Bienvenida -->
+  <section class="home-welcome sidebar-welcome" aria-label="Bienvenida">
+    <div class="welcome-inner d-flex align-items-center gap-3">
+      <div class="welcome-avatar" aria-hidden="true">
+        <span class="welcome-avatar-letter">{{ inicialAvatar() }}</span>
+      </div>
+      <div>
+        <p class="welcome-saludo mb-0">{{ saludo() }},</p>
+        <h2 class="welcome-nombre mb-0">
+          @if (estaLogueado()) {
+            {{ userName() }}
+          } @else {
+            ¡Bienvenido!
+          }
+        </h2>
+        <p class="welcome-sub mb-0">
+          @if (estaLogueado()) {
+            ¿Qué quieres escuchar hoy?
+          } @else {
+            <a routerLink="/login" class="welcome-login-link">Inicia sesión</a>
+          }
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="sidebar-nav" aria-label="Menú lateral">
+    @for (item of sidebarItems; track item.label) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        class="sidebar-link"
+        [attr.aria-label]="item.label">
+        <span class="material-icons" aria-hidden="true">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+</aside>
