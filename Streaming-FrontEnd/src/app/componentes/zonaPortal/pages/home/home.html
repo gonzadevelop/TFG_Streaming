@@ -1,173 +1,325 @@
-<!-- Fondo animado (igual que login) -->
+<!-- Fondo animado -->
 <div class="home-bg" aria-hidden="true">
   <div class="home-blob home-blob--1"></div>
   <div class="home-blob home-blob--2"></div>
   <div class="home-blob home-blob--3"></div>
 </div>
 
-
-<main class="home-content" id="main-content">
-
-<!-- BIENVENIDA AL USUARIO -->
-
-  <section class="home-section home-welcome" aria-label="Bienvenida">
-    <div class="container-fluid px-4 px-md-5">
-      <div class="welcome-inner d-flex align-items-center gap-4">
-        <div class="welcome-avatar" aria-hidden="true">
-          <span class="welcome-avatar-letter">{{ inicialAvatar() }}</span>
-        </div>
-        <div>
-          <p class="welcome-saludo mb-0">{{ saludo() }},</p>
-          <h1 class="welcome-nombre mb-0">{{ nombreUsuario() }}</h1>
-          <p class="welcome-sub mb-0">¿Qué quieres escuchar hoy?</p>
-        </div>
-      </div>
+<main class="home-content" aria-label="Contenido principal de KeySound">
+  @if (cargando()) {
+    <div class="home-loading" role="status" aria-live="polite">
+      <div class="spinner-border text-primary" aria-hidden="true"></div>
+      <p class="mt-3 mb-0">Cargando contenido…</p>
     </div>
-  </section>
+  } @else {
 
-  <!-- ══════════════════════════
-       2. Playlists de la plataforma
-  ══════════════════════════ -->
-  <section class="home-section" aria-labelledby="playlists-heading">
-    <div class="container-fluid px-4 px-md-5">
-      <div class="section-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-          <h2 class="section-title mb-0" id="playlists-heading">
-            <span class="section-icon" aria-hidden="true">PLAYLIST RECOMENDADAS, A TU GUSTO.</span>
-          </h2>
-          <p class="section-sub mb-0">Seleccionadas por nuestros editores para ti</p>
+    <!-- ══════════════════════════
+         1. MIS PLAYLISTS / PLAYLISTS DESTACADAS
+    ══════════════════════════ -->
+    <section class="home-section" aria-labelledby="playlists-heading">
+      <div class="container-fluid px-4 px-md-5">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-title mb-0" id="playlists-heading">
+              @if (estaLogueado()) { Mis playlists } @else { Playlists destacadas }
+            </h2>
+            <p class="section-sub mb-0">
+              @if (estaLogueado()) { Las que más escuchas } @else { Seleccionadas por nuestros editores }
+            </p>
+          </div>
+          <a routerLink="/playlists" class="section-link" aria-label="Ver todas las playlists">Ver todas →</a>
         </div>
-        <a routerLink="/playlists" class="section-link" aria-label="Ver todas las playlists">Ver todas →</a>
-      </div>
 
-      <div class="cards-grid" role="list">
-        @for (playlist of playlists(); track playlist.id) {
-          <article class="ks-card" role="listitem" tabindex="0" [attr.aria-label]="playlist.nombre + ', ' + playlist.canciones + ' canciones'">
-            <div class="ks-card__cover" [style.background]="'linear-gradient(135deg, ' + playlist.color + '33, ' + playlist.color + '66'">
-              <span class="ks-card__emoji" aria-hidden="true">{{ playlist.emoji }}</span>
-              <button type="button" class="ks-card__play-btn" [attr.aria-label]="'Reproducir ' + playlist.nombre">
-                <i class="bi bi-play-fill"></i>
-              </button>
-            </div>
-            <div class="ks-card__body">
-              <p class="ks-card__title mb-1">{{ playlist.nombre }}</p>
-              <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
-              <span class="ks-card__badge mt-2">{{ playlist.canciones }} canciones</span>
-            </div>
-          </article>
+        @if (playlists().length > 0) {
+          <div class="cards-grid" role="list">
+            @for (playlist of playlists(); track playlist.id) {
+              <article
+                class="ks-card"
+                role="listitem"
+                tabindex="0"
+                [attr.aria-label]="playlist.nombre"
+              >
+                <div class="ks-card__cover ks-card__cover--playlist">
+                  @if (playlist.foto_portada) {
+                    <img
+                      [src]="playlist.foto_portada"
+                      [alt]="'Portada de ' + playlist.nombre"
+                      class="ks-card__img"
+                    />
+                  } @else {
+                    <span class="ks-card__fallback-icon" aria-hidden="true">
+                      <i class="bi bi-music-note-list"></i>
+                    </span>
+                  }
+                  <button
+                    type="button"
+                    class="ks-card__play-btn"
+                    [attr.aria-label]="'Reproducir ' + playlist.nombre"
+                  >
+                    <i class="bi bi-play-fill"></i>
+                  </button>
+                </div>
+                <div class="ks-card__body">
+                  <p class="ks-card__title mb-1">{{ playlist.nombre }}</p>
+                  @if (playlist.descripcion) {
+                    <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
+                  }
+                  <span class="ks-card__badge mt-2">
+                    {{ playlist.esPublica ? 'Pública' : 'Privada' }}
+                  </span>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-music-note-list empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">
+              @if (estaLogueado()) {
+                Aún no tienes playlists. <a routerLink="/playlists/nueva">Crea una</a>.
+              } @else {
+                No hay playlists disponibles en este momento.
+              }
+            </p>
+          </div>
         }
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ══════════════════════════
-       3. Podcasts recomendados
-  ══════════════════════════ -->
-  <section class="home-section" aria-labelledby="podcasts-heading">
-    <div class="container-fluid px-4 px-md-5">
-      <div class="section-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-          <h2 class="section-title mb-0" id="podcasts-heading">
-            <span class="section-icon" aria-hidden="true">ARTISTAS QUE SIGUES:</span>
-          </h2>
-          <p class="section-sub mb-0">Lo que el mundo está escuchando</p>
+    <!-- ══════════════════════════
+         2. ARTISTAS QUE SIGUES / POPULARES
+    ══════════════════════════ -->
+    <section class="home-section" aria-labelledby="artistas-heading">
+      <div class="container-fluid px-4 px-md-5">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-title mb-0" id="artistas-heading">
+              @if (estaLogueado()) { Artistas que sigues } @else { Artistas populares }
+            </h2>
+            <p class="section-sub mb-0">
+              @if (estaLogueado()) { Tus artistas favoritos } @else { Los más escuchados ahora mismo }
+            </p>
+          </div>
+          <a routerLink="/artistas" class="section-link" aria-label="Ver todos los artistas">Ver todos →</a>
         </div>
-        <a routerLink="/podcasts" class="section-link" aria-label="Ver todos los podcasts">Ver todos →</a>
-      </div>
 
-      <div class="cards-grid cards-grid--podcasts" role="list">
-        @for (podcast of podcasts(); track podcast.id) {
-          <article class="ks-card ks-card--horizontal" role="listitem" tabindex="0" [attr.aria-label]="podcast.titulo + ' por ' + podcast.autor">
-            <div class="ks-card__cover ks-card__cover--sm" [style.background]="'linear-gradient(135deg, ' + podcast.color + '33, ' + podcast.color + '66'">
-              <span class="ks-card__emoji" aria-hidden="true">{{ podcast.emoji }}</span>
-            </div>
-            <div class="ks-card__body">
-              <p class="ks-card__title mb-1">{{ podcast.titulo }}</p>
-              <p class="ks-card__desc mb-1">{{ podcast.autor }}</p>
-              <span class="ks-card__badge">{{ podcast.categoria }}</span>
-              <span class="ks-card__badge ks-card__badge--secondary ms-1">{{ podcast.episodios }} ep.</span>
-            </div>
-          </article>
+        @if (artistas().length > 0) {
+          <div class="artistas-grid" role="list">
+            @for (artista of artistas(); track artista.id) {
+              <article
+                class="artista-card"
+                role="listitem"
+                tabindex="0"
+                [attr.aria-label]="artista.name"
+              >
+                <div class="artista-card__avatar">
+                  @if (artista.avatarUrl) {
+                    <img
+                      [src]="artista.avatarUrl"
+                      [alt]="artista.name"
+                      class="artista-card__img"
+                    />
+                  } @else {
+                    <span class="artista-card__initial" aria-hidden="true">
+                      {{ artista.name[0]?.toUpperCase() }}
+                    </span>
+                  }
+                </div>
+                <p class="artista-card__nombre mb-0">{{ artista.name }}</p>
+                @if (artista.biografia) {
+                  <p class="artista-card__bio mb-0">{{ artista.biografia }}</p>
+                }
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-person-music empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">
+              @if (estaLogueado()) {
+                Aún no sigues a ningún artista.
+              } @else {
+                No hay artistas disponibles en este momento.
+              }
+            </p>
+          </div>
         }
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ══════════════════════════
-       4. Artistas en concierto
-  ══════════════════════════ -->
-  <section class="home-section" aria-labelledby="conciertos-heading">
-    <div class="container-fluid px-4 px-md-5">
-      <div class="section-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-          <h2 class="section-title mb-0" id="conciertos-heading">
-            <span class="section-icon" aria-hidden="true">🎤</span>
-            Artistas que sigues en concierto
-          </h2>
-          <p class="section-sub mb-0">No te pierdas sus próximas actuaciones</p>
+    <!-- ══════════════════════════
+         3. NOVEDADES DE LA SEMANA
+    ══════════════════════════ -->
+    <section class="home-section" aria-labelledby="novedades-heading">
+      <div class="container-fluid px-4 px-md-5">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-title mb-0" id="novedades-heading">Novedades de la semana</h2>
+            <p class="section-sub mb-0">Los lanzamientos más recientes</p>
+          </div>
+          <a routerLink="/novedades" class="section-link" aria-label="Ver todas las novedades">Ver todas →</a>
         </div>
-        <a routerLink="/conciertos" class="section-link" aria-label="Ver todos los conciertos">Ver todos →</a>
-      </div>
 
-      <div class="conciertos-list" role="list">
-        @for (concierto of conciertos(); track concierto.id) {
-          <article class="concierto-item" role="listitem" tabindex="0" [attr.aria-label]="concierto.nombre + ' el ' + concierto.fecha + ' en ' + concierto.ciudad">
-            <div class="concierto-item__avatar" [style.background]="'linear-gradient(135deg, ' + concierto.color + '22, ' + concierto.color + '55'">
-              <span aria-hidden="true">{{ concierto.emoji }}</span>
-            </div>
-            <div class="concierto-item__info">
-              <p class="concierto-item__nombre mb-0">{{ concierto.nombre }}</p>
-              <p class="concierto-item__ciudad mb-0">
-                <i class="bi bi-geo-alt-fill me-1" aria-hidden="true"></i>{{ concierto.ciudad }}
-              </p>
-            </div>
-            <div class="concierto-item__fecha ms-auto text-end">
-              <span class="concierto-item__fecha-badge">
-                <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>{{ concierto.fecha }}
-              </span>
-              <button type="button" class="btn-ticket mt-1" [attr.aria-label]="'Comprar entradas para ' + concierto.nombre">
-                Entradas <i class="bi bi-ticket-perforated ms-1" aria-hidden="true"></i>
-              </button>
-            </div>
-          </article>
+        @if (novedadesSemana().length > 0) {
+          <div class="cards-grid cards-grid--novedades" role="list">
+            @for (novedad of novedadesSemana(); track novedad.id) {
+              <article
+                class="ks-card ks-card--novedad"
+                role="listitem"
+                tabindex="0"
+                [attr.aria-label]="novedad.titulo + ' de ' + novedad.idUsuario.name"
+              >
+                <div class="ks-card__cover">
+                  @if (novedad.archivo_portada) {
+                    <img
+                      [src]="novedad.archivo_portada"
+                      [alt]="'Portada de ' + novedad.titulo"
+                      class="ks-card__img"
+                    />
+                  } @else {
+                    <span class="ks-card__fallback-icon" aria-hidden="true">
+                      <i class="bi bi-disc"></i>
+                    </span>
+                  }
+                  <button
+                    type="button"
+                    class="ks-card__play-btn"
+                    [attr.aria-label]="'Reproducir ' + novedad.titulo"
+                  >
+                    <i class="bi bi-play-fill"></i>
+                  </button>
+                </div>
+                <div class="ks-card__body">
+                  <p class="ks-card__title mb-1">{{ novedad.titulo }}</p>
+                  <p class="ks-card__desc mb-0">{{ novedad.idUsuario.name }}</p>
+                  <span class="ks-card__badge mt-2">{{ novedad.tipo }}</span>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-disc empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">No hay novedades esta semana.</p>
+          </div>
         }
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ══════════════════════════
-       5. Novedades recientes (extra)
-  ══════════════════════════ -->
-  <section class="home-section home-section--last" aria-labelledby="novedades-heading">
-    <div class="container-fluid px-4 px-md-5">
-      <div class="section-header d-flex align-items-center justify-content-between mb-4">
-        <div>
-          <h2 class="section-title mb-0" id="novedades-heading">
-            <span class="section-icon" aria-hidden="true">NOVEDADES DE LA SEMANA.</span>
-          </h2>
-          <p class="section-sub mb-0">Los lanzamientos más recientes</p>
+    <!-- ══════════════════════════
+         4. PRÓXIMOS LANZAMIENTOS
+    ══════════════════════════ -->
+    <section class="home-section" aria-labelledby="proximos-heading">
+      <div class="container-fluid px-4 px-md-5">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-title mb-0" id="proximos-heading">
+              @if (estaLogueado()) { Próximos lanzamientos de tus artistas } @else { Próximos lanzamientos }
+            </h2>
+            <p class="section-sub mb-0">Lo que viene pronto</p>
+          </div>
+          <a routerLink="/lanzamientos" class="section-link" aria-label="Ver todos los próximos lanzamientos">Ver todos →</a>
         </div>
-        <a routerLink="/novedades" class="section-link" aria-label="Ver todas las novedades">Ver todas →</a>
-      </div>
 
-      <div class="cards-grid cards-grid--novedades" role="list">
-        @for (novedad of novedades(); track novedad.id) {
-          <article class="ks-card ks-card--novedad" role="listitem" tabindex="0" [attr.aria-label]="novedad.titulo + ' de ' + novedad.artista">
-            <div class="ks-card__cover" [style.background]="'linear-gradient(135deg, ' + novedad.color + '33, ' + novedad.color + '66'">
-              <span class="ks-card__emoji" aria-hidden="true">{{ novedad.emoji }}</span>
-              <button type="button" class="ks-card__play-btn" [attr.aria-label]="'Reproducir ' + novedad.titulo">
-                <i class="bi bi-play-fill"></i>
-              </button>
-            </div>
-            <div class="ks-card__body">
-              <p class="ks-card__title mb-1">{{ novedad.titulo }}</p>
-              <p class="ks-card__desc mb-0">{{ novedad.artista }}</p>
-              <span class="ks-card__badge mt-2">{{ novedad.tipo }}</span>
-            </div>
-          </article>
+        @if (proximosLanzamientos().length > 0) {
+          <div class="lanzamientos-list" role="list">
+            @for (lanzamiento of proximosLanzamientos(); track lanzamiento.id) {
+              <article
+                class="lanzamiento-item"
+                role="listitem"
+                tabindex="0"
+                [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.idUsuario.name"
+              >
+                <div class="lanzamiento-item__cover">
+                  @if (lanzamiento.archivo_portada) {
+                    <img
+                      [src]="lanzamiento.archivo_portada"
+                      [alt]="'Portada de ' + lanzamiento.titulo"
+                      class="lanzamiento-item__img"
+                    />
+                  } @else {
+                    <i class="bi bi-calendar-event lanzamiento-item__icon" aria-hidden="true"></i>
+                  }
+                </div>
+                <div class="lanzamiento-item__info">
+                  <p class="lanzamiento-item__titulo mb-0">{{ lanzamiento.titulo }}</p>
+                  <p class="lanzamiento-item__artista mb-0">{{ lanzamiento.idUsuario.name }}</p>
+                </div>
+                <div class="lanzamiento-item__meta ms-auto text-end">
+                  <span class="ks-card__badge">{{ lanzamiento.tipo }}</span>
+                  <p class="lanzamiento-item__fecha mb-0 mt-1">
+                    <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>
+                    {{ lanzamiento.fecha_lanzamiento }}
+                  </p>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-calendar-event empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">No hay próximos lanzamientos por el momento.</p>
+          </div>
         }
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- ══════════════════════════
+         5. CANCIONES MÁS ESCUCHADAS
+    ══════════════════════════ -->
+    <section class="home-section home-section--last" aria-labelledby="canciones-heading">
+      <div class="container-fluid px-4 px-md-5">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-title mb-0" id="canciones-heading">
+              @if (estaLogueado()) { Tus canciones más escuchadas } @else { Canciones más escuchadas }
+            </h2>
+            <p class="section-sub mb-0">
+              @if (estaLogueado()) { Tu historial personal } @else { Lo que suena en todo el mundo }
+            </p>
+          </div>
+          <a routerLink="/canciones" class="section-link" aria-label="Ver todas las canciones">Ver todas →</a>
+        </div>
+
+        @if (canciones().length > 0) {
+          <ol class="canciones-list" aria-label="Lista de canciones más escuchadas">
+            @for (cancion of canciones(); track cancion.id; let i = $index) {
+              <li class="cancion-item" tabindex="0" [attr.aria-label]="cancion.titulo">
+                <span class="cancion-item__pos" aria-hidden="true">{{ i + 1 }}</span>
+                <div class="cancion-item__cover">
+                  <i class="bi bi-music-note cancion-item__icon" aria-hidden="true"></i>
+                </div>
+                <div class="cancion-item__info">
+                  <p class="cancion-item__titulo mb-0">{{ cancion.titulo }}</p>
+                </div>
+                <div class="cancion-item__meta ms-auto text-end">
+                  <p class="cancion-item__duracion mb-0">{{ formatearDuracion(cancion.duracionSegundos) }}</p>
+                </div>
+                <button
+                  type="button"
+                  class="cancion-item__play"
+                  [attr.aria-label]="'Reproducir ' + cancion.titulo"
+                >
+                  <i class="bi bi-play-fill"></i>
+                </button>
+              </li>
+            }
+          </ol>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-headphones empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">
+              @if (estaLogueado()) {
+                Aún no tienes canciones escuchadas.
+              } @else {
+                No hay datos disponibles en este momento.
+              }
+            </p>
+          </div>
+        }
+      </div>
+    </section>
+
+  }
 
 </main>

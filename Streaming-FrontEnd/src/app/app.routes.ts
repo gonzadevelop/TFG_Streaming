@@ -2,6 +2,19 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: '',
+    loadComponent: () =>
+      import('./componentes/zonaPortal/Layout/layout').then(m => m.Layout),
+    children: [
+      {
+        path: '',
+        title: 'Abre todas las puertas a tus oídos | KeySound',
+        loadComponent: () =>
+          import('./componentes/zonaPortal/pages/home/home').then(m => m.Home),
+      },
+    ],
+  },
+  {
     path: 'login',
     title: 'Inicio de sesión | KeySound',
     loadComponent: () =>
@@ -14,43 +27,10 @@ export const routes: Routes = [
       import('./componentes/zonaCliente/Auth/registro/registro').then(m => m.Registro),
   },
   {
-    path: 'header',
-    title: 'Header | KeySound',
-    loadComponent: () =>
-      import('./componentes/zonaPortal/Layout/Header/header').then(m => m.Header),
-    children: [
-      {
-        path: 'artista',
-        title: 'Zona Artista | KeySound',
-        loadComponent: () =>
-          import('./componentes/zonaArtista/artista').then(m => m.Artista),
-      },
-      {
-        path: '',
-        redirectTo: 'artista',
-        pathMatch: 'full',
-      },
-    ],
-  },
-  {
-    path: 'artista',
-    redirectTo: 'header/artista',
-    pathMatch: 'full',
-  },
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
-  {
     path: 'verificar-email',
     title: 'Verifica tu correo | KeySound',
     loadComponent: () =>
       import('./componentes/zonaCliente/Auth/email-verification/email-verification')
         .then(m => m.EmailVerification),
-  },
-  {
-    path: '**',
-    redirectTo: 'header/artista',
   },
 ];

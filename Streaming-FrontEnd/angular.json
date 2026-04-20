@@ -86,7 +86,8 @@
               "buildTarget": "KeySound-FrontEnd:build:production"
             },
             "development": {
-              "buildTarget": "KeySound-FrontEnd:build:development"
+              "buildTarget": "KeySound-FrontEnd:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
