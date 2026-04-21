@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './Header/header';
 import { Footer } from './Footer/footer';
@@ -15,8 +15,7 @@ import { Player } from './Player/player';
     <div class="layout-shell" [class.layout-shell--collapsed]="!sidebarOpen()">
       <app-sidebar
         [hidden]="!sidebarOpen()"
-        [isOpen]="sidebarOpen()"
-        [userName]="userName()" />
+        [isOpen]="sidebarOpen()" />
 
       <main class="layout-content" id="main-content">
         <router-outlet />
@@ -29,14 +28,4 @@ import { Player } from './Player/player';
 })
 export class Layout {
   readonly sidebarOpen = signal(true);
-
-  readonly userName = computed(() => {
-    if (typeof window === 'undefined') return 'Usuario';
-    const keys = ['userName', 'username', 'name'];
-    for (const key of keys) {
-      const value = window.localStorage.getItem(key);
-      if (value?.trim()) return value.trim();
-    }
-    return 'Usuario';
-  });
 }

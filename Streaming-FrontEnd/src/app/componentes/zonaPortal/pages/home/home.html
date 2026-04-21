@@ -31,11 +31,10 @@
         </div>
 
         @if (playlists().length > 0) {
-          <div class="cards-grid" role="list">
+          <ul class="cards-grid list-unstyled">
             @for (playlist of playlists(); track playlist.id) {
-              <article
+              <li
                 class="ks-card"
-                role="listitem"
                 tabindex="0"
                 [attr.aria-label]="playlist.nombre"
               >
@@ -68,20 +67,9 @@
                     {{ playlist.esPublica ? 'Pública' : 'Privada' }}
                   </span>
                 </div>
-              </article>
+              </li>
             }
-          </div>
-        } @else {
-          <div class="empty-state" role="status">
-            <i class="bi bi-music-note-list empty-state__icon" aria-hidden="true"></i>
-            <p class="empty-state__text">
-              @if (estaLogueado()) {
-                Aún no tienes playlists. <a routerLink="/playlists/nueva">Crea una</a>.
-              } @else {
-                No hay playlists disponibles en este momento.
-              }
-            </p>
-          </div>
+          </ul>
         }
       </div>
     </section>
@@ -104,34 +92,33 @@
         </div>
 
         @if (artistas().length > 0) {
-          <div class="artistas-grid" role="list">
+          <ul class="artistas-grid list-unstyled">
             @for (artista of artistas(); track artista.id) {
-              <article
+              <li
                 class="artista-card"
-                role="listitem"
                 tabindex="0"
-                [attr.aria-label]="artista.name"
+                [attr.aria-label]="artista.username"
               >
                 <div class="artista-card__avatar">
                   @if (artista.avatarUrl) {
                     <img
                       [src]="artista.avatarUrl"
-                      [alt]="artista.name"
+                      [alt]="artista.username"
                       class="artista-card__img"
                     />
                   } @else {
                     <span class="artista-card__initial" aria-hidden="true">
-                      {{ artista.name[0]?.toUpperCase() }}
+                      {{ artista.username[0]?.toUpperCase() }}
                     </span>
                   }
                 </div>
-                <p class="artista-card__nombre mb-0">{{ artista.name }}</p>
+                <p class="artista-card__nombre mb-0">{{ artista.username }}</p>
                 @if (artista.biografia) {
                   <p class="artista-card__bio mb-0">{{ artista.biografia }}</p>
                 }
-              </article>
+              </li>
             }
-          </div>
+          </ul>
         } @else {
           <div class="empty-state" role="status">
             <i class="bi bi-person-music empty-state__icon" aria-hidden="true"></i>
@@ -161,13 +148,12 @@
         </div>
 
         @if (novedadesSemana().length > 0) {
-          <div class="cards-grid cards-grid--novedades" role="list">
+          <ul class="cards-grid cards-grid--novedades list-unstyled">
             @for (novedad of novedadesSemana(); track novedad.id) {
-              <article
+              <li
                 class="ks-card ks-card--novedad"
-                role="listitem"
                 tabindex="0"
-                [attr.aria-label]="novedad.titulo + ' de ' + novedad.idUsuario.name"
+                [attr.aria-label]="novedad.titulo + ' de ' + novedad.idUsuario.username"
               >
                 <div class="ks-card__cover">
                   @if (novedad.archivo_portada) {
@@ -191,17 +177,12 @@
                 </div>
                 <div class="ks-card__body">
                   <p class="ks-card__title mb-1">{{ novedad.titulo }}</p>
-                  <p class="ks-card__desc mb-0">{{ novedad.idUsuario.name }}</p>
+                  <p class="ks-card__desc mb-0">{{ novedad.idUsuario.username }}</p>
                   <span class="ks-card__badge mt-2">{{ novedad.tipo }}</span>
                 </div>
-              </article>
+              </li>
             }
-          </div>
-        } @else {
-          <div class="empty-state" role="status">
-            <i class="bi bi-disc empty-state__icon" aria-hidden="true"></i>
-            <p class="empty-state__text">No hay novedades esta semana.</p>
-          </div>
+          </ul>
         }
       </div>
     </section>
@@ -222,13 +203,12 @@
         </div>
 
         @if (proximosLanzamientos().length > 0) {
-          <div class="lanzamientos-list" role="list">
+          <ul class="lanzamientos-list list-unstyled" aria-label="Próximos lanzamientos">
             @for (lanzamiento of proximosLanzamientos(); track lanzamiento.id) {
-              <article
+              <li
                 class="lanzamiento-item"
-                role="listitem"
                 tabindex="0"
-                [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.idUsuario.name"
+                [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.idUsuario.username"
               >
                 <div class="lanzamiento-item__cover">
                   @if (lanzamiento.archivo_portada) {
@@ -243,7 +223,7 @@
                 </div>
                 <div class="lanzamiento-item__info">
                   <p class="lanzamiento-item__titulo mb-0">{{ lanzamiento.titulo }}</p>
-                  <p class="lanzamiento-item__artista mb-0">{{ lanzamiento.idUsuario.name }}</p>
+                  <p class="lanzamiento-item__artista mb-0">{{ lanzamiento.idUsuario.username }}</p>
                 </div>
                 <div class="lanzamiento-item__meta ms-auto text-end">
                   <span class="ks-card__badge">{{ lanzamiento.tipo }}</span>
@@ -252,14 +232,9 @@
                     {{ lanzamiento.fecha_lanzamiento }}
                   </p>
                 </div>
-              </article>
+              </li>
             }
-          </div>
-        } @else {
-          <div class="empty-state" role="status">
-            <i class="bi bi-calendar-event empty-state__icon" aria-hidden="true"></i>
-            <p class="empty-state__text">No hay próximos lanzamientos por el momento.</p>
-          </div>
+          </ul>
         }
       </div>
     </section>
