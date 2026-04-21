@@ -32,7 +32,7 @@ public class PlaylistKeysoundController {
     /**
      * Endpoint para obtener las playlists destacadas de KeySound.
      * Estas playlists son seleccionadas por el equipo de la plataforma y se muestran en la página principal de la aplicación para que los usuarios las descubran fácilmente.
-     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseKeySoundPlaylistDTO}&gt;&gt; Devuelve una lista de playlists destacadas con un status 200 (OK)
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseKeySoundPlaylistDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de playlists destacadas de KeySound
      * @apiNote {@code GET /api/KeySoundPlaylists}
      */
     @GetMapping
@@ -44,7 +44,7 @@ public class PlaylistKeysoundController {
      * Endpoint para obtener el ranking diario de las 30 canciones más escuchadas en la plataforma.
      * Este ranking se actualiza automáticamente cada día a las 00:00, por lo que siempre refleja las tendencias de escucha más recientes.
      * @param fecha (opcional) Si se proporciona una fecha en formato "YYYY-MM-DD", se devuelve el ranking correspondiente a esa fecha. Si no se proporciona, se devuelve el ranking del día anterior.
-     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponsePistaTopPlaylistDTO}&gt;&gt; Devuelve una lista de las 30 canciones más escuchadas con un status 200 (OK)
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponsePistaTopPlaylistDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de las 30 canciones más escuchadas para la fecha especificada o para el día anterior si no se especifica una fecha
      * @apiNote {@code GET /api/KeySoundPlaylists/dailyTop30/{fecha?}}
      */
     @GetMapping("/dailyTop30/{fecha}")

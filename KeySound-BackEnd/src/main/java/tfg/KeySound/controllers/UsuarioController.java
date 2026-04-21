@@ -22,6 +22,9 @@ public class UsuarioController {
      * Se puede agregar una canción a favoritos, siempre que no esté ya en favoritos
      * @param pistaId {@link Long}
      * @param token {@link String} token JWT del usuario autenticado
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.pista.PistaNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException 409 (CONFLICT)
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si la canción se agrega correctamente a favoritos
      * @apiNote {@code POST /api/usuarios/agregar-cancion-favoritos}
      */
@@ -38,6 +41,7 @@ public class UsuarioController {
      * Endpoint para obtener la información de un usuario.
      * @param username {@link String}
      * @return {@link ResponseEntity}&lt;{@link ResponseUsuarioDTO}&gt; Devuelve un status 200 (OK) con la información del usuario
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code GET /api/usuarios/visualizar/{username}}
      */
     @GetMapping("/visualizar/{username}")
@@ -47,9 +51,14 @@ public class UsuarioController {
 
     /**
      * Endpoint para que un usuario siga a otro usuario.
-     * @param username {@link String} nombre de usuario del usuario a seguir
+     * @param id {@link Long} id del usuario a seguir
      * @param token {@link String} token JWT del usuario autenticado
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si el usuario se sigue correctamente
+     * @throws tfg.KeySound.exception.usuario.SelfFollowException 400 (BAD_REQUEST)
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.artista.FollowRestrictionException 403 (FORBIDDEN)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.usuario.AlreadyFollowingException 409 (CONFLICT)
      * @apiNote {@code POST /api/usuarios/seguir}
      */
     @PostMapping("/seguir")

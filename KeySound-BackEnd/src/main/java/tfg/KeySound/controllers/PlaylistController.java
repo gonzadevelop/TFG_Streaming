@@ -26,6 +26,8 @@ public class PlaylistController {
      * @param dto {@link RequestPlaylistDTO}
      * @param token {@link String} token JWT del usuario autenticado
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 201 (CREATED) si la playlist se crea correctamente
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code POST /api/playlists/crear}
      */
     @PostMapping("/crear")
@@ -43,6 +45,11 @@ public class PlaylistController {
      * @param dto {@link RequestPlaylistDTO}
      * @param token {@link String} token JWT del usuario autenticado
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 204 (NO_CONTENT) si la playlist se borra correctamente
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.playlist.OwnershipRequiredException 403 (FORBIDDEN)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.pista.PistaNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.playlist.PlaylistNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code POST /api/playlists/agregar-cancion}
      */
     @PostMapping("/agregar-cancion")

@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
@@ -14,6 +15,7 @@ import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseProximoAlbumDTO;
 import tfg.KeySound.services.AlbumService;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,14 @@ public class AlbumController {
      * @param portada {@link MultipartFile} con la imagen de portada del álbum
      * @param archivos {@link List}&lt;{@link MultipartFile}&gt; con las pistas de audio del álbum
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 201 (Created) si se sube correctamente
+     * @throws tfg.KeySound.exception.archivo.AudioProcessingException 400 (BAD_REQUEST)
+     * @throws tfg.KeySound.exception.cancion.InvalidFormatFileException 400 (BAD_REQUEST)
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.cancion.CancionNotFoundException 404 (NOT_FOUND)
+     * @throws org.springframework.web.multipart.MaxUploadSizeExceededException 413 (PAYLOAD_TOO_LARGE)
+     * @throws   javax.naming.SizeLimitExceededException 413 (PAYLOAD_TOO_LARGE)
+     * @throws   org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException 413 (PAYLOAD_TOO_LARGE)
      * @apiNote {@code POST /api/albums/crear}
      */
     @PostMapping(value = "/crear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -50,6 +60,8 @@ public class AlbumController {
      * Endpoint para que un usuario visualice la información de un album (álbum o sencillo).
      * @param albumId {@link Long}
      * @return {@link ResponseEntity}&lt;{@link ResponseAlbumCompletoDTO}&gt; Devuelve un status 200 (OK) con la información del album
+     * @throws tfg.KeySound.exception.album.AlbumNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.cancion.CancionNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code GET /api/albums/visualizar/{albumId}}
      */
     @GetMapping("/visualizar/{albumId}")
@@ -62,6 +74,7 @@ public class AlbumController {
      * @param token {@link String}
      * @param albumId {@link Long}
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si se publica correctamente
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
      * @apiNote {@code PUT /api/albums/publicar/{albumId}}
      */
     @PutMapping("/publicar/{albumId}")

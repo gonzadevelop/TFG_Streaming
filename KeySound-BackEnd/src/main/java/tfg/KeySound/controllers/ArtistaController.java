@@ -26,6 +26,7 @@ public class ArtistaController {
      * @param username {@link String}
      * @param token {@link String}
      * @return {@link ResponseEntity}&lt;{@link ResponseArtistaDTO}&gt; Devuelve un status 200 (OK)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code GET /api/artistas/visualizar/{username}}
      */
     @GetMapping("/visualizar/{username}")
@@ -42,6 +43,8 @@ public class ArtistaController {
      * Endpoint para obtener los albums de un artista.
      * @param token {@link String}
      * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseMiAlbumDTO}&gt;&gt; Devuelve un status 200 (OK)
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code GET /api/artistas/mis-albums}
      */
     @GetMapping("/mis-albums")
@@ -56,6 +59,9 @@ public class ArtistaController {
      * @param idAlbum {@link Long}
      * @param token {@link String}
      * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK)
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.album.AlbumNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code PATCH /api/artistas/publicar/{idAlbum}}
      */
     @PatchMapping("/publicar/{idAlbum}")
@@ -71,6 +77,8 @@ public class ArtistaController {
      * Endpoint para obtener los artistas que sigo.
      * @param token {@link String}
      * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseArtistaHomeDTO}&gt;&gt; Devuelve un status 200 (OK)
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code GET /api/artistas/artistas-que-sigo}
      */
     @GetMapping("/artistas-que-sigo")

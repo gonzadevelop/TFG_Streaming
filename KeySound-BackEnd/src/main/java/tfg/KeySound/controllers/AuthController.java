@@ -26,6 +26,8 @@ public class AuthController {
      * Endpoint para iniciar sesión.
      * @param request {@link LoginRequestDTO}
      * @return {@link ResponseEntity}&lt;{@link LoginResponseDTO}&gt Devuelve un status 200 (OK)
+     * @throws tfg.KeySound.exception.auth.EmailAlrreadyExistsException Status 409 (CONFLICT)
+     * @throws tfg.KeySound.exception.auth.UsernameAlreadyExistsException Status 409 (CONFLICT)
      * @apiNote {@code POST /api/auth/login}
      */
     @PostMapping("/login")
@@ -37,6 +39,7 @@ public class AuthController {
      * Endpoint para registrar un nuevo usuario.
      * @param request {@link RegisterRequestDTO}
      * @return {@link ResponseEntity}&lt;{@link Void}&gt Devuelve un status 201 (CREATED) si el registro se realiza correctamente
+     * @throws tfg.KeySound.exception.auth.EmailNotFoundException Status 404 (NOT_FOUND)
      * @apiNote {@code POST /api/auth/register}
      */
     @PostMapping("/register")
