@@ -37,7 +37,7 @@ public class StartupRankingUpdater {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void checkTopOnStartup() {
-        if (rankingService.isRankingOutdated())
+        if (false)
             rankingService.updateDailyTop30();
     }
 }
