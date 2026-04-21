@@ -13,10 +13,11 @@ import tfg.KeySound.model.pista.ResponsePistaDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = LocalDateTime.class)
+@Mapper(componentModel = "spring", imports = LocalDateTime.class, uses = {ArtistaMapper.class})
 public interface AlbumMapper {
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "artista", source = "usuario")
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "urlPortada", source = "archivoPortada")
     @Mapping(target = "anioLanzamiento", source = "album.fechaLanzamiento.year")
@@ -57,6 +58,7 @@ public interface AlbumMapper {
     List<ResponseMiAlbumDTO> toMisAlbumsDtos(List<Album> albums);
 
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "artista", source = "usuario")
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "urlPortada", source = "archivoPortada")
     @Mapping(target = "fechaLanzamiento", source = "album.fechaLanzamiento")
