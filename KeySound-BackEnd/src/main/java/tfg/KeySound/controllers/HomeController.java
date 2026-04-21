@@ -20,6 +20,8 @@ public class HomeController {
      * Endpoint para que un usuario visualice la información de su home. La información incluye playlists destacadas, artistas seguidos, albums seguidos, próximos lanzamientos y canciones más escuchadas.
      * @param token {@link String} Token JWT del usuario (opcional)
      * @return {@link ResponseEntity}&lt;{@link HomeDTO}&gt; Devuelve un status 200 (OK) con la información de la home del usuario
+     * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
+     * @throws tfg.KeySound.exception.cancion.CancionNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code GET /api/home/visualizar}
      */
     @GetMapping("/visualizar")

@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
 
         // Diferenciamos entre las excepciones de tamaño de carga para proporcionar un mensaje más específico al usuario.
         String massage = ex instanceof MaxUploadSizeExceededException ?
-                "El tamaño total de la carga excede el límite permitido (60MB)." :
+                "El tamaño total de la carga excede el límite permitido (120MB)." :
                 "El archivo excede el tamaño máximo permitido (10MB).";
 
         return buildResponse(HttpStatus.PAYLOAD_TOO_LARGE, ex, massage);
