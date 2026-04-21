@@ -39,7 +39,6 @@ public class AuthService {
      */
     public LoginResponseDTO login(LoginRequestDTO request) {
 
-
         String username = usuarioRepository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new EmailNotFoundException(request.getEmail()))
                 .getUsername();
