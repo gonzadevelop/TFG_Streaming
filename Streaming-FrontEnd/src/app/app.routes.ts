@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import {publicGuard} from './guards/publicGuard';
 
 export const routes: Routes = [
   {
@@ -17,12 +18,14 @@ export const routes: Routes = [
   {
     path: 'login',
     title: 'Inicio de sesión | KeySound',
+    canActivate: [publicGuard],
     loadComponent: () =>
       import('./componentes/zonaCliente/Auth/login/login').then(m => m.Login),
   },
   {
     path: 'register',
     title: 'Dale sonido a tu vida con KeySound | Regístrate ahora',
+    canActivate: [publicGuard],
     loadComponent: () =>
       import('./componentes/zonaCliente/Auth/registro/registro').then(m => m.Registro),
   },
@@ -33,4 +36,8 @@ export const routes: Routes = [
       import('./componentes/zonaCliente/Auth/email-verification/email-verification')
         .then(m => m.EmailVerification),
   },
+  {
+    path: '**',
+    redirectTo: '',
+  }
 ];

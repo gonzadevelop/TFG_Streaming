@@ -3,13 +3,23 @@
   class="side-menu"
   [attr.aria-hidden]="!isOpen()">
 
-  <!-- Bienvenida -->
+  <!-- Bienvenida con dropdown -->
   <section class="home-welcome sidebar-welcome" aria-label="Bienvenida">
-    <div class="welcome-inner d-flex align-items-center gap-3">
+    <div
+      class="welcome-inner d-flex align-items-center gap-3 welcome-trigger"
+      (click)="toggleDropdown()"
+      (keydown.enter)="toggleDropdown()"
+      (keydown.space)="toggleDropdown()"
+      tabindex="0"
+      role="button"
+      [attr.aria-expanded]="dropdownOpen()"
+      aria-haspopup="menu"
+      aria-label="Menú de usuario"
+    >
       <div class="welcome-avatar" aria-hidden="true">
         <span class="welcome-avatar-letter">{{ inicialAvatar() }}</span>
       </div>
-      <div>
+      <div class="flex-grow-1">
         <p class="welcome-saludo mb-0">{{ saludo() }},</p>
         <h2 class="welcome-nombre mb-0">
           @if (estaLogueado()) {
@@ -22,11 +32,65 @@
           @if (estaLogueado()) {
             ¿Qué quieres escuchar hoy?
           } @else {
-            <a routerLink="/login" class="welcome-login-link">Inicia sesión</a>
+            Toca para iniciar sesión
           }
         </p>
       </div>
+      <span class="welcome-chevron material-icons" aria-hidden="true">
+        {{ dropdownOpen() ? 'expand_less' : 'expand_more' }}
+      </span>
     </div>
+
+    <!-- Dropdown -->
+    @if (dropdownOpen()) {
+      <div
+        class="sidebar-dropdown"
+        role="menu"
+        aria-label="Opciones de usuario"
+        (click)="$event.stopPropagation()"
+      >
+        @if (estaLogueado()) {
+          <a
+            routerLink="/perfil"
+            class="sidebar-dropdown__item"
+            role="menuitem"
+            (click)="closeDropdown()"
+          >
+            <span class="material-icons" aria-hidden="true">person</span>
+            Perfil
+          </a>
+          <a
+            routerLink="/ajustes"
+            class="sidebar-dropdown__item"
+            role="menuitem"
+            (click)="closeDropdown()"
+          >
+            <span class="material-icons" aria-hidden="true">settings</span>
+            Ajustes
+          </a>
+          <hr class="sidebar-dropdown__divider" aria-hidden="true">
+          <button
+            type="button"
+            class="sidebar-dropdown__item sidebar-dropdown__item--danger"
+            role="menuitem"
+            (click)="cerrarSesion()"
+          >
+            <span class="material-icons" aria-hidden="true">logout</span>
+            Cerrar sesión
+          </button>
+        } @else {
+          <a
+            routerLink="/login"
+            class="sidebar-dropdown__item"
+            role="menuitem"
+            (click)="closeDropdown()"
+          >
+            <span class="material-icons" aria-hidden="true">login</span>
+            Iniciar sesión
+          </a>
+        }
+      </div>
+    }
   </section>
 
   <nav class="sidebar-nav" aria-label="Menú lateral">

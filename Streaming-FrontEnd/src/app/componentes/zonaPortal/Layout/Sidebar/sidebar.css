@@ -137,3 +137,90 @@
   outline: 2px solid #0b75c0;
   outline-offset: 2px;
 }
+
+/* ── Dropdown del usuario ────────────────────── */
+
+.welcome-trigger {
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 6px 8px;
+  transition: background 0.2s ease;
+}
+
+.welcome-trigger:hover,
+.welcome-trigger:focus-visible {
+  background: rgba(11, 117, 192, 0.1);
+  outline: none;
+}
+
+.welcome-chevron {
+  font-size: 1.2rem;
+  color: #4a6a8a;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-dropdown {
+  margin-top: 6px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+  animation: dropdown-in 0.2s ease;
+  border: 1px solid rgba(11, 117, 192, 0.15);
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #2c3e50;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-dropdown__item:hover,
+.sidebar-dropdown__item:focus-visible {
+  background: rgba(11, 117, 192, 0.08);
+  color: #0b75c0;
+  outline: none;
+}
+
+.sidebar-dropdown__item .material-icons {
+  font-size: 1.1rem;
+  color: inherit;
+}
+
+.sidebar-dropdown__item--danger {
+  color: #c0392b;
+}
+
+.sidebar-dropdown__item--danger:hover,
+.sidebar-dropdown__item--danger:focus-visible {
+  background: rgba(192, 57, 43, 0.08);
+  color: #c0392b;
+}
+
+.sidebar-dropdown__divider {
+  margin: 4px 0;
+  border-color: rgba(0, 0, 0, 0.08);
+}

@@ -2,12 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  computed,
   inject,
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
 import { TokenService } from '../../../../services/tokenService';
 import { HomeService } from '../../../../services/homeService';
 import IPlaylist from '../../../../model/IPlaylist';
@@ -32,16 +30,6 @@ export class Home implements OnInit {
   protected readonly estaLogueado = signal<boolean>(false);
   protected readonly nombreUsuario = signal<string>('Invitado');
 
-  protected readonly inicialAvatar = computed<string>(() =>
-    this.nombreUsuario()[0]?.toUpperCase() ?? 'I'
-  );
-
-  protected readonly saludo = computed<string>(() => {
-    const hora = 12; // valor fijo para SSR/evitar globals
-    if (hora < 12) return '¡Buenos días';
-    if (hora < 19) return '¡Buenas tardes';
-    return '¡Buenas noches';
-  });
 
   // ── Señales de datos ────────────────────────────────────
   protected readonly playlists = signal<IPlaylist[]>([]);
@@ -58,6 +46,9 @@ export class Home implements OnInit {
   ngOnInit(): void {
     const logueado = this.tokenService.isLogged();
     this.estaLogueado.set(logueado);
+    if (logueado) {
+      this.nombreUsuario.set(this.tokenService.getUsername());
+    }
     this.cargarDatos(logueado);
   }
 
