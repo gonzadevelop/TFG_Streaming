@@ -2,8 +2,10 @@ package tfg.KeySound;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class StreamingBackEndApplication {
 
     public static void main(String[] args) {
