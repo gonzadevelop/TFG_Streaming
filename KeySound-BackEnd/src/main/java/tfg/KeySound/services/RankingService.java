@@ -88,6 +88,6 @@ public class RankingService {
                 .getFecha();
 
         // comprobar si la fecha del último ranking es anterior a la fecha actual
-        return lastRankingDate.isBefore(LocalDate.now());
+        return !lastRankingDate.isEqual(LocalDate.now().minusDays(1));
     }
 }

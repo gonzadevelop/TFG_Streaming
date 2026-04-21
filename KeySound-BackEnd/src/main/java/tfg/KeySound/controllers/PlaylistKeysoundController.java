@@ -47,7 +47,7 @@ public class PlaylistKeysoundController {
      * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponsePistaTopPlaylistDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de las 30 canciones más escuchadas para la fecha especificada o para el día anterior si no se especifica una fecha
      * @apiNote {@code GET /api/KeySoundPlaylists/dailyTop30/{fecha?}}
      */
-    @GetMapping("/dailyTop30/{fecha}")
+    @GetMapping({"/dailyTop30", "/dailyTop30/{fecha}"})
     public ResponseEntity<List<ResponsePistaTopPlaylistDTO>> getDailyTop30(
             @PathVariable(required = false) String fecha) {
 
