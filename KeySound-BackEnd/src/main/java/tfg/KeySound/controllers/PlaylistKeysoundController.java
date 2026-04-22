@@ -11,6 +11,7 @@ import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaTopPlaylistDTO;
+import tfg.KeySound.model.playlist.ResponseKeySoundPlaylistCompletaDTO;
 import tfg.KeySound.model.playlist.ResponseKeySoundPlaylistDTO;
 import tfg.KeySound.services.AlbumService;
 import tfg.KeySound.services.PlaylistKeysoundService;
@@ -48,7 +49,7 @@ public class PlaylistKeysoundController {
      * @apiNote {@code GET /api/KeySoundPlaylists/dailyTop30/{fecha?}}
      */
     @GetMapping({"/dailyTop30", "/dailyTop30/{fecha}"})
-    public ResponseEntity<List<ResponsePistaTopPlaylistDTO>> getDailyTop30(
+    public ResponseEntity<ResponseKeySoundPlaylistCompletaDTO> getDailyTop30(
             @PathVariable(required = false) String fecha) {
 
         return ResponseEntity.ok(rankingService.getDailyTop30(fecha));

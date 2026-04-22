@@ -16,7 +16,7 @@ import { Player } from './Player/player';
       <app-sidebar
         [hidden]="!sidebarOpen()"
         [isOpen]="sidebarOpen()"
-        [userName]="userName()" />
+      />
 
       <main class="layout-content" id="main-content">
         <router-outlet />
