@@ -112,4 +112,8 @@ public class UsuarioService {
         usuario.getSeguidos().add(usuarioASeguir);
         usuarioRepository.save(usuarioASeguir);
     }
+
+    public String obtenerUsername(String token) {
+        return jwtService.extractUsername(token);
+    }
 }

@@ -1,0 +1,44 @@
+<article class="mini-cancion track-row" tabindex="0" [attr.aria-label]="pista().titulo">
+
+  <div class="track-row__index">
+    @if (posicion() !== null) {
+      <span class="mini-cancion__pos" aria-hidden="true">{{ posicion() }}</span>
+    }
+    <button type="button" class="mini-cancion__play" [attr.aria-label]="'Reproducir ' + pista().titulo">
+      ▶
+    </button>
+  </div>
+
+  <div class="track-row__title-group">
+    <div class="mini-cancion__cover">
+      @if (pista().urlPortada) {
+        <img
+          class="mini-cancion__img"
+          [src]="pista().urlPortada"
+          [alt]="'Portada de ' + pista().titulo"
+          loading="lazy"
+        />
+      } @else {
+        <span class="mini-cancion__icon" aria-hidden="true">♪</span>
+      }
+    </div>
+    <div class="mini-cancion__info">
+      <p class="mini-cancion__titulo mb-0">{{ pista().titulo }}</p>
+      <p class="mini-cancion__artistas mb-0">{{ artistasTexto() }}</p>
+    </div>
+  </div>
+
+  <div class="track-row__plays">
+    @if (pista().reproducciones) {
+      <span class="mini-cancion__plays-count">
+        {{ pista().reproducciones }}
+      </span>
+    }
+  </div>
+
+  <div class="track-row__duration">
+    <span class="mini-cancion__duracion">{{ formatearDuracion(pista().duracionSegundos) }}</span>
+  </div>
+
+</article>
+

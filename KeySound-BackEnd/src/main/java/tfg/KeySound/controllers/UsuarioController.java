@@ -69,4 +69,18 @@ public class UsuarioController {
         usuarioService.seguirUsuario(id, token.substring(7));
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * Endpoint para obtener tu propio nombre de usuario.
+     * @param token {@link String} token JWT del usuario autenticado
+     * @return {@link ResponseEntity}&lt;{@link String}&gt; Devuelve un status 200 (OK) con el nombre de usuario del usuario autenticado
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @apiNote {@code GET /api/usuarios/obtener-username
+     */
+    @GetMapping("/obtener-username")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> obtenerUsername(@RequestHeader ("Authorization") String token) {
+        String username = usuarioService.obtenerUsername(token.substring(7));
+        return ResponseEntity.ok(username);
+    }
 }

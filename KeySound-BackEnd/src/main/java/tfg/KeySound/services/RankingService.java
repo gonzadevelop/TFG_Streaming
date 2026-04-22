@@ -3,13 +3,18 @@ package tfg.KeySound.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.Cancion;
+import tfg.KeySound.entitys.PlaylistKeysound;
 import tfg.KeySound.entitys.TopMusicalDiario;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.mappers.ArtistaMapper;
+import tfg.KeySound.mappers.PlaylistKeysoundCompletaMapper;
+import tfg.KeySound.mappers.PlaylistKeysoundMapper;
 import tfg.KeySound.mappers.TopMusicalDiarioMapper;
 import tfg.KeySound.model.pista.ResponsePistaTopPlaylistDTO;
+import tfg.KeySound.model.playlist.ResponseKeySoundPlaylistCompletaDTO;
 import tfg.KeySound.repositorys.CancionRepository;
 import tfg.KeySound.repositorys.HistorialReproduccionesRepository;
+import tfg.KeySound.repositorys.PlaylistKeysoundRepository;
 import tfg.KeySound.repositorys.TopMusicalDiarioRepository;
 import tfg.KeySound.services.external.FirebaseService;
 
@@ -30,19 +35,21 @@ public class RankingService {
     private final CancionRepository cancionRepository;
     private final FirebaseService firebaseService;
     private final ArtistaMapper artistaMapper;
+    private final PlaylistKeysoundRepository playlistKeysoundRepository;
+    private final PlaylistKeysoundCompletaMapper playlistKeysoundCompletaMapper;
 
     /**
      * Metodo para obtener el ranking diario actual.
      * Si no se proporciona una fecha, se devuelve el ranking del día anterior (ya que el ranking se actualiza a las 00:00).
      */
-    public List<ResponsePistaTopPlaylistDTO> getDailyTop30(String fecha) {
+    public ResponseKeySoundPlaylistCompletaDTO getDailyTop30(String fecha) {
         LocalDate fechaConsulta = fecha == null || fecha.isEmpty()
                 ? LocalDate.now().minusDays(1)
                 : LocalDate.parse(fecha);
 
-        List<ResponsePistaTopPlaylistDTO> response = topMusicalDiarioMapper.toDtos(topMusicalDiarioRepository.findByFecha(fechaConsulta));
+        List<ResponsePistaTopPlaylistDTO> pistas = topMusicalDiarioMapper.toDtos(topMusicalDiarioRepository.findByFecha(fechaConsulta));
 
-        response
+        pistas
                 .stream()
                 .peek(
                         r-> {
@@ -65,7 +72,12 @@ public class RankingService {
                 )
                 .toList();
 
-        return response;
+        PlaylistKeysound entity = playlistKeysoundRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("No se encontró la playlist de ranking diario"));
+
+        String imagen = firebaseService.obtenerUrlArchivoImagen(entity.getUrlPortada(), "");
+
+        return playlistKeysoundCompletaMapper.toDto(entity, imagen, pistas);
     }
 
     /**
