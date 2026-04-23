@@ -7,7 +7,6 @@ import tfg.KeySound.model.album.ResponseProximoAlbumDTO;
 import tfg.KeySound.model.artista.ResponseArtistaHomeDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.model.playlist.ResponseKeySoundPlaylistDTO;
-import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 
 import java.util.List;
 

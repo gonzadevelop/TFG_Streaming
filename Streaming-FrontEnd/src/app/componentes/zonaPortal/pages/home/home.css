@@ -739,6 +739,10 @@
 .cancion-item__artista {
   font-size: 0.76rem;
   color: #6c757d;
+  margin-top: 0.15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cancion-item__repros {
@@ -884,4 +888,3 @@
     margin-top: 0.5rem;
   }
 }
-

@@ -15,7 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import tfg.KeySound.services.external.CustomUserDetailsService;
 
 @Configuration
@@ -25,7 +27,6 @@ public class SecurityConfig {
 
     private final JwtFilter jwtAuthFilter;
     private final CustomUserDetailsService userDetailsService;
-    private final CorsConfigurationSource corsConfigurationSource;
 
 
     /**
@@ -39,11 +40,29 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                // Ahora Spring buscará el Bean definido abajo automáticamente
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    /**
+     * Configura la fuente de configuración CORS para permitir solicitudes desde el frontend. Permite solicitudes desde "http://localhost:4200"
+     * con métodos GET, POST, PUT, DELETE y OPTIONS, y permite los encabezados "Authorization", "Content-Type" y "Cache-Control".
+     * @return {@link CorsConfigurationSource} la fuente de configuración CORS configurada
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "Cache-Control"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     /**
@@ -69,7 +88,7 @@ public class SecurityConfig {
     /**
      * Configura el AuthenticationManager utilizando la configuración de autenticación proporcionada por Spring Security.
      * @param config {@link AuthenticationConfiguration} la configuración de autenticación proporcionada por Spring Security
-        * @return {@link AuthenticationManager} el AuthenticationManager configurado
+     * @return {@link AuthenticationManager} el AuthenticationManager configurado
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

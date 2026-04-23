@@ -7,6 +7,7 @@ import tfg.KeySound.exception.artista.FollowRestrictionException;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.pista.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException;
+import tfg.KeySound.exception.usuario.AlreadyFollowingException;
 import tfg.KeySound.exception.usuario.SelfFollowException;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
@@ -105,10 +106,14 @@ public class UsuarioService {
         if (usuario.equals(usuarioASeguir)) throw new SelfFollowException();
 
         // Verificar si el seguidor ya sigue al usuario y si le sigue, no hacer nada
-        if (usuario.getSeguidores().contains(usuarioASeguir)) throw new SelfFollowException();
+        if (usuario.getSeguidores().contains(usuarioASeguir)) throw new AlreadyFollowingException();
 
         // Agregar el seguidor a la lista de seguidores del usuario a seguir
         usuario.getSeguidos().add(usuarioASeguir);
         usuarioRepository.save(usuarioASeguir);
+    }
+
+    public String obtenerUsername(String token) {
+        return jwtService.extractUsername(token);
     }
 }

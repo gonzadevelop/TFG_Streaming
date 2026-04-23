@@ -1,6 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  input,
+  signal,
+  WritableSignal
+} from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TokenService } from '../../../../services/tokenService';
+import {SidebarService} from '../../../../services/SidebarService';
 
 interface SidebarItem {
   label: string;
@@ -17,13 +27,12 @@ interface SidebarItem {
 })
 export class Sidebar implements OnInit {
   private readonly tokenService = inject(TokenService);
-  private readonly router = inject(Router);
+  private readonly sidebarService = inject(SidebarService);
 
   readonly isOpen = input<boolean>(true);
+  userName: WritableSignal<string> = signal<string>('');
 
   protected readonly estaLogueado = signal<boolean>(false);
-  protected readonly userName = signal<string>('Invitado');
-  protected readonly dropdownOpen = signal<boolean>(false);
 
   protected readonly inicialAvatar = computed<string>(() =>
     this.userName()[0]?.toUpperCase() ?? 'I'
@@ -37,31 +46,24 @@ export class Sidebar implements OnInit {
   });
 
   readonly sidebarItems: SidebarItem[] = [
-    { label: 'Inicio', icon: 'home', route: '/home' },
-    { label: 'Lista de favoritos', icon: 'equalizer', route: '/favs' },
-    { label: 'Estadísticas', icon: 'insights', route: '/artista' },
-    { label: 'Explorar', icon: 'search', route: '/artista' },
+    {label: 'Inicio', icon: 'home', route: '/home'},
+    {label: 'Lista de favoritos', icon: 'equalizer', route: '/favs'},
+    {label: 'Estadísticas', icon: 'insights', route: '/artista'},
+    {label: 'Explorar', icon: 'search', route: '/artista'},
   ];
 
   ngOnInit(): void {
     this.estaLogueado.set(this.tokenService.isLogged());
-    this.userName.set(this.tokenService.getUsername());
-  }
-
-  protected toggleDropdown(): void {
-    this.dropdownOpen.update(v => !v);
-  }
-
-  protected closeDropdown(): void {
-    this.dropdownOpen.set(false);
-  }
-
-  protected cerrarSesion(): void {
-    this.tokenService.removeToken();
-    this.tokenService.removeUsername();
-    this.estaLogueado.set(false);
-    this.userName.set('Invitado');
-    this.dropdownOpen.set(false);
-    this.router.navigate(['/login']);
+    if (this.estaLogueado()) {
+      this.sidebarService.getUsername().subscribe({
+        next: (data) => {
+          this.userName.set(data);
+          console.log(data);
+        },
+        error: (err) => {
+          console.error('Error al obtener el nombre de usuario:', err);
+        }
+      });
+    }
   }
 }

@@ -2,17 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
-  signal,
+  signal, WritableSignal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TokenService } from '../../../../services/tokenService';
 import { HomeService } from '../../../../services/homeService';
-import IPlaylist from '../../../../model/IPlaylist';
-import IUser from '../../../../model/IUser';
-import ICancion from '../../../../model/ICancion';
-import ILanzamiento from '../../../../model/ILanzamiento';
-import {IAlbum} from '../../../../model/IAlbum';
+import { IHome } from '../../../../model/home/IHome';
+import { IMiniArtista } from '../../../../model/home/IMiniArtista';
 
 @Component({
   selector: 'app-home',
@@ -23,115 +21,66 @@ import {IAlbum} from '../../../../model/IAlbum';
 })
 export class Home implements OnInit {
 
-  private readonly tokenService = inject(TokenService);
-  private readonly homeService = inject(HomeService);
+  private readonly tokenService:TokenService = inject(TokenService);
+  private readonly homeService:HomeService = inject(HomeService);
 
   // ── Estado de sesión ────────────────────────────────────
   protected readonly estaLogueado = signal<boolean>(false);
   protected readonly nombreUsuario = signal<string>('Invitado');
 
+  protected readonly inicialAvatar = computed<string>(() =>
+    this.nombreUsuario()[0]?.toUpperCase() ?? 'I'
+  );
+
+  protected readonly saludo = computed<string>(() => {
+    const hora = 12; // valor fijo para SSR/evitar globals
+    if (hora < 12) return '¡Buenos días';
+    if (hora < 19) return '¡Buenas tardes';
+    return '¡Buenas noches';
+  });
 
   // ── Señales de datos ────────────────────────────────────
-  protected readonly playlists = signal<IPlaylist[]>([]);
-  protected readonly artistas = signal<IUser[]>([]);
-  protected readonly album = signal<IAlbum[]>([]);
-  protected readonly canciones = signal<ICancion[]>([]);
-  protected readonly proximosLanzamientos = signal<ILanzamiento[]>([]);
-  protected readonly novedadesSemana = signal<ILanzamiento[]>([]);
+  homeData:WritableSignal<IHome> = signal<IHome>({
+  keySoundPlaylists: [],
+  artistasSeguidos: [],
+  novedadesDeLaSemana: [],
+  proximosLanzmientos: [],
+  cancionesMasEscuchadas: []
+  });
+
 
   // ── Estados de carga ────────────────────────────────────
   protected readonly cargando = signal<boolean>(true);
   protected readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    const logueado = this.tokenService.isLogged();
-    this.estaLogueado.set(logueado);
-    if (logueado) {
-      this.nombreUsuario.set(this.tokenService.getUsername());
-    }
-    this.cargarDatos(logueado);
+    this.cargarDatos();
   }
 
-  private cargarDatos(logueado: boolean): void {
-    this.cargando.set(true);
-    this.error.set(null);
+  private cargarDatos(): void {
+     console.log("mira que chulo" + this.homeService.getDatosHome());
+      this.homeService.getDatosHome().subscribe({
+        next: (data) => {
+          this.homeData.set(data);
+          this.cargando.set(false);
+        },
+        error: (err) => {
+          console.error('Error al cargar datos del home:', err);
+          this.error.set('No se pudieron cargar los datos. Intenta nuevamente más tarde.');
+          this.cargando.set(false);
+        }
+      });
 
-    if (logueado) {
-      this.cargarDatosPersonalizados();
-    } else {
-      this.cargarDatosPublicos();
-    }
-  }
-
-  private cargarDatosPublicos(): void {
-    this.homeService.getPlaylistsDestacadas().subscribe({
-      next: (data) => this.playlists.set(data),
-      error: () => this.playlists.set([]),
-    });
-
-    this.homeService.getArtistasPopulares().subscribe({
-      next: (data) => this.artistas.set(data),
-      error: () => this.artistas.set([]),
-    });
-
-    this.homeService.getCancionesMasEscuchadas().subscribe({
-      next: (data) => this.canciones.set(data),
-      error: () => this.canciones.set([]),
-    });
-
-    this.homeService.getProximosLanzamientos().subscribe({
-      next: (data) => this.proximosLanzamientos.set(data),
-      error: () => this.proximosLanzamientos.set([]),
-    });
-
-    this.homeService.getNovedadesSemana().subscribe({
-      next: (data) => {
-        this.novedadesSemana.set(data);
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.novedadesSemana.set([]);
-        this.cargando.set(false);
-      },
-    });
-  }
-
-  private cargarDatosPersonalizados(): void {
-    this.homeService.getMisPlaylists().subscribe({
-      next: (data) => this.playlists.set(data),
-      error: () => this.playlists.set([]),
-    });
-
-    this.homeService.getArtistasQueSigo().subscribe({
-      next: (data) => this.artistas.set(data),
-      error: () => this.artistas.set([]),
-    });
-
-    this.homeService.getMisCancionesMasEscuchadas().subscribe({
-      next: (data) => this.canciones.set(data),
-      error: () => this.canciones.set([]),
-    });
-
-    this.homeService.getMisProximosLanzamientos().subscribe({
-      next: (data) => {
-        this.proximosLanzamientos.set(data);
-        this.cargando.set(false);
-      },
-      error: () => {
-        this.proximosLanzamientos.set([]);
-        this.cargando.set(false);
-      },
-    });
-
-    this.homeService.getNovedadesSemana().subscribe({
-      next: (data) => this.novedadesSemana.set(data),
-      error: () => this.novedadesSemana.set([]),
-    });
   }
 
   protected formatearDuracion(segundos: number): string {
     const m = Math.floor(segundos / 60);
     const s = segundos % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  protected formatearArtistas(artistas?: IMiniArtista[] | null): string {
+    if (!artistas || artistas.length === 0) return '';
+    return artistas.map((a) => a.username).join(', ');
   }
 }

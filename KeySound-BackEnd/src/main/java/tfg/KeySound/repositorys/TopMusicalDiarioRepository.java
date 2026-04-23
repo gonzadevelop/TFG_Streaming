@@ -12,4 +12,3 @@ public interface TopMusicalDiarioRepository extends JpaRepository<TopMusicalDiar
     TopMusicalDiario findTopByOrderByFechaDesc();
     List<TopMusicalDiario> findByFecha(LocalDate fecha);
 }
-

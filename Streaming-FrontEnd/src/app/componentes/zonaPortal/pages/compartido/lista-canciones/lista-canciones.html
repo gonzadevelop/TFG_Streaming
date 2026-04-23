@@ -1,0 +1,23 @@
+@if (!pistas().length) {
+  <p class="muted mt-3">Esta lista está vacía.</p>
+} @else {
+  <div class="tracks-header">
+    <div class="tracks-header__col text-center">#</div>
+    <div class="tracks-header__col">Título</div>
+    @if (pistas()[0]?.reproducciones) {
+      <div class="tracks-header__col text-right">Reproducciones</div>
+    }
+    <div class="tracks-header__col text-right">⏱</div>
+  </div>
+  <div class="tracks-header-divider"></div>
+
+  <div class="playlist-tracks" role="list" aria-label="Lista de pistas">
+    @for (pista of pistas(); track pista.idCancion ?? pista.id; let i = $index) {
+      <div class="playlist-tracks__item" role="listitem">
+        <app-mini-cancion
+          [pista]="pista"
+          [posicion]="i + 1" />
+      </div>
+    }
+  </div>
+}

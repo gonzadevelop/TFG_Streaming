@@ -30,26 +30,22 @@
           <a routerLink="/playlists" class="section-link" aria-label="Ver todas las playlists">Ver todas →</a>
         </div>
 
-        @if (playlists().length > 0) {
-          <ul class="cards-grid list-unstyled">
-            @for (playlist of playlists(); track playlist.id) {
-              <li
+        @if (homeData().keySoundPlaylists.length > 0) {
+          <div class="cards-grid" role="list">
+            @for (playlist of homeData().keySoundPlaylists; track playlist.nombre) {
+              <article
                 class="ks-card"
+                role="listitem"
                 tabindex="0"
                 [attr.aria-label]="playlist.nombre"
               >
                 <div class="ks-card__cover ks-card__cover--playlist">
-                  @if (playlist.foto_portada) {
                     <img
-                      [src]="playlist.foto_portada"
+                      [src]="playlist.urlPortada"
                       [alt]="'Portada de ' + playlist.nombre"
                       class="ks-card__img"
                     />
-                  } @else {
-                    <span class="ks-card__fallback-icon" aria-hidden="true">
-                      <i class="bi bi-music-note-list"></i>
-                    </span>
-                  }
+
                   <button
                     type="button"
                     class="ks-card__play-btn"
@@ -63,13 +59,21 @@
                   @if (playlist.descripcion) {
                     <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
                   }
-                  <span class="ks-card__badge mt-2">
-                    {{ playlist.esPublica ? 'Pública' : 'Privada' }}
-                  </span>
                 </div>
-              </li>
+              </article>
             }
-          </ul>
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-music-note-list empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">
+              @if (estaLogueado()) {
+                Aún no tienes playlists. <a routerLink="/playlists/nueva">Crea una</a>.
+              } @else {
+                No hay playlists disponibles en este momento.
+              }
+            </p>
+          </div>
         }
       </div>
     </section>
@@ -82,7 +86,7 @@
         <div class="section-header d-flex align-items-center justify-content-between mb-4">
           <div>
             <h2 class="section-title mb-0" id="artistas-heading">
-              @if (estaLogueado()) { Artistas que sigues } @else { Artistas populares }
+              @if (estaLogueado()) { Artistas que sigues } @else { Artistas seguidos }
             </h2>
             <p class="section-sub mb-0">
               @if (estaLogueado()) { Tus artistas favoritos } @else { Los más escuchados ahora mismo }
@@ -91,34 +95,26 @@
           <a routerLink="/artistas" class="section-link" aria-label="Ver todos los artistas">Ver todos →</a>
         </div>
 
-        @if (artistas().length > 0) {
-          <ul class="artistas-grid list-unstyled">
-            @for (artista of artistas(); track artista.id) {
-              <li
+        @if (homeData().artistasSeguidos.length > 0) {
+          <div class="artistas-grid" role="list">
+            @for (artista of homeData().artistasSeguidos; track artista.id) {
+              <article
                 class="artista-card"
+                role="listitem"
                 tabindex="0"
                 [attr.aria-label]="artista.username"
               >
                 <div class="artista-card__avatar">
-                  @if (artista.avatarUrl) {
                     <img
-                      [src]="artista.avatarUrl"
+                      [src]="artista.urlAvatar"
                       [alt]="artista.username"
                       class="artista-card__img"
                     />
-                  } @else {
-                    <span class="artista-card__initial" aria-hidden="true">
-                      {{ artista.username[0]?.toUpperCase() }}
-                    </span>
-                  }
                 </div>
                 <p class="artista-card__nombre mb-0">{{ artista.username }}</p>
-                @if (artista.biografia) {
-                  <p class="artista-card__bio mb-0">{{ artista.biografia }}</p>
-                }
-              </li>
+              </article>
             }
-          </ul>
+          </div>
         } @else {
           <div class="empty-state" role="status">
             <i class="bi bi-person-music empty-state__icon" aria-hidden="true"></i>
@@ -147,26 +143,22 @@
           <a routerLink="/novedades" class="section-link" aria-label="Ver todas las novedades">Ver todas →</a>
         </div>
 
-        @if (novedadesSemana().length > 0) {
-          <ul class="cards-grid cards-grid--novedades list-unstyled">
-            @for (novedad of novedadesSemana(); track novedad.id) {
-              <li
+        @if (homeData().novedadesDeLaSemana.length > 0) {
+          <div class="cards-grid cards-grid--novedades" role="list">
+            @for (novedad of homeData().novedadesDeLaSemana; track novedad.id) {
+              <article
                 class="ks-card ks-card--novedad"
+                role="listitem"
                 tabindex="0"
-                [attr.aria-label]="novedad.titulo + ' de ' + novedad.idUsuario.username"
+                [attr.aria-label]="novedad.titulo + ' de ' + novedad.artista.username"
               >
                 <div class="ks-card__cover">
-                  @if (novedad.archivo_portada) {
                     <img
-                      [src]="novedad.archivo_portada"
+                      [src]="novedad.urlPortada"
                       [alt]="'Portada de ' + novedad.titulo"
                       class="ks-card__img"
                     />
-                  } @else {
-                    <span class="ks-card__fallback-icon" aria-hidden="true">
-                      <i class="bi bi-disc"></i>
-                    </span>
-                  }
+
                   <button
                     type="button"
                     class="ks-card__play-btn"
@@ -177,12 +169,17 @@
                 </div>
                 <div class="ks-card__body">
                   <p class="ks-card__title mb-1">{{ novedad.titulo }}</p>
-                  <p class="ks-card__desc mb-0">{{ novedad.idUsuario.username }}</p>
+                  <p class="ks-card__desc mb-0">{{ novedad.artista.username }}</p>
                   <span class="ks-card__badge mt-2">{{ novedad.tipo }}</span>
                 </div>
-              </li>
+              </article>
             }
-          </ul>
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-disc empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">No hay novedades esta semana.</p>
+          </div>
         }
       </div>
     </section>
@@ -202,39 +199,42 @@
           <a routerLink="/lanzamientos" class="section-link" aria-label="Ver todos los próximos lanzamientos">Ver todos →</a>
         </div>
 
-        @if (proximosLanzamientos().length > 0) {
-          <ul class="lanzamientos-list list-unstyled" aria-label="Próximos lanzamientos">
-            @for (lanzamiento of proximosLanzamientos(); track lanzamiento.id) {
-              <li
+        @if (homeData().proximosLanzmientos.length > 0) {
+          <div class="lanzamientos-list" role="list">
+            @for (lanzamiento of homeData().proximosLanzmientos; track lanzamiento.id) {
+              <article
                 class="lanzamiento-item"
+                role="listitem"
                 tabindex="0"
-                [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.idUsuario.username"
+                [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.artista.username"
               >
                 <div class="lanzamiento-item__cover">
-                  @if (lanzamiento.archivo_portada) {
                     <img
-                      [src]="lanzamiento.archivo_portada"
+                      [src]="lanzamiento.urlPortada"
                       [alt]="'Portada de ' + lanzamiento.titulo"
                       class="lanzamiento-item__img"
                     />
-                  } @else {
-                    <i class="bi bi-calendar-event lanzamiento-item__icon" aria-hidden="true"></i>
-                  }
+
                 </div>
                 <div class="lanzamiento-item__info">
                   <p class="lanzamiento-item__titulo mb-0">{{ lanzamiento.titulo }}</p>
-                  <p class="lanzamiento-item__artista mb-0">{{ lanzamiento.idUsuario.username }}</p>
+                  <p class="lanzamiento-item__artista mb-0">{{ lanzamiento.artista.username }}</p>
                 </div>
                 <div class="lanzamiento-item__meta ms-auto text-end">
                   <span class="ks-card__badge">{{ lanzamiento.tipo }}</span>
                   <p class="lanzamiento-item__fecha mb-0 mt-1">
                     <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>
-                    {{ lanzamiento.fecha_lanzamiento }}
+                    {{ lanzamiento.fechaLanzamiento }}
                   </p>
                 </div>
-              </li>
+              </article>
             }
-          </ul>
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-calendar-event empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">No hay próximos lanzamientos por el momento.</p>
+          </div>
         }
       </div>
     </section>
@@ -249,23 +249,30 @@
             <h2 class="section-title mb-0" id="canciones-heading">
               @if (estaLogueado()) { Tus canciones más escuchadas } @else { Canciones más escuchadas }
             </h2>
-            <p class="section-sub mb-0">
-              @if (estaLogueado()) { Tu historial personal } @else { Lo que suena en todo el mundo }
-            </p>
           </div>
           <a routerLink="/canciones" class="section-link" aria-label="Ver todas las canciones">Ver todas →</a>
         </div>
 
-        @if (canciones().length > 0) {
+        @if (homeData().cancionesMasEscuchadas.length > 0) {
           <ol class="canciones-list" aria-label="Lista de canciones más escuchadas">
-            @for (cancion of canciones(); track cancion.id; let i = $index) {
+            @for (cancion of homeData().cancionesMasEscuchadas; track cancion.cancionId; let i = $index) {
               <li class="cancion-item" tabindex="0" [attr.aria-label]="cancion.titulo">
                 <span class="cancion-item__pos" aria-hidden="true">{{ i + 1 }}</span>
                 <div class="cancion-item__cover">
-                  <i class="bi bi-music-note cancion-item__icon" aria-hidden="true"></i>
+                  @if (cancion.urlPortada) {
+                    <img
+                      class="cancion-item__img"
+                      [src]="cancion.urlPortada"
+                      [alt]="'Portada de ' + cancion.titulo"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <i class="bi bi-music-note cancion-item__icon" aria-hidden="true"></i>
+                  }
                 </div>
                 <div class="cancion-item__info">
                   <p class="cancion-item__titulo mb-0">{{ cancion.titulo }}</p>
+                  <p class="cancion-item__artista mb-0">{{ formatearArtistas(cancion.artistas) }}</p>
                 </div>
                 <div class="cancion-item__meta ms-auto text-end">
                   <p class="cancion-item__duracion mb-0">{{ formatearDuracion(cancion.duracionSegundos) }}</p>
