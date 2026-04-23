@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { IsActiveMatchOptions, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { Footer } from '../../../zonaFooter/footer';
 
@@ -7,6 +7,7 @@ interface NavItem {
   route: string;
   label: string;
   icon?: string;
+  queryParams?: Record<string, string>;
 }
 
 interface User {
@@ -18,6 +19,7 @@ interface SidebarItem {
   label: string;
   icon: string;
   route: string;
+  queryParams?: Record<string, string>;
 }
 
 @Component({
@@ -28,19 +30,27 @@ interface SidebarItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header {
+  private readonly router = inject(Router);
+  readonly exactRouteMatch: IsActiveMatchOptions = {
+    paths: 'exact',
+    queryParams: 'exact',
+    matrixParams: 'ignored',
+    fragment: 'ignored',
+  };
+
   readonly isSidebarOpen = signal(true);
-  readonly isUserMenuOpen = signal(false);
 
   readonly navItems: NavItem[] = [
     { route: '/header/artista', label: 'Inicio', icon: 'home' },
-    { route: '/header/artista', label: 'Playlist KeySound', icon: 'library_music' },
-    { route: '/header/artista', label: 'Podcast', icon: 'podcasts' },
+    { route: '/header/mis-lanzamientos', label: 'Mis lanzamientos', icon: 'library_music' },
+    { route: '/header/estadisticas', label: 'Estadisticas', icon: 'podcasts' },
   ];
 
   readonly sidebarItems: SidebarItem[] = [
-    { label: 'Panel del artista', icon: 'equalizer', route: '/header/artista' },
-    { label: 'Mis lanzamientos', icon: 'album', route: '/header/artista' },
-    { label: 'Estadisticas', icon: 'insights', route: '/header/artista' },
+    { label: 'Panel principal', icon: 'equalizer', route: '/header/artista' },
+    { label: 'Mis lanzamientos', icon: 'album', route: '/header/mis-lanzamientos' },
+    { label: 'Estadisticas', icon: 'insights', route: '/header/estadisticas' },
+    { label: 'Configuracion', icon: 'settings', route: '/header/configuracion', queryParams: { section: 'profile' } },
   ];
 
   readonly currentUser = signal<User>({
@@ -63,21 +73,29 @@ export class Header {
 
   toggleSidebar(): void {
     this.isSidebarOpen.update((value) => !value);
-    if (!this.isSidebarOpen()) {
-      this.isUserMenuOpen.set(false);
-    }
   }
 
-  toggleUserMenu(): void {
-    this.isUserMenuOpen.update((value) => !value);
-  }
-
-  openSettings(): void {
-    this.isUserMenuOpen.set(true);
+  goToAccountSettings(): void {
+    this.router.navigate(['/header/configuracion'], {
+      queryParams: { section: 'account' },
+    });
   }
 
   onSearch(): void {
-    // TODO: implementar búsqueda con searchTerm()
+    const term = this.searchTerm().trim();
+
+    if (!term) {
+      this.router.navigate(['/header/artista']);
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('lastSearch', term);
+    }
+
+    this.router.navigate(['/header/artista'], {
+      queryParams: { q: term },
+    });
   }
 
   clearSearch(): void {
@@ -86,7 +104,7 @@ export class Header {
 
   private resolveUserName(): string {
     if (typeof window === 'undefined') {
-      return 'Artista';
+      return 'Usuario';
     }
 
     const keys = ['userName', 'username', 'name'];
@@ -97,6 +115,6 @@ export class Header {
       }
     }
 
-    return 'Artista';
+    return 'Usuario';
   }
 }

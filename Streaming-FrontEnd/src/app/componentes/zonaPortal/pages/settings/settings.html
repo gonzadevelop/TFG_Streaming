@@ -1,0 +1,151 @@
+<section class="settings-page" aria-labelledby="settings-title">
+  <header class="settings-hero">
+    <div>
+      <p class="kicker">Cuenta y perfil</p>
+      <h1 id="settings-title">Configuracion</h1>
+      <p class="description">{{ pageSubtitle() }}</p>
+    </div>
+
+    <div class="hero-actions">
+      <button type="button" class="btn-secondary" (click)="discardChanges()" [disabled]="isSaving() || isLoading()">
+        Descartar
+      </button>
+      <button type="button" class="btn-primary" (click)="saveSettings()" [disabled]="isSaving() || isLoading()">
+        {{ isSaving() ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="status status-error">{{ errorMessage() }}</p>
+  }
+
+  @if (successMessage()) {
+    <p class="status status-success">{{ successMessage() }}</p>
+  }
+
+  <form [formGroup]="settingsForm" class="settings-shell" (ngSubmit)="saveSettings()">
+    <aside class="settings-sidebar" aria-label="Navegacion de configuracion">
+      <div class="sidebar-copy">
+        <p class="kicker">Panel lateral</p>
+        <h2>Menu de ajustes</h2>
+        <p>{{ pageSubtitle() }}</p>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Secciones de configuracion">
+        <button
+          type="button"
+          class="sidebar-link"
+          [class.active]="activeSection() === 'account'"
+          (click)="setSection('account')"
+        >
+          <span class="sidebar-link-label">Cuenta</span>
+          <span class="sidebar-link-note">Email y contraseña</span>
+        </button>
+
+        <button
+          type="button"
+          class="sidebar-link"
+          [class.active]="activeSection() === 'profile'"
+          (click)="setSection('profile')"
+        >
+          <span class="sidebar-link-label">
+            {{ role() === 'artist' ? 'Perfil artista' : 'Preferencias de oyente' }}
+          </span>
+          <span class="sidebar-link-note">
+            {{ role() === 'artist' ? 'Bio y redes' : 'Hábitos de escucha' }}
+          </span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="sidebar-status-dot"></span>
+        <p>Los cambios se guardan en tu cuenta de KeySound.</p>
+      </div>
+    </aside>
+
+    <main class="settings-content">
+      @if (activeSection() === 'account') {
+        <section class="settings-panel" formGroupName="account" aria-labelledby="account-title">
+          <div class="panel-head">
+            <p class="panel-kicker">Sección 01</p>
+            <h2 id="account-title">Configuracion de cuenta</h2>
+          </div>
+
+          <div class="panel-grid">
+            <label class="field">
+              <span class="label">Email</span>
+              <input type="email" formControlName="email" placeholder="tu@email.com" />
+            </label>
+            @if (settingsForm.controls.account.controls.email.touched && settingsForm.controls.account.controls.email.invalid) {
+              <p class="error-text">Introduce un email valido.</p>
+            }
+
+            <label class="field">
+              <span class="label">Nueva contrasena</span>
+              <input type="password" formControlName="password" placeholder="Minimo 8 caracteres" />
+            </label>
+            @if (settingsForm.controls.account.controls.password.touched && settingsForm.controls.account.controls.password.invalid) {
+              <p class="error-text">La contrasena debe tener al menos 8 caracteres.</p>
+            }
+          </div>
+        </section>
+      }
+
+      @if (activeSection() === 'profile') {
+        @if (role() === 'artist') {
+          <section class="settings-panel" formGroupName="artistProfile" aria-labelledby="profile-title">
+            <div class="panel-head">
+              <p class="panel-kicker">Sección 02</p>
+              <h2 id="profile-title">Configuracion de perfil (Artista)</h2>
+            </div>
+
+            <label class="field">
+              <span class="label">Biografia</span>
+              <textarea rows="4" formControlName="bio" placeholder="Describe tu proyecto musical"></textarea>
+            </label>
+
+            <div class="grid-two">
+              <label class="field">
+                <span class="label">Instagram</span>
+                <input type="text" formControlName="instagram" placeholder="@tuusuario" />
+              </label>
+              <label class="field">
+                <span class="label">YouTube</span>
+                <input type="text" formControlName="youtube" placeholder="Canal o URL" />
+              </label>
+            </div>
+
+            <label class="field">
+              <span class="label">TikTok</span>
+              <input type="text" formControlName="tiktok" placeholder="@tuusuario" />
+            </label>
+          </section>
+        } @else {
+          <section class="settings-panel" formGroupName="listenerProfile" aria-labelledby="profile-title">
+            <div class="panel-head">
+              <p class="panel-kicker">Sección 02</p>
+              <h2 id="profile-title">Configuracion de perfil (Oyente)</h2>
+            </div>
+
+            <label class="field">
+              <span class="label">Preferencias musicales</span>
+              <input type="text" formControlName="favoriteGenres" placeholder="Pop, Rock, Indie..." />
+            </label>
+
+            <label class="toggle-row">
+              <input type="checkbox" formControlName="explicitContent" />
+              <span>Permitir contenido explicito</span>
+            </label>
+
+            <label class="toggle-row">
+              <input type="checkbox" formControlName="releaseNotifications" />
+              <span>Recibir notificaciones de lanzamientos</span>
+            </label>
+          </section>
+        }
+      }
+    </main>
+  </form>
+</section>
+

@@ -26,16 +26,33 @@ export const routes: Routes = [
           import('./componentes/zonaArtista/artista').then(m => m.Artista),
       },
       {
+        path: 'configuracion',
+        title: 'Configuracion | KeySound',
+        loadComponent: () =>
+          import('./componentes/zonaPortal/pages/settings/settings').then(m => m.SettingsComponent),
+      },
+      {
+        path: 'mis-lanzamientos',
+        title: 'Mis lanzamientos | KeySound',
+        loadComponent: () =>
+          import('./componentes/zonaPortal/pages/mis-lanzamientos/mis-lanzamientos').then(
+            m => m.MisLanzamientosComponent
+          ),
+      },
+      {
+        path: 'estadisticas',
+        title: 'Estadisticas | KeySound',
+        loadComponent: () =>
+          import('./componentes/zonaPortal/pages/estadisticas/estadisticas').then(
+            m => m.EstadisticasComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'artista',
         pathMatch: 'full',
       },
     ],
-  },
-  {
-    path: 'artista',
-    redirectTo: 'header/artista',
-    pathMatch: 'full',
   },
   {
     path: '',
@@ -44,6 +61,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'header/artista',
+    redirectTo: 'login',
   },
 ];

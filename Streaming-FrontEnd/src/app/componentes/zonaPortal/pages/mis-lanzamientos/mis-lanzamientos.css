@@ -1,0 +1,151 @@
+:host {
+  --surface-color: rgba(15, 23, 42, 0.78);
+  --surface-hover: rgba(30, 41, 59, 0.62);
+  --line-color: rgba(203, 213, 225, 0.16);
+  --accent-color: #a855f7;
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-soft: #94a3b8;
+
+  display: block;
+  color: var(--text-main);
+}
+
+.lanzamientos-page {
+  padding: 0.2rem;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+}
+
+.kicker {
+  margin: 0;
+  color: var(--text-soft);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0.35rem 0 0.2rem;
+  font-size: clamp(1.45rem, 2.3vw, 2rem);
+}
+
+.description {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.status-message {
+  margin: 0 0 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(168, 85, 247, 0.28);
+  background: rgba(168, 85, 247, 0.1);
+  color: #ead8ff;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.88rem;
+}
+
+.list-card {
+  display: grid;
+  gap: 0.65rem;
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  border-radius: 16px;
+  padding: 0.85rem;
+}
+
+.release-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--line-color);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: rgba(15, 23, 42, 0.62);
+}
+
+.release-main h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.release-main p {
+  margin: 0.2rem 0 0;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+}
+
+.state-chip {
+  border-radius: 999px;
+  border: 1px solid var(--line-color);
+  color: var(--text-muted);
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.state-chip.is-published {
+  border-color: rgba(168, 85, 247, 0.5);
+  background: rgba(168, 85, 247, 0.2);
+  color: #ead8ff;
+}
+
+.row-actions {
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  border-radius: 999px;
+  padding: 0.46rem 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-primary {
+  border: none;
+  background: var(--accent-color);
+  color: #1f0836;
+}
+
+.btn-primary:hover {
+  background: #c084fc;
+}
+
+.btn-secondary {
+  border: 1px solid var(--line-color);
+  background: rgba(30, 41, 59, 0.62);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-hover);
+}
+
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .release-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .row-actions {
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    flex: 1;
+  }
+}
+

@@ -1,0 +1,38 @@
+<section class="lanzamientos-page" aria-labelledby="lanzamientos-title">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Panel principal</p>
+      <h1 id="lanzamientos-title">Mis lanzamientos</h1>
+      <p class="description">Gestiona estado y visibilidad de tus temas en un solo panel.</p>
+    </div>
+  </header>
+
+  @if (statusMessage()) {
+    <p class="status-message">{{ statusMessage() }}</p>
+  }
+
+  <section class="list-card" aria-label="Listado de lanzamientos">
+    @for (item of lanzamientos(); track item.id) {
+      <article class="release-row">
+        <div class="release-main">
+          <h2>{{ item.titulo }}</h2>
+          <p>{{ item.tipo }} · {{ item.fecha }}</p>
+        </div>
+
+        <span class="state-chip" [class.is-published]="item.estado === 'Publicado'">
+          {{ item.estado }}
+        </span>
+
+        <div class="row-actions">
+          <button type="button" class="btn-secondary" (click)="toggleVisibility(item.id)">
+            {{ item.visible ? 'Ocultar' : 'Mostrar' }}
+          </button>
+          <button type="button" class="btn-primary" (click)="toggleState(item.id)">
+            {{ item.estado === 'Publicado' ? 'Pasar a borrador' : 'Publicar' }}
+          </button>
+        </div>
+      </article>
+    }
+  </section>
+</section>
+

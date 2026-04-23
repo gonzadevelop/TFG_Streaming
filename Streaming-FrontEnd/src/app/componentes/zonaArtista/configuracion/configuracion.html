@@ -1,0 +1,64 @@
+<section class="config-page" aria-labelledby="config-title">
+  <header class="config-hero">
+    <div>
+      <p class="kicker">Panel simple</p>
+      <h1 id="config-title">Configuracion de artista</h1>
+      <p class="description">Ajustes rapidos y claros. Todo lo que ves aqui funciona sin recargar ni complicar la pantalla.</p>
+    </div>
+
+    <div class="hero-actions">
+      <button type="button" class="btn-secondary" (click)="resetSettings()">Restablecer</button>
+      <button type="button" class="btn-principal" (click)="saveChanges()">Guardar cambios</button>
+    </div>
+  </header>
+
+  @if (mensajesEstado()) {
+    <p class="status-message">{{ mensajesEstado() }}</p>
+  }
+
+  <section class="config-grid" aria-label="Ajustes principales">
+    <article class="config-card">
+      <div class="card-head">
+        <h2>Cuenta</h2>
+        <span class="badge">Base</span>
+      </div>
+
+      <div class="field-list">
+        <label class="field">
+          <span class="field-label">Nombre artistico</span>
+          <input type="text" [value]="nombreArtistico()" (input)="nombreArtistico.set($any($event.target).value)" />
+        </label>
+
+        <label class="field">
+          <span class="field-label">Correo de contacto</span>
+          <input type="email" [value]="emailContacto()" (input)="emailContacto.set($any($event.target).value)" />
+        </label>
+      </div>
+    </article>
+
+    <article class="config-card">
+      <div class="card-head">
+        <h2>Botones rapidos</h2>
+        <span class="badge">Activos</span>
+      </div>
+
+      <div class="field-list">
+        <button type="button" class="action-row" [class.action-row-active]="modoPrivado()" (click)="toggleModoPrivado()">
+          <span class="material-icons" aria-hidden="true">visibility_off</span>
+          <span>{{ modoPrivado() ? 'Modo privado activado' : 'Activar modo privado' }}</span>
+        </button>
+
+        <button type="button" class="action-row" [class.action-row-active]="dobleVerificacion()" (click)="toggleDobleVerificacion()">
+          <span class="material-icons" aria-hidden="true">admin_panel_settings</span>
+          <span>{{ dobleVerificacion() ? 'Doble verificacion activada' : 'Activar doble verificacion' }}</span>
+        </button>
+
+        <button type="button" class="action-row" [class.action-row-active]="avisosLanzamiento()" (click)="toggleAvisosLanzamiento()">
+          <span class="material-icons" aria-hidden="true">notifications</span>
+          <span>{{ avisosLanzamiento() ? 'Avisos de lanzamiento activos' : 'Activar avisos de lanzamiento' }}</span>
+        </button>
+      </div>
+    </article>
+  </section>
+</section>
+
