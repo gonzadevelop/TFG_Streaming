@@ -887,4 +887,48 @@
     gap: 0.75rem;
     margin-top: 0.5rem;
   }
+
+  .top30-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.15));
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .top30-banner:hover,
+  .top30-banner:focus-visible {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.25));
+    border-color: rgba(99, 102, 241, 0.6);
+    outline: 2px solid rgba(99, 102, 241, 0.5);
+    outline-offset: 2px;
+  }
+
+  .top30-banner__icon {
+    font-size: 2rem;
+    color: #818cf8;
+  }
+
+  .top30-banner__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+  }
+
+  .top30-banner__sub {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .top30-banner__arrow {
+    margin-left: auto;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
 }
