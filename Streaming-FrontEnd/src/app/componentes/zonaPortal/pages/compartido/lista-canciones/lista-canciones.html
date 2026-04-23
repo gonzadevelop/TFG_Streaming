@@ -12,7 +12,7 @@
   <div class="tracks-header-divider"></div>
 
   <div class="playlist-tracks" role="list" aria-label="Lista de pistas">
-    @for (pista of pistas(); track pista.idCancion ?? pista.id; let i = $index) {
+    @for (pista of pistas(); track $index; let i = $index) {
       <div class="playlist-tracks__item" role="listitem">
         <app-mini-cancion
           [pista]="pista"

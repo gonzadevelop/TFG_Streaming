@@ -1,11 +1,17 @@
 <article class="mini-cancion track-row" tabindex="0" [attr.aria-label]="pista().titulo">
 
   <div class="track-row__index">
-    @if (posicion() !== null) {
+    @if (posicion() !== null && !isReproduciendoEsta()) {
       <span class="mini-cancion__pos" aria-hidden="true">{{ posicion() }}</span>
     }
-    <button type="button" class="mini-cancion__play" [attr.aria-label]="'Reproducir ' + pista().titulo">
-      ▶
+    <button
+      type="button"
+      class="mini-cancion__play"
+      [class.mini-cancion__play--activo]="isReproduciendoEsta()"
+      (click)="reproducir()"
+      [attr.aria-label]="isReproduciendoEsta() ? 'Pausar ' + pista().titulo : 'Reproducir ' + pista().titulo"
+      [attr.aria-pressed]="isReproduciendoEsta()">
+      {{ isReproduciendoEsta() ? '⏸' : '▶' }}
     </button>
   </div>
 

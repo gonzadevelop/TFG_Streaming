@@ -11,6 +11,7 @@ import {
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TokenService } from '../../../../services/tokenService';
 import {SidebarService} from '../../../../services/SidebarService';
+import {Router} from '@angular/router';
 
 interface SidebarItem {
   label: string;
@@ -28,10 +29,12 @@ interface SidebarItem {
 export class Sidebar implements OnInit {
   private readonly tokenService = inject(TokenService);
   private readonly sidebarService = inject(SidebarService);
+  private readonly router = inject(Router);
 
   readonly isOpen = input<boolean>(true);
   userName: WritableSignal<string> = signal<string>('');
 
+  protected readonly dropdownOpen = signal<boolean>(false);
   protected readonly estaLogueado = signal<boolean>(false);
 
   protected readonly inicialAvatar = computed<string>(() =>
@@ -47,10 +50,26 @@ export class Sidebar implements OnInit {
 
   readonly sidebarItems: SidebarItem[] = [
     {label: 'Inicio', icon: 'home', route: '/home'},
-    {label: 'Lista de favoritos', icon: 'equalizer', route: '/favs'},
+    {label: 'Lista de favoritos', icon: 'favorite', route: '/favs'},
     {label: 'Estadísticas', icon: 'insights', route: '/artista'},
     {label: 'Explorar', icon: 'search', route: '/artista'},
   ];
+
+  toggleDropdown(): void {
+    this.dropdownOpen.update(v => !v);
+  }
+
+  closeDropdown(): void {
+    this.dropdownOpen.set(false);
+  }
+
+  cerrarSesion(): void {
+    this.tokenService.removeToken();
+    this.estaLogueado.set(false);
+    this.userName.set('');
+    this.closeDropdown();
+    this.router.navigate(['/']);
+  }
 
   ngOnInit(): void {
     this.estaLogueado.set(this.tokenService.isLogged());

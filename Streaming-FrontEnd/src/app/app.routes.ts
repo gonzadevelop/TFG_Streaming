@@ -14,12 +14,6 @@ export const routes: Routes = [
           import('./componentes/zonaPortal/pages/home/home').then(m => m.Home),
       },
       {
-        path: 'home',
-        title: 'Inicio | KeySound',
-        loadComponent: () =>
-          import('./componentes/zonaPortal/pages/home/home').then(m => m.Home),
-      },
-      {
         path: 'keysound-playlists',
         children: [
           {

@@ -54,6 +54,7 @@ export class Home implements OnInit {
   protected readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
+    this.estaLogueado.set(this.tokenService.isLogged());
     this.cargarDatos();
   }
 

@@ -1,12 +1,11 @@
 import {IMiniArtista} from '../home/IMiniArtista';
 
-export interface IPistaPlaylist {
+export default interface IPistaReproduccion {
   idPista: number;
   titulo: string;
   artistas: IMiniArtista[];
   urlPortada: string;
   urlCancion: string;
-  reproducciones?: number;
   duracionSegundos: number;
-  numeroPista?: number;
+  reproduciendo: boolean;
 }
