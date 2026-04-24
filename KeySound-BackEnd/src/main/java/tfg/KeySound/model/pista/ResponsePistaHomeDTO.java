@@ -7,10 +7,11 @@ import java.util.List;
 
 @Data
 public class ResponsePistaHomeDTO {
-    private Long cancionId;
+    private Long idPista;
     private Long albumId;
     private String titulo;
     private String urlPortada;
+    private String urlCancion;
     private List<MiniArtistaDTO> artistas;
     private int duracionSegundos;
     private int reproduccionesDelUsuario;
