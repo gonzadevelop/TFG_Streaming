@@ -256,39 +256,7 @@
         </div>
 
         @if (homeData().cancionesMasEscuchadas.length > 0) {
-          <ol class="canciones-list" aria-label="Lista de canciones más escuchadas">
-            @for (cancion of homeData().cancionesMasEscuchadas; track cancion.cancionId; let i = $index) {
-              <li class="cancion-item" tabindex="0" [attr.aria-label]="cancion.titulo">
-                <span class="cancion-item__pos" aria-hidden="true">{{ i + 1 }}</span>
-                <div class="cancion-item__cover">
-                  @if (cancion.urlPortada) {
-                    <img
-                      class="cancion-item__img"
-                      [src]="cancion.urlPortada"
-                      [alt]="'Portada de ' + cancion.titulo"
-                      loading="lazy"
-                    />
-                  } @else {
-                    <i class="bi bi-music-note cancion-item__icon" aria-hidden="true"></i>
-                  }
-                </div>
-                <div class="cancion-item__info">
-                  <p class="cancion-item__titulo mb-0">{{ cancion.titulo }}</p>
-                  <p class="cancion-item__artista mb-0">{{ formatearArtistas(cancion.artistas) }}</p>
-                </div>
-                <div class="cancion-item__meta ms-auto text-end">
-                  <p class="cancion-item__duracion mb-0">{{ formatearDuracion(cancion.duracionSegundos) }}</p>
-                </div>
-                <button
-                  type="button"
-                  class="cancion-item__play"
-                  [attr.aria-label]="'Reproducir ' + cancion.titulo"
-                >
-                  <i class="bi bi-play-fill"></i>
-                </button>
-              </li>
-            }
-          </ol>
+          <app-lista-canciones [pistas]="homeData().cancionesMasEscuchadas" />
         } @else {
           <div class="empty-state" role="status">
             <i class="bi bi-headphones empty-state__icon" aria-hidden="true"></i>

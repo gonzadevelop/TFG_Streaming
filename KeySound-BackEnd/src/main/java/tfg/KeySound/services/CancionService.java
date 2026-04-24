@@ -81,23 +81,27 @@ public class CancionService {
 
         List<Cancion> canciones = historialReproduccionesRepository.findTop10MostPlayed(usuario.getId());
 
-        List<ResponsePistaHomeDTO> pistaDto = pistaMapper.toDtos(canciones)
-                .stream()
-                 .peek(p -> {
-                         p.setReproduccionesDelUsuario(
-                            historialReproduccionesRepository.countReproduccionesByUsuarioAndCancion(usuario.getId(), p.getCancionId())
-                         );
-                        p.setArtistas(
-                                artistaMapper.toMiniDtos(obtenerArtistasDeCancion(p.getCancionId()))
-                        );
-                 })
-                .toList();
+        List<ResponsePistaHomeDTO> pistaDto = pistaMapper.toDtos(canciones);
+
+        for (int i = 0; i < pistaDto.size(); i++) {
+            pistaDto.get(i)
+                            .setIdPista(canciones.get(i).getPistas().stream().findFirst().get().getId());
+
+            pistaDto.get(i).setReproduccionesDelUsuario(
+                    historialReproduccionesRepository.countReproduccionesByUsuarioAndCancion(usuario.getId(), canciones.get(i).getId())
+            );
+            pistaDto.get(i).setArtistas(
+                    artistaMapper.toMiniDtos(obtenerArtistasDeCancion(canciones.get(i).getId()))
+            );
+        }
 
         for (int i = 0; i < pistaDto.size(); i++) {
             pistaDto.get(i).setUrlPortada(firebaseService.obtenerUrlArchivoImagen(
                     canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getArchivoPortada(),
                     canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getTitulo())
             );
+
+            pistaDto.get(i).setUrlCancion(firebaseService.obtenerUrlArchivoAudio(canciones.get(i).getArchivoCancion()));
 
             pistaDto.get(i)
                     .setAlbumId(

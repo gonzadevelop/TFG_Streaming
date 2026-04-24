@@ -10,12 +10,11 @@ import { RouterLink } from '@angular/router';
 import { TokenService } from '../../../../services/tokenService';
 import { HomeService } from '../../../../services/homeService';
 import { IHome } from '../../../../model/home/IHome';
-import { IMiniArtista } from '../../../../model/home/IMiniArtista';
-import { StorageGlobal } from '../../../../services/storageGlobal';
+import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, ListaCanciones],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,17 +71,5 @@ export class Home implements OnInit {
           this.cargando.set(false);
         }
       });
-
-  }
-
-  protected formatearDuracion(segundos: number): string {
-    const m = Math.floor(segundos / 60);
-    const s = segundos % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
-  }
-
-  protected formatearArtistas(artistas?: IMiniArtista[] | null): string {
-    if (!artistas || artistas.length === 0) return '';
-    return artistas.map((a) => a.username).join(', ');
   }
 }

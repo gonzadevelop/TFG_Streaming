@@ -12,10 +12,7 @@ import tfg.KeySound.mappers.PlaylistKeysoundMapper;
 import tfg.KeySound.mappers.TopMusicalDiarioMapper;
 import tfg.KeySound.model.pista.ResponsePistaTopPlaylistDTO;
 import tfg.KeySound.model.playlist.ResponseKeySoundPlaylistCompletaDTO;
-import tfg.KeySound.repositorys.CancionRepository;
-import tfg.KeySound.repositorys.HistorialReproduccionesRepository;
-import tfg.KeySound.repositorys.PlaylistKeysoundRepository;
-import tfg.KeySound.repositorys.TopMusicalDiarioRepository;
+import tfg.KeySound.repositorys.*;
 import tfg.KeySound.services.external.FirebaseService;
 
 import java.time.LocalDate;
@@ -53,7 +50,8 @@ public class RankingService {
                 .stream()
                 .peek(
                         r-> {
-                            Cancion cancion = cancionRepository.findById(r.getIdCancion()).orElseThrow();
+                            Cancion cancion = cancionRepository.findById(r.getIdPista()).orElseThrow();
+
                             // obtener usuario principal del album (si existe) y mapear a MiniArtistaDTO
                             List<Usuario> artistas = Stream.concat(
                                             cancion
@@ -64,7 +62,7 @@ public class RankingService {
                                             cancion.getUsuarios().stream()
                                     )
                                     .toList();
-
+                            r.setIdPista(cancion.getPistas().stream().findFirst().get().getId());
                             r.setArtistas(artistaMapper.toMiniDtos(artistas));
                             r.setUrlPortada(cancion.getPistas().stream().findFirst().map(p -> firebaseService.obtenerUrlArchivoImagen(p.getAlbum().getArchivoPortada(), "")).orElse(null));
                             r.setUrlCancion(firebaseService.obtenerUrlArchivoAudio(cancion.getArchivoCancion()));
