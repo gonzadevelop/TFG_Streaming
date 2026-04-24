@@ -6,6 +6,7 @@ export interface IPistaHome {
   titulo: string;
   urlPortada: string;
   artistas: IMiniArtista[];
+  urlCancion: string;
   duracionSegundos: number;
   reproduccionesDelUsuario: number;
 }

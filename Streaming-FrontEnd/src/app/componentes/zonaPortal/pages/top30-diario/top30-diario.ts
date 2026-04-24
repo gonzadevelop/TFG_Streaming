@@ -30,21 +30,21 @@ export class Top30Diario implements OnInit {
   protected readonly playlist: WritableSignal<IPlaylistCompleta | null> = signal<IPlaylistCompleta | null>(null);
 
   ngOnInit(): void {
-    // opcional: permitir /top30-diario?fecha=YYYY-MM-DD
+    const nombre = this.route.snapshot.paramMap.get('nombre') ?? '';
     const fecha = this.route.snapshot.queryParamMap.get('fecha') ?? undefined;
 
     this.cargando.set(true);
     this.error.set(null);
 
-    this.service.getDailyTop30(fecha).subscribe({
-      next: (data) => {
+    this.service.getPlaylistByNombre(nombre, fecha).subscribe({
+      next: (data: IPlaylistCompleta) => {
         this.playlist.set(data);
         this.cargando.set(false);
         console.log(this.playlist);
       },
-      error: (err) => {
-        console.error('Error cargando dailyTop30:', err);
-        this.error.set('No se pudo cargar el Top 30 diario.');
+      error: (err: unknown) => {
+        console.error('Error cargando playlist:', err);
+        this.error.set('No se pudo cargar la playlist.');
         this.cargando.set(false);
       },
     });

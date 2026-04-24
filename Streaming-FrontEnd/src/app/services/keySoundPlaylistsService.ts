@@ -20,5 +20,22 @@ export class KeySoundPlaylistsService {
 
     return this.http.get<IPlaylistCompleta>(url);
   }
+
+  /**
+   * Obtiene una playlist por su nombre (slug) de ruta.
+   * Mapea el nombre del segmento de URL al endpoint correcto del backend.
+   */
+  getPlaylistByNombre(nombre: string, fechaYYYYMMDD?: string): Observable<IPlaylistCompleta> {
+
+    const key = nombre
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\s\-_]/g, '');
+
+    if (key.includes('top30')) {
+      return this.getDailyTop30(fechaYYYYMMDD);
+    }
+    return this.http.get<IPlaylistCompleta>(`${this.baseURL}/KeySoundPlaylists/${encodeURIComponent(nombre)}`);
+  }
 }
 
