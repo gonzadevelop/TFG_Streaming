@@ -17,9 +17,8 @@ export const routes: Routes = [
         path: 'keysound-playlists',
         children: [
           {
-            path: 'top30-diario',
-            title: 'Top 30 diario | KeySound',
-            // Asegúrate de que la ruta al archivo sea exacta y el componente sea standalone
+            path: ':nombre',
+            title: 'Playlist | KeySound',
             loadComponent: () => import('./componentes/zonaPortal/pages/top30-diario/top30-diario')
               .then(m => m.Top30Diario),
           }

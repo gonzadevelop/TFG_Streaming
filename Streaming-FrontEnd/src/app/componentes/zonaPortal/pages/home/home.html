@@ -39,6 +39,7 @@
                 tabindex="0"
                 [attr.aria-label]="playlist.nombre"
               >
+                <a [routerLink]="['/keysound-playlists', playlist.nombre]" class="ks-card__link" [attr.aria-label]="'Ir a la playlist ' + playlist.nombre" tabindex="-1">
                 <div class="ks-card__cover ks-card__cover--playlist">
                     <img
                       [src]="playlist.urlPortada"
@@ -60,6 +61,7 @@
                     <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
                   }
                 </div>
+                </a>
               </article>
             }
           </div>

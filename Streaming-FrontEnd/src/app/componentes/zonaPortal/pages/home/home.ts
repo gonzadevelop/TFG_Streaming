@@ -11,6 +11,7 @@ import { TokenService } from '../../../../services/tokenService';
 import { HomeService } from '../../../../services/homeService';
 import { IHome } from '../../../../model/home/IHome';
 import { IMiniArtista } from '../../../../model/home/IMiniArtista';
+import { StorageGlobal } from '../../../../services/storageGlobal';
 
 @Component({
   selector: 'app-home',
