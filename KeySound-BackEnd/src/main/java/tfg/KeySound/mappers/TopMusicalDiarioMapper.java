@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {ArtistaMapper.class})
 public interface TopMusicalDiarioMapper {
 
-    @Mapping(target = "idCancion", source = "cancion.id")
+    @Mapping(target = "idPista", source = "cancion.id")
     @Mapping(target = "titulo", source = "cancion.titulo")
     @Mapping(target = "artistas", source = "cancion.usuarios")
     @Mapping(target = "urlPortada", ignore = true)

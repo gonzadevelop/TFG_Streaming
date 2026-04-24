@@ -1,19 +1,11 @@
 package tfg.KeySound.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tfg.KeySound.mappers.TopMusicalDiarioMapper;
-import tfg.KeySound.model.album.RequestAlbumDTO;
-import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
-import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaTopPlaylistDTO;
 import tfg.KeySound.model.playlist.ResponseKeySoundPlaylistCompletaDTO;
 import tfg.KeySound.model.playlist.ResponseKeySoundPlaylistDTO;
-import tfg.KeySound.services.AlbumService;
 import tfg.KeySound.services.PlaylistKeysoundService;
 import tfg.KeySound.services.RankingService;
 
