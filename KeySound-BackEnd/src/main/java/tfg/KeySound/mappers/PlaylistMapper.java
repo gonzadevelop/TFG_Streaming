@@ -4,8 +4,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Playlist;
 import tfg.KeySound.entitys.Usuario;
+import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.model.playlist.RequestPlaylistDTO;
+import tfg.KeySound.model.playlist.ResponsePlaylistCompletaDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PlaylistMapper {
@@ -25,5 +29,13 @@ public interface PlaylistMapper {
     @Mapping(source = "playlist.descripcion", target = "descripcion")
     @Mapping(source = "url", target = "urlPortada")
     ResponsePlaylistDTO toDto(Playlist playlist, String url);
-}
 
+    @Mapping(source = "playlist.id", target = "id")
+    @Mapping(source = "playlist.nombre", target = "nombre")
+    @Mapping(source = "playlist.descripcion", target = "descripcion")
+    @Mapping(target = "usernamePropietario", constant = "keysound")
+    @Mapping(source = "urlPortada", target = "urlPortada")
+    @Mapping(source = "pistas", target = "pistas")
+    @Mapping(target = "esPropia", constant = "false")
+    ResponsePlaylistCompletaDTO toDto(Playlist playlist, String urlPortada, List<ResponsePistaPlaylistDTO> pistas);
+}

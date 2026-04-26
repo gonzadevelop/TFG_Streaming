@@ -35,7 +35,7 @@
   </div>
 
   <div class="track-row__plays">
-    @if (pista().reproducciones) {
+    @if (pista().reproducciones !== undefined) {
       <span class="mini-cancion__plays-count">
         {{ pista().reproducciones }}
       </span>
@@ -47,4 +47,3 @@
   </div>
 
 </article>
-

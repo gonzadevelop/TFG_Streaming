@@ -11,6 +11,7 @@ public class ResponsePlaylistCompletaDTO {
     private String nombre;
     private String descripcion;
     private String urlPortada;
+    private String usernamePropietario;
     private List<ResponsePistaPlaylistDTO> pistas;
     private boolean esPropia;
 }

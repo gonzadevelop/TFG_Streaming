@@ -4,7 +4,7 @@
   <div class="tracks-header">
     <div class="tracks-header__col text-center">#</div>
     <div class="tracks-header__col">Título</div>
-    @if (pistas()[0].reproducciones) {
+    @if (pistas()[0].reproducciones !== undefined) {
       <div class="tracks-header__col text-right">Reproducciones</div>
       <div class="tracks-header__col text-right">⏱</div>
     }

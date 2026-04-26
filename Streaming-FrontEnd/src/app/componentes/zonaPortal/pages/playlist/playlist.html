@@ -1,0 +1,54 @@
+@if (cargando()) {
+  <section class="playlist-page">
+    <p class="muted">Cargando playlist…</p>
+  </section>
+} @else if (error()) {
+  <section class="playlist-page">
+    <p class="error">{{ error() }}</p>
+  </section>
+} @else if (playlist(); as p) {
+  <section class="playlist-page">
+    <div class="playlist-gradient-bg"></div>
+
+    <header class="playlist-header">
+      <div class="playlist-cover-container">
+        @if (p.urlPortada) {
+          <img
+            class="playlist-cover"
+            [src]="p.urlPortada"
+            [alt]="'Portada de ' + p.nombre"
+            loading="lazy"
+          />
+        } @else {
+          <div class="playlist-cover-placeholder">
+            <span class="playlist-cover-icon" aria-hidden="true">♪</span>
+          </div>
+        }
+      </div>
+
+      <div class="playlist-info">
+        <span class="playlist-type">Playlist</span>
+        <h1 class="playlist-title">{{ p.nombre }}</h1>
+        <div class="playlist-meta">
+          @if (p.descripcion) {
+            <p class="playlist-desc mb-0">{{ p.descripcion }}</p>
+          }
+          <span class="playlist-stats">
+            <span class="playlist-author">{{ p.usernamePropietario }}</span> • {{ p.pistas.length || 0 }} canciones
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <div class="playlist-actions">
+      <button class="btn-play-large" aria-label="Reproducir">
+        ▶
+      </button>
+    </div>
+
+    <div class="playlist-content">
+      <app-lista-canciones
+        [pistas]="p.pistas || []"/>
+    </div>
+  </section>
+}

@@ -8,12 +8,19 @@ import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.pista.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.OwnershipRequiredException;
 import tfg.KeySound.exception.playlist.PlaylistNotFoundException;
+import tfg.KeySound.mappers.CancionMapper;
+import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.model.cancion.RequestCancionesPlaylistDTO;
+import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.model.playlist.RequestPlaylistDTO;
+import tfg.KeySound.model.playlist.ResponsePlaylistCompletaDTO;
+import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import tfg.KeySound.repositorys.*;
 import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.services.external.JwtService;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +31,8 @@ public class PlaylistService {
      */
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
+    private final RankingService rankingService;
+
     private final PistaRepository pistaRepository;
 
     private final PlaylistPistaRepository playlistPistaRepository;
@@ -31,6 +40,7 @@ public class PlaylistService {
     private final UsuarioRepository usuarioRepository;
 
     private final PlaylistMapper playlistMapper;
+    private final PistaMapper pistaMapper;
 
     /**
      * Metodos llamados por endpoints
@@ -86,5 +96,49 @@ public class PlaylistService {
                     return relacion;
                 })
                 .forEach(playlistPistaRepository::save); // Guardar la relación en la base de datos
+    }
+
+    public List<ResponsePlaylistDTO> getPlaylists() {
+
+        return playlistRepository
+                .findAll()
+                .stream()
+                .filter(p -> p.getPropietario().getId().equals(1L))
+                .map( p ->
+                        playlistMapper
+                                .toDto(
+                                        p,
+                                        firebaseService.obtenerUrlArchivoImagen(p.getFotoPortada(), "")
+                                )
+                )
+                .toList();
+    }
+
+    public ResponsePlaylistCompletaDTO getPlaylistById(Long id, String fecha) {
+        if (id.equals(1L)) {
+            return rankingService.getDailyTop30(fecha);
+        }
+
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new PlaylistNotFoundException(id));
+
+        List<ResponsePistaPlaylistDTO> pistas = playlist
+                .getPlaylistPistas()
+                .stream()
+                .map( pp -> pistaMapper.pistaToPlaylistDto(
+                        pp.getPista(),
+                        firebaseService.obtenerUrlArchivoImagen(pp.getPista().getAlbum().getArchivoPortada(), ""),
+                        firebaseService.obtenerUrlArchivoAudio(pp.getPista().getCancion().getArchivoCancion()),
+                        pp.getPista().getCancion().getUsuarios()
+                                .stream()
+                                .map(Usuario::getUsername)
+                                .toList()
+                ))
+                .toList();
+
+        return playlistMapper.toDto(
+                playlist,
+                firebaseService.obtenerUrlArchivoImagen(playlist.getFotoPortada(), ""),
+                pistas);
     }
 }

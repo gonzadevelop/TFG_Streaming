@@ -1,0 +1,83 @@
+<div class="keysound-playlists-bg" aria-hidden="true">
+  <div class="keysound-blob keysound-blob--1"></div>
+  <div class="keysound-blob keysound-blob--2"></div>
+  <div class="keysound-blob keysound-blob--3"></div>
+</div>
+
+<main class="keysound-playlists-content" aria-label="Playlists de KeySound">
+  @if (cargando()) {
+    <div class="keysound-loading" role="status" aria-live="polite">
+      <div class="spinner-border text-primary" aria-hidden="true"></div>
+      <p class="mt-3 mb-0">Cargando playlists…</p>
+    </div>
+  } @else {
+
+    <!-- ══════════════════════════
+         Keysound Playlists
+    ══════════════════════════ -->
+    <section class="keysound-section" aria-labelledby="playlists-heading">
+      <div class="container-fluid px-4 px-md-5">
+        <div class="section-header mb-4 d-flex align-items-center justify-content-between">
+          <div>
+            <h1 class="section-title mb-2" id="playlists-heading">Playlists de KeySound</h1>
+            <p class="section-sub mb-0">Las mejores playlists seleccionadas por nuestros editores</p>
+          </div>
+          <a routerLink="/" class="btn-back" [attr.aria-label]="'Volver al inicio'">
+            <i class="bi bi-house-fill"></i>
+            <span>Inicio</span>
+          </a>
+        </div>
+
+        @if (playlists().length > 0) {
+          <div class="cards-grid" role="list">
+            @for (playlist of playlists(); track playlist.id) {
+              <article
+                class="ks-card"
+                role="listitem"
+                tabindex="0"
+                [attr.aria-label]="playlist.nombre"
+              >
+                <a [routerLink]="['/playlists/keysound', playlist.id]" class="ks-card__link" [attr.aria-label]="'Ir a la playlist ' + playlist.nombre" tabindex="-1">
+                  <div class="ks-card__cover ks-card__cover--playlist">
+                    <img
+                      [src]="playlist.urlPortada"
+                      [alt]="'Portada de ' + playlist.nombre"
+                      class="ks-card__img"
+                    />
+
+                    <button
+                      type="button"
+                      class="ks-card__play-btn"
+                      [attr.aria-label]="'Reproducir ' + playlist.nombre"
+                    >
+                      <i class="bi bi-play-fill"></i>
+                    </button>
+                  </div>
+                  <div class="ks-card__body">
+                    <p class="ks-card__title mb-1">{{ playlist.nombre }}</p>
+                    @if (playlist.descripcion) {
+                      <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
+                    }
+                  </div>
+                </a>
+              </article>
+            }
+          </div>
+        } @else if (!error()) {
+          <div class="empty-state" role="status">
+            <i class="bi bi-music-note-list empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">No hay playlists disponibles en este momento.</p>
+          </div>
+        }
+
+        @if (error()) {
+          <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+            {{ error() }}
+          </div>
+        }
+      </div>
+    </section>
+  }
+</main>
+
