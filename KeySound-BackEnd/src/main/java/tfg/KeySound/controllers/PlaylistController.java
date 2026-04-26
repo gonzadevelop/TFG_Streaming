@@ -7,6 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tfg.KeySound.model.cancion.RequestCancionesPlaylistDTO;
 import tfg.KeySound.model.playlist.RequestPlaylistDTO;
+import tfg.KeySound.model.playlist.ResponsePlaylistCompletaDTO;
+import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import tfg.KeySound.services.PlaylistService;
 
 import java.util.List;
@@ -59,5 +61,23 @@ public class PlaylistController {
             @RequestHeader ("Authorization") String token) {
         playlistService.agregarCancionesAPlaylist(dto, token.substring(7));
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Endpoint para obtener las playlists destacadas de KeySound.
+     * Estas playlists son seleccionadas por el equipo de la plataforma y se muestran en la página principal de la aplicación para que los usuarios las descubran fácilmente.
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponsePlaylistDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de playlists destacadas de KeySound
+     * @apiNote {@code GET /api/playlists/keysound}
+     */
+    @GetMapping("/keysound")
+    public ResponseEntity<List<ResponsePlaylistDTO>> getKeySoundPlaylists() {
+        return ResponseEntity.ok(playlistService.getPlaylists());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponsePlaylistCompletaDTO> getPlaylistById(
+            @PathVariable Long id,
+            @RequestParam (required = false) String fecha) {
+        return ResponseEntity.ok(playlistService.getPlaylistById(id, fecha));
     }
 }

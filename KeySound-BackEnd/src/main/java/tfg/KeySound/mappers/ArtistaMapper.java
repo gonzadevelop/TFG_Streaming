@@ -3,7 +3,6 @@ package tfg.KeySound.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Usuario;
-import tfg.KeySound.model.artista.MiniArtistaDTO;
 import tfg.KeySound.model.artista.ResponseArtistaDTO;
 import tfg.KeySound.model.artista.ResponseArtistaHomeDTO;
 import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
@@ -25,10 +24,4 @@ public interface ArtistaMapper {
     @Mapping(target = "username", source = "artista.username")
     @Mapping(target = "urlAvatar", ignore = true)
     ResponseArtistaHomeDTO toHomeDto(Usuario artista);
-
-    @Mapping(target = "id", source = "artista.id")
-    @Mapping(target = "username", source = "artista.username")
-    MiniArtistaDTO toMiniDto(Usuario artista);
-
-    List<MiniArtistaDTO> toMiniDtos(List<Usuario> artistas);
 }

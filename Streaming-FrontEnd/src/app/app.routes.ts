@@ -14,16 +14,22 @@ export const routes: Routes = [
           import('./componentes/zonaPortal/pages/home/home').then(m => m.Home),
       },
       {
-        path: 'keysound-playlists',
+        path: 'playlists',
         children: [
           {
-            path: ':nombre',
+            path: 'keysound',
+            title: 'KeySound | Playlists',
+            loadComponent: () => import('./componentes/zonaPortal/pages/keysound-playlists/keysound-playlists')
+              .then(m => m.Playlists),
+          },
+          {
+            path: ':id',
             title: 'Playlist | KeySound',
-            loadComponent: () => import('./componentes/zonaPortal/pages/top30-diario/top30-diario')
-              .then(m => m.Top30Diario),
+            loadComponent: () => import('./componentes/zonaPortal/pages/playlist/playlist')
+              .then(m => m.Playlist),
           }
         ],
-      }
+      },
     ],
   },
   {

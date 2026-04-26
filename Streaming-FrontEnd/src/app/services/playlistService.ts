@@ -3,11 +3,21 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {Observable} from 'rxjs';
 import { IPlaylistRequest, ICancionesPlaylistRequest } from '../model/playlists/IPlaylistRequest';
+import {IPlaylistCompleta} from '../model/playlists/IPlaylistCompleta';
+import { IPlaylist } from '../model/home/IPlaylist';
 
 @Injectable({ providedIn: 'root' })
 export class PlaylistService {
   private readonly http = inject(HttpClient);
   private readonly baseURL = `${environment.apiURL}`;
+
+  /**
+   * Obtiene todas las playlists destacadas de KeySound.
+   * GET /api/playlists/keysound
+   */
+  getPlaylistsKeysound(): Observable<IPlaylist[]> {
+    return this.http.get<IPlaylist[]>(`${this.baseURL}/playlists/keysound`);
+  }
 
   /**
    * El usuario crea una nueva playlist vacía.
@@ -21,6 +31,14 @@ export class PlaylistService {
     if (dto.descripcion) formData.append('descripcion', dto.descripcion);
     if (dto.fotoPortada) formData.append('fotoPortada', dto.fotoPortada);
     return this.http.post<void>(`${this.baseURL}/playlists/crear`, formData);
+  }
+
+  /**
+   * Obtiene una playlist desde el endpoint especificado.
+   * @param endpoint URL completa del endpoint (ej: 'localhost:8080/api/playlists/{id}')
+   */
+  getPlaylist(endpoint: string): Observable<IPlaylistCompleta> {
+    return this.http.get<IPlaylistCompleta>(this.baseURL + endpoint);
   }
 
   /**

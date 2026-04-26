@@ -6,6 +6,7 @@ import tfg.KeySound.entitys.Album;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
+import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 
 import java.util.List;
 
@@ -29,4 +30,13 @@ public interface PistaMapper {
     ResponsePistaHomeDTO toDto(Cancion cancion);
 
     List<ResponsePistaHomeDTO> toDtos(List<Cancion> canciones);
+
+    @Mapping(target = "idPista", source = "pista.id")
+    @Mapping(target = "titulo", source = "pista.cancion.titulo")
+    @Mapping(target = "urlPortada", source = "urlPortada")
+    @Mapping(target = "urlCancion", source = "urlCancion")
+    @Mapping(target = "artistas", source = "artistas")
+    @Mapping(target = "reproducciones", ignore = true)
+    @Mapping(target = "duracionSegundos", source = "pista.cancion.duracionSegundos")
+    ResponsePistaPlaylistDTO pistaToPlaylistDto(Pista pista, String urlPortada, String urlCancion, List<String> artistas);
 }

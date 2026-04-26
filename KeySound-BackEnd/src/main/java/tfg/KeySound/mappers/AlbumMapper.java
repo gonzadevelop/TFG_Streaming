@@ -17,7 +17,7 @@ import java.util.List;
 public interface AlbumMapper {
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "artista", source = "usuario")
+    @Mapping(target = "artista", source = "usuario.username")
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "urlPortada", source = "archivoPortada")
     @Mapping(target = "anioLanzamiento", source = "album.fechaLanzamiento.year")
@@ -58,7 +58,7 @@ public interface AlbumMapper {
     List<ResponseMiAlbumDTO> toMisAlbumsDtos(List<Album> albums);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "artista", source = "usuario")
+    @Mapping(target = "artista", source = "usuario.username")
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "urlPortada", source = "archivoPortada")
     @Mapping(target = "fechaLanzamiento", source = "album.fechaLanzamiento")

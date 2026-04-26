@@ -57,7 +57,7 @@ export class Player implements OnDestroy {
     }
     return {
       title:    pista.titulo,
-      artist:   pista.artistas.map(a => a.username).join(', '),
+      artist:   pista.artistas.length > 0 ? pista.artistas.join(', ') : 'Desconocido',
       cover:    pista.urlPortada || null,
       duracion: pista.duracionSegundos,
       activa:   true,

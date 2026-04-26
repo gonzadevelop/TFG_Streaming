@@ -24,7 +24,7 @@ export class MiniCancion {
   });
 
   protected readonly artistasTexto = computed(() =>
-    (this.pista().artistas ?? []).map(a => a.username).join(', ')
+    (this.pista().artistas ?? []).map(a => a).join(', ')
   );
 
   protected reproducir(): void {

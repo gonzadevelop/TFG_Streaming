@@ -1,9 +1,7 @@
-import {IMiniArtista} from '../home/IMiniArtista';
-
 export default interface IPistaReproduccion {
   idPista: number;
   titulo: string;
-  artistas: IMiniArtista[];
+  artistas: string[];
   urlPortada: string;
   urlCancion: string;
   duracionSegundos: number;

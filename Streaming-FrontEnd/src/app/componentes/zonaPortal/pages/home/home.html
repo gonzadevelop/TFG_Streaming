@@ -14,7 +14,7 @@
   } @else {
 
     <!-- ══════════════════════════
-         1. MIS PLAYLISTS / PLAYLISTS DESTACADAS
+         1. Keysound Playlists
     ══════════════════════════ -->
     <section class="home-section" aria-labelledby="playlists-heading">
       <div class="container-fluid px-4 px-md-5">
@@ -27,19 +27,19 @@
               @if (estaLogueado()) { Las que más escuchas } @else { Seleccionadas por nuestros editores }
             </p>
           </div>
-          <a routerLink="/playlists" class="section-link" aria-label="Ver todas las playlists">Ver todas →</a>
+          <a routerLink="/playlists/keysound" class="section-link" aria-label="Ver todas las playlists">Ver todas →</a>
         </div>
 
         @if (homeData().keySoundPlaylists.length > 0) {
           <div class="cards-grid" role="list">
-            @for (playlist of homeData().keySoundPlaylists; track playlist.nombre) {
+            @for (playlist of homeData().keySoundPlaylists; track playlist.id) {
               <article
                 class="ks-card"
                 role="listitem"
                 tabindex="0"
                 [attr.aria-label]="playlist.nombre"
               >
-                <a [routerLink]="['/keysound-playlists', playlist.nombre]" class="ks-card__link" [attr.aria-label]="'Ir a la playlist ' + playlist.nombre" tabindex="-1">
+                <a [routerLink]="['/playlists', playlist.id]" class="ks-card__link" [attr.aria-label]="'Ir a la playlist ' + playlist.nombre" tabindex="-1">
                 <div class="ks-card__cover ks-card__cover--playlist">
                     <img
                       [src]="playlist.urlPortada"

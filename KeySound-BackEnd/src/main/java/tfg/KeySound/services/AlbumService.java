@@ -16,7 +16,6 @@ import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseProximoAlbumDTO;
-import tfg.KeySound.model.artista.MiniArtistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
@@ -146,7 +145,10 @@ public class AlbumService {
                 .map(p -> {
                     String urlCancion = firebaseService.obtenerUrlArchivoAudio(p.getCancion().getArchivoCancion());
 
-                    List<MiniArtistaDTO> artistas = artistaMapper.toMiniDtos(cancionService.obtenerArtistasDeCancion(p.getCancion().getId()));
+                    List<String> artistas = cancionService.obtenerArtistasDeCancion(p.getCancion().getId())
+                            .stream()
+                            .map(Usuario::getUsername)
+                            .toList();
 
                     return cancionMapper.toAlbumDto(p, urlCancion, artistas);
                 })

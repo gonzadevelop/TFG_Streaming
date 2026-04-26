@@ -1,5 +1,5 @@
-export interface IKeySoundPlaylist {
-  urlPlaylist: string;
+export interface IPlaylist {
+  id: number;
   nombre: string;
   descripcion: string;
   urlPortada: string;

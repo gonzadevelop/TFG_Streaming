@@ -1,7 +1,6 @@
 package tfg.KeySound.model.pista;
 
 import lombok.Data;
-import tfg.KeySound.model.artista.MiniArtistaDTO;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class ResponsePistaHomeDTO {
     private String titulo;
     private String urlPortada;
     private String urlCancion;
-    private List<MiniArtistaDTO> artistas;
+    private List<String> artistas;
     private int duracionSegundos;
     private int reproduccionesDelUsuario;
 }

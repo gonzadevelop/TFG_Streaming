@@ -1,14 +1,12 @@
 package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.HistorialReproducciones;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
-import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.repositorys.CancionRepository;
@@ -21,9 +19,6 @@ import tfg.KeySound.services.external.JwtService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
-
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +35,6 @@ public class CancionService {
     private final UsuarioRepository usuarioRepository;
     private final HistorialReproduccionesRepository historialReproduccionesRepository;
 
-    private final ArtistaMapper artistaMapper;
     private final PistaMapper pistaMapper;
 
     /**
@@ -91,7 +85,10 @@ public class CancionService {
                     historialReproduccionesRepository.countReproduccionesByUsuarioAndCancion(usuario.getId(), canciones.get(i).getId())
             );
             pistaDto.get(i).setArtistas(
-                    artistaMapper.toMiniDtos(obtenerArtistasDeCancion(canciones.get(i).getId()))
+                    obtenerArtistasDeCancion(canciones.get(i).getId())
+                            .stream()
+                            .map(Usuario::getUsername)
+                            .toList()
             );
         }
 

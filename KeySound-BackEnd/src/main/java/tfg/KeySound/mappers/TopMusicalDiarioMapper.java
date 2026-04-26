@@ -3,7 +3,7 @@ package tfg.KeySound.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.TopMusicalDiario;
-import tfg.KeySound.model.pista.ResponsePistaTopPlaylistDTO;
+import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 
 import java.util.List;
 
@@ -12,14 +12,12 @@ public interface TopMusicalDiarioMapper {
 
     @Mapping(target = "idPista", source = "cancion.id")
     @Mapping(target = "titulo", source = "cancion.titulo")
-    @Mapping(target = "artistas", source = "cancion.usuarios")
+    @Mapping(target = "artistas", ignore = true)
     @Mapping(target = "urlPortada", ignore = true)
     @Mapping(target = "urlCancion", ignore = true)
     @Mapping(target = "reproducciones", source = "reproduccionesEnElDia")
     @Mapping(target = "duracionSegundos", source = "cancion.duracionSegundos")
-    @Mapping(target = "numeroPista", source = "posicionEnElDia")
-    ResponsePistaTopPlaylistDTO toDto(TopMusicalDiario top);
+    ResponsePistaPlaylistDTO toDto(TopMusicalDiario top);
 
-    List<ResponsePistaTopPlaylistDTO> toDtos(List<TopMusicalDiario> tops);
+    List<ResponsePistaPlaylistDTO> toDtos(List<TopMusicalDiario> tops);
 }
-

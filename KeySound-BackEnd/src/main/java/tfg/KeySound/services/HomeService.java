@@ -12,7 +12,7 @@ public class HomeService {
     /**
      * Inyecciones por constructor
      */
-    private final PlaylistKeysoundService playlistKeysoundService;
+    private final PlaylistService playlistService;
     private final ArtistaService artistaService;
     private final AlbumService albumService;
     private final CancionService cancionService;
@@ -23,7 +23,7 @@ public class HomeService {
     public HomeDTO getHome(String token) {
         return HomeDTO
                 .builder()
-                .keySoundPlaylists(playlistKeysoundService.getKeySoundPlaylists())
+                .keySoundPlaylists(playlistService.getPlaylists())
                 .artistasSeguidos(artistaService.obtenerArtistasQueSigo(token))
                 .novedadesDeLaSemana(albumService.obtenerNovedades())
                 .proximosLanzmientos(albumService.obtenerProximosLanzamientos())
