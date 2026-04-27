@@ -1,109 +1,53 @@
 <section class="artista-page" aria-labelledby="titulo-zona-artista">
-  <div class="artista-layout">
-    <aside class="artist-menu-card" aria-label="Menu lateral">
-      <div class="menu-header">
-        <p class="menu-kicker">Panel principal</p>
-        <h2>Menu lateral</h2>
-        <p class="menu-note">Accede rapido a lanzamientos, estadisticas y configuracion.</p>
+  <div class="artista-content">
+    <header class="artista-hero">
+      <div>
+        <p class="kicker">Panel de control</p>
+        <h1 id="titulo-zona-artista">{{ nombreArtistico }}</h1>
+        <p class="description">Gestiona tu catalogo, revisa reproducciones y mantiene el control de tus lanzamientos.</p>
       </div>
 
-      <button
-        type="button"
-        class="menu-trigger"
-        [attr.aria-expanded]="isMenuOpen()"
-        (click)="toggleMenu()"
-      >
-        <span class="material-icons" aria-hidden="true">menu</span>
-        Menu principal
-        <span class="material-icons arrow" [class.open]="isMenuOpen()" aria-hidden="true">expand_more</span>
-      </button>
+      <button type="button" class="btn-principal" (click)="submitNewSong()">Subir nuevo tema</button>
+    </header>
 
-      <nav class="artist-menu" [class.open]="isMenuOpen()">
-        <a routerLink="/header/artista" class="menu-item">
-          <span class="material-icons" aria-hidden="true">home</span>
-          <span class="menu-item-text">Inicio</span>
-        </a>
-        <a routerLink="/header/mis-lanzamientos" class="menu-item">
-          <span class="material-icons" aria-hidden="true">album</span>
-          <span class="menu-item-text">Mis lanzamientos</span>
-        </a>
-        <a routerLink="/header/estadisticas" class="menu-item">
-          <span class="material-icons" aria-hidden="true">insights</span>
-          <span class="menu-item-text">Estadisticas</span>
-        </a>
-        <a routerLink="/header/configuracion" class="menu-item menu-item-featured">
-          <span class="material-icons" aria-hidden="true">settings</span>
-          <span class="menu-item-text">
-            <strong>Configuracion</strong>
-            <small>Ajustes de cuenta y perfil</small>
-          </span>
-          <span class="menu-pill">Ajustes</span>
-        </a>
-      </nav>
-    </aside>
+    @if (uploadMessage()) {
+      <p class="action-message">{{ uploadMessage() }}</p>
+    }
 
-    <div class="artista-content">
-      <header class="artista-hero">
-        <div>
-          <p class="kicker">Panel de control</p>
-          <h1 id="titulo-zona-artista">{{ nombreArtistico }}</h1>
-          <p class="description">Gestiona tu catalogo, revisa reproducciones y mantiene el control de tus lanzamientos.</p>
-        </div>
+    <section class="stats-grid" aria-label="Resumen rapido de estadisticas">
+      <article class="stat-card">
+        <span class="label">Oyentes mensuales</span>
+        <strong class="value">42.1K</strong>
+      </article>
 
-        <button type="button" class="btn-principal" (click)="submitNewSong()">Subir nuevo tema</button>
-      </header>
+      <article class="stat-card">
+        <span class="label">Reproducciones (30 dias)</span>
+        <strong class="value">315K</strong>
+      </article>
 
-      @if (uploadMessage()) {
-        <p class="action-message">{{ uploadMessage() }}</p>
-      }
+      <article class="stat-card">
+        <span class="label">Seguidores</span>
+        <strong class="value">9.8K</strong>
+      </article>
+    </section>
 
-      <section class="stats-grid" aria-label="Resumen rapido de estadisticas">
-        <article class="stat-card">
-          <span class="label">Oyentes mensuales</span>
-          <strong class="value">42.1K</strong>
-        </article>
+    <section class="songs-card" aria-labelledby="titulo-canciones-top">
+      <div class="songs-head">
+        <h2 id="titulo-canciones-top">Canciones destacadas</h2>
+        <a routerLink="/artista" class="link-secundario">Ver todas</a>
+      </div>
 
-        <article class="stat-card">
-          <span class="label">Reproducciones (30 dias)</span>
-          <strong class="value">315K</strong>
-        </article>
-
-        <article class="stat-card">
-          <span class="label">Seguidores</span>
-          <strong class="value">9.8K</strong>
-        </article>
-      </section>
-
-      <section class="songs-card" aria-labelledby="titulo-canciones-top">
-        <div class="songs-head">
-          <h2 id="titulo-canciones-top">Canciones destacadas</h2>
-          <a routerLink="/header/artista" class="link-secundario">Ver todas</a>
-        </div>
-
-        <div class="songs-list" role="table" aria-label="Lista de canciones top del artista">
-          @for (cancion of cancionesTop; track cancion.titulo; let i = $index) {
-            <div class="song-row" role="row">
-              <span class="song-index" role="cell">{{ i + 1 }}</span>
-              <span class="song-title" role="cell">{{ cancion.titulo }}</span>
-              <span class="song-plays" role="cell">{{ cancion.escuchas }}</span>
-              <span class="song-duration" role="cell">{{ cancion.duracion }}</span>
-            </div>
-          }
-        </div>
-      </section>
-
-      <section class="quick-actions" aria-label="Accesos directos del artista">
-        <a routerLink="/header/configuracion" [queryParams]="{ section: 'account' }" class="quick-link">
-          <span class="material-icons" aria-hidden="true">settings</span>
-          Configuracion de la cuenta
-        </a>
-        <a routerLink="/header/configuracion" [queryParams]="{ section: 'profile' }" class="quick-link">
-          <span class="material-icons" aria-hidden="true">tune</span>
-          Configuracion del perfil
-        </a>
-      </section>
-    </div>
+      <div class="songs-list" role="table" aria-label="Lista de canciones top del artista">
+        @for (cancion of cancionesTop; track cancion.titulo; let i = $index) {
+          <div class="song-row" role="row">
+            <span class="song-index" role="cell">{{ i + 1 }}</span>
+            <span class="song-title" role="cell">{{ cancion.titulo }}</span>
+            <span class="song-plays" role="cell">{{ cancion.escuchas }}</span>
+            <span class="song-duration" role="cell">{{ cancion.duracion }}</span>
+          </div>
+        }
+      </div>
+    </section>
   </div>
 </section>
-
 

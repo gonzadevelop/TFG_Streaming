@@ -16,7 +16,6 @@ interface CancionTop {
 })
 export class Artista {
   readonly nombreArtistico = 'Tu Perfil Artistico';
-  readonly isMenuOpen = signal<boolean>(true);
   readonly uploadMessage = signal<string>('');
 
   readonly cancionesTop: CancionTop[] = [
@@ -25,13 +24,7 @@ export class Artista {
     { titulo: 'Ciudad Neon', escuchas: '61K', duracion: '4:15' },
   ];
 
-  toggleMenu(): void {
-    this.isMenuOpen.update((value) => !value);
-  }
-
   submitNewSong(): void {
     this.uploadMessage.set('Funcionalidad de subir tema preparada para conectar con el formulario real.');
   }
 }
-
-
