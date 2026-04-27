@@ -16,21 +16,32 @@
   </div>
 
   <div class="track-row__title-group">
-    <div class="mini-cancion__cover">
-      @if (pista().urlPortada) {
+    @if (pista().urlPortada !== undefined) {
+      <div class="mini-cancion__cover">
         <img
           class="mini-cancion__img"
           [src]="pista().urlPortada"
           [alt]="'Portada de ' + pista().titulo"
           loading="lazy"
         />
-      } @else {
-        <span class="mini-cancion__icon" aria-hidden="true">♪</span>
-      }
     </div>
+    }
     <div class="mini-cancion__info">
       <p class="mini-cancion__titulo mb-0">{{ pista().titulo }}</p>
-      <p class="mini-cancion__artistas mb-0">{{ artistasTexto() }}</p>
+      <p class="mini-cancion__artistas mb-0">
+        @for (artista of pista().artistas; track artista; let last = $last) {
+          <button
+            type="button"
+            class="mini-cancion__artista-link"
+            (click)="navegarArtista(artista)"
+            [attr.aria-label]="'Ir a la página del artista ' + artista">
+            {{ artista }}
+          </button>
+          @if (!last) {
+            <span class="mini-cancion__artista-separator">, </span>
+          }
+        }
+      </p>
     </div>
   </div>
 

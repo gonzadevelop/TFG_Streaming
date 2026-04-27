@@ -21,10 +21,10 @@ public interface PistaMapper {
     Pista toEntity(Cancion cancion, Album album, Integer numeroPista);
 
     @Mapping(target = "idPista", ignore = true)
-    @Mapping(target = "albumId", ignore = true)
+    @Mapping(target = "idAlbum", ignore = true)
     @Mapping(target = "titulo", source = "cancion.titulo")
     @Mapping(target = "urlPortada", ignore = true)
-    @Mapping(target = "urlCancion", source = "cancion.archivoCancion")
+    @Mapping(target = "urlCancion", ignore = true)
     @Mapping(target = "artistas", ignore = true)
     @Mapping(target = "duracionSegundos", source = "cancion.duracionSegundos")
     ResponsePistaHomeDTO toDto(Cancion cancion);

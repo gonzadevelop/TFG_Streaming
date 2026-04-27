@@ -30,6 +30,18 @@ export const routes: Routes = [
           }
         ],
       },
+      {
+        path: 'artistas/:username',
+        title: 'Artista | KeySound',
+        loadComponent: () => import('./componentes/zonaPortal/pages/artista/artista')
+          .then(m => m.Artista),
+      },
+      {
+        path: 'album/:id',
+        title: 'Album | KeySound',
+        loadComponent: () => import('./componentes/zonaPortal/pages/album/album')
+          .then(m => m.Album),
+      },
     ],
   },
   {

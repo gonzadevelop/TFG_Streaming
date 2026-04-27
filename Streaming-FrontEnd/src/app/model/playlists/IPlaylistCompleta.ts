@@ -1,4 +1,4 @@
-import {IPistaPlaylist} from '../pista/IPistaPlaylist';
+import {IPista} from '../pista/IPista';
 
 export interface IPlaylistCompleta {
   id: number;
@@ -6,6 +6,6 @@ export interface IPlaylistCompleta {
   descripcion: string;
   usernamePropietario: string;
   urlPortada: string;
-  pistas: IPistaPlaylist[];
+  pistas: IPista[];
   esPropia: boolean;
 }

@@ -1,4 +1,4 @@
-export interface IPistaPlaylist {
+export interface IPista {
   idPista: number;
   titulo: string;
   artistas: string[];

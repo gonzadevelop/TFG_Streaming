@@ -5,24 +5,12 @@ import org.mapstruct.Mapping;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.entitys.Usuario;
-import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaDTO;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CancionMapper {
-
-    @Mapping(target = "idAlbum", source = "id")
-    @Mapping(target = "titulo", source = "cancion.titulo")
-    @Mapping(target = "urlPortada", source = "album.archivoPortada")
-    @Mapping(target = "artistas", expression = "java(pista.getCancion().getUsuarios().stream().map(u -> u.getUsername()).toList())")
-    @Mapping(target = "urlCancion", source = "cancion.archivoCancion")
-    @Mapping(target = "reproducciones", expression = "java((long) (pista.getCancion().getHistorialReproducciones() != null ? pista.getCancion().getHistorialReproducciones().size() : 0))")
-    ResponseCancionArtistaDTO toDto(Pista pista);
-
-    List<ResponseCancionArtistaDTO> toDtos(List<Pista> pistas);
-
     @Mapping(target = "titulo", source = "titulo")
     @Mapping(target = "archivoCancion", source = "archivo")
     @Mapping(target = "usuarios", source = "usuarios")

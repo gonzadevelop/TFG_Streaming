@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, untracked } from '@angular/core';
-import { IPistaPlaylist } from '../../../../../model/pista/IPistaPlaylist';
+import { Router } from '@angular/router';
+import { IPista } from '../../../../../model/pista/IPista';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
 
 @Component({
@@ -10,10 +11,11 @@ import { StorageGlobal } from '../../../../../services/storageGlobal';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MiniCancion {
-  readonly pista    = input.required<IPistaPlaylist>();
+  readonly pista    = input.required<IPista>();
   readonly posicion = input<number | null>(null);
 
   private readonly storage = inject(StorageGlobal);
+  private readonly router = inject(Router);
 
   /** true si esta pista es la que está sonando actualmente */
   protected readonly isReproduciendoEsta = computed(() => {
@@ -22,10 +24,6 @@ export class MiniCancion {
       && actual.urlCancion === this.pista().urlCancion
       && this.storage.reproduciendo();
   });
-
-  protected readonly artistasTexto = computed(() =>
-    (this.pista().artistas ?? []).map(a => a).join(', ')
-  );
 
   protected reproducir(): void {
     const p = this.pista();
@@ -52,6 +50,10 @@ export class MiniCancion {
     const m = Math.floor(segundos / 60);
     const s = segundos % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  protected navegarArtista(nombreArtista: string): void {
+    this.router.navigate(['/artistas', nombreArtista]);
   }
 }
 

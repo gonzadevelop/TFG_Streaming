@@ -22,7 +22,20 @@
     </div>
     <div class="player-expanded__info">
       <span class="player-expanded__title">{{ currentSong().title }}</span>
-      <span class="player-expanded__artist">{{ currentSong().artist }}</span>
+      <span class="player-expanded__artist">
+        @for (artista of currentSong().artists; track artista; let last = $last) {
+          <button
+            type="button"
+            class="player-expanded__artista-link"
+            (click)="navegarArtista(artista)"
+            [attr.aria-label]="'Ir a la página del artista ' + artista">
+            {{ artista }}
+          </button>
+          @if (!last) {
+            <span class="player-expanded__artista-separator">, </span>
+          }
+        }
+      </span>
       @if (currentSong().activa) {
         <span class="player-expanded__duration">{{ formattedCurrent() }} / {{ formattedDuration() }}</span>
       }
@@ -77,10 +90,19 @@
           [title]="currentSong().title">
           {{ currentSong().title }}
         </span>
-        <span
-          class="player-song__artist"
-          [title]="currentSong().artist">
-          {{ currentSong().artist }}
+        <span class="player-song__artist">
+          @for (artista of currentSong().artists; track artista; let last = $last) {
+            <button
+              type="button"
+              class="player-song__artista-link"
+              (click)="navegarArtista(artista)"
+              [attr.aria-label]="'Ir a la página del artista ' + artista">
+              {{ artista }}
+            </button>
+            @if (!last) {
+              <span class="player-song__artista-separator">, </span>
+            }
+          }
         </span>
       </div>
     </div>

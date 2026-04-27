@@ -81,7 +81,7 @@ public class CancionService {
             pistaDto.get(i)
                             .setIdPista(canciones.get(i).getPistas().stream().findFirst().get().getId());
 
-            pistaDto.get(i).setReproduccionesDelUsuario(
+            pistaDto.get(i).setReproducciones(
                     historialReproduccionesRepository.countReproduccionesByUsuarioAndCancion(usuario.getId(), canciones.get(i).getId())
             );
             pistaDto.get(i).setArtistas(
@@ -101,7 +101,7 @@ public class CancionService {
             pistaDto.get(i).setUrlCancion(firebaseService.obtenerUrlArchivoAudio(canciones.get(i).getArchivoCancion()));
 
             pistaDto.get(i)
-                    .setAlbumId(
+                    .setIdAlbum(
                             canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getId()
                     );
         }

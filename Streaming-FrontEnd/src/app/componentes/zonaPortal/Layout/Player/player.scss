@@ -107,6 +107,38 @@
 .player-expanded__artist {
   font-size: 0.95rem;
   color: #8baab8;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.player-expanded__artista-link {
+  background: none;
+  border: none;
+  color: #4fa3d1;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  text-decoration: none;
+  transition: color 160ms ease;
+  font-size: 0.95rem;
+
+  &:hover {
+    color: #6eb5e0;
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #4fa3d1;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.player-expanded__artista-separator {
+  color: #8baab8;
+  margin: 0 2px;
 }
 
 /* ── Barra principal ── */
@@ -193,6 +225,38 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.player-song__artista-link {
+  background: none;
+  border: none;
+  color: #4fa3d1;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  text-decoration: none;
+  transition: color 160ms ease;
+  font-size: 0.78rem;
+  white-space: nowrap;
+
+  &:hover {
+    color: #6eb5e0;
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #4fa3d1;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.player-song__artista-separator {
+  color: #8baab8;
+  margin: 0 1px;
 }
 
 /* ── Controles centrales ── */

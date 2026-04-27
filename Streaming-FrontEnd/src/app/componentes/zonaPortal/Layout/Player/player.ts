@@ -1,5 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { StorageGlobal } from '../../../../services/storageGlobal';
 
 @Component({
@@ -11,6 +12,7 @@ import { StorageGlobal } from '../../../../services/storageGlobal';
 })
 export class Player implements OnDestroy {
   private readonly storage = inject(StorageGlobal);
+  private readonly router = inject(Router);
 
   constructor() {
     // Tras el primer render (solo browser), restaurar la canción guardada en sessionStorage
@@ -50,6 +52,7 @@ export class Player implements OnDestroy {
       return {
         title:    'Sin reproducción activa',
         artist:   'KeySound',
+        artists:  [],
         cover:    null as string | null,
         duracion: 0,
         activa:   false,
@@ -58,6 +61,7 @@ export class Player implements OnDestroy {
     return {
       title:    pista.titulo,
       artist:   pista.artistas.length > 0 ? pista.artistas.join(', ') : 'Desconocido',
+      artists:  pista.artistas,
       cover:    pista.urlPortada || null,
       duracion: pista.duracionSegundos,
       activa:   true,
@@ -144,5 +148,9 @@ export class Player implements OnDestroy {
 
   ngOnDestroy(): void {
     this.storage.Pausar();
+  }
+
+  protected navegarArtista(nombreArtista: string): void {
+    this.router.navigate(['/artistas', nombreArtista]);
   }
 }

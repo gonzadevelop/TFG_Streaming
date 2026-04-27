@@ -22,10 +22,7 @@
             <h1 class="section-title mb-2" id="playlists-heading">Playlists de KeySound</h1>
             <p class="section-sub mb-0">Las mejores playlists seleccionadas por nuestros editores</p>
           </div>
-          <a routerLink="/" class="btn-back" [attr.aria-label]="'Volver al inicio'">
-            <i class="bi bi-house-fill"></i>
-            <span>Inicio</span>
-          </a>
+          <a routerLink="/" class="section-link" [attr.aria-label]="'Volver al inicio'">← Volver</a>
         </div>
 
         @if (playlists().length > 0) {

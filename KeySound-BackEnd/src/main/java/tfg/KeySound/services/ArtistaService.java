@@ -3,17 +3,19 @@ package tfg.KeySound.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.Album;
+import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.AlbumMapper;
+import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.model.artista.ResponseArtistaHomeDTO;
-import tfg.KeySound.model.cancion.ResponseCancionArtistaDTO;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseMiAlbumDTO;
 import tfg.KeySound.model.artista.ResponseArtistaDTO;
+import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.repositorys.AlbumRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.FirebaseService;
@@ -21,6 +23,8 @@ import tfg.KeySound.services.external.JwtService;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +39,9 @@ public class ArtistaService {
     private final UsuarioRepository usuarioRepository;
     private final AlbumRepository albumRepository;
 
-    private final CancionMapper cancionMapper;
     private final AlbumMapper albumMapper;
     private final ArtistaMapper artistaMapper;
+    private final PistaMapper pistaMapper;
 
     /**
      * Metodos llamados por endpoints
@@ -55,12 +59,7 @@ public class ArtistaService {
             Usuario usuarioToken = usuarioRepository.findByUsernameIgnoreCase(usernameToken)
                     .orElseThrow(() -> new UsernameNotFoundException(usernameToken));
 
-            cancionesEnFavoritos = usuarioToken
-                    .getFavoritos()
-                    .stream()
-                    .filter(pista -> pista.getCancion().getUsuarios().contains(artista))
-                    .mapToInt(pista -> 1)
-                    .sum();
+            cancionesEnFavoritos = usuarioRepository.countFavoritosByUsuarioAndArtista(usuarioToken.getId(), artista.getId());
         }
 
         // Sacar todos los albums del artista.
@@ -73,14 +72,48 @@ public class ArtistaService {
                 .toList();
 
         // Buscar las 10 canciones más populares del artista, ordenadas por número de reproducciones (historialReproducciones)
-        List<Pista> cancionesPopulares = artista.getCanciones()
+        List<ResponsePistaHomeDTO> cancionesPopulares =
+                Stream.concat(
+                        // obtener todas las canciones del artista.
+                        artista
+                                .getCanciones()
+                                .stream(),
+                        albums
+                                .stream()
+                                .flatMap(a -> a.getPistas().stream())
+                                .map(Pista::getCancion)
+                )
+                .collect(Collectors.toMap(
+                        // usar el ID de la canción como clave para evitar duplicados (si una canción está en un album y también suelta, por ejemplo)
+                        Cancion::getId,
+                        c -> c,
+                        (existente, reemplazo) -> existente
+                ))
+                .values()
                 .stream()
                 .sorted((c1, c2) -> Integer.compare(
+                        // comparar por número de reproducciones (historialReproducciones), teniendo en cuenta que puede ser null
                         c2.getHistorialReproducciones() != null ? c2.getHistorialReproducciones().size() : 0,
                         c1.getHistorialReproducciones() != null ? c1.getHistorialReproducciones().size() : 0))
                 .limit(10)
-                .map(cancion -> cancion.getPistas().stream().findFirst())
-                .flatMap(Optional::stream)
+                .map( c -> {
+                    // Mapear a DTO y añadir la URL de la canción, la portada del album y los artistas (el artista principal del
+                    ResponsePistaHomeDTO dto = pistaMapper.toDto(c);
+                    dto.setIdPista(c.getPistas().stream().findFirst().get().getId());
+                    Album album = c.getPistas().stream().findFirst().get().getAlbum();
+                    dto.setIdAlbum(album.getId());
+                    dto.setUrlPortada(firebaseService.obtenerUrlArchivoImagen(album.getArchivoPortada(), album.getTitulo()));
+                    dto.setUrlCancion(firebaseService.obtenerUrlArchivoAudio(c.getArchivoCancion()));
+                    List<String> artistas = Stream.concat(
+                                    Stream.of(c.getPistas().stream().findFirst().get().getAlbum().getUsuario()),
+                                    c.getUsuarios().stream()
+                            )
+                            .map(Usuario::getUsername)
+                            .toList();
+                    dto.setArtistas(artistas);
+                    dto.setReproducciones(c.getHistorialReproducciones().size());
+                    return dto;
+                })
                 .toList();
 
         // Obtener la URL del avatar del artista desde Firebase o de ui-avatars si no tiene avatar
@@ -88,8 +121,11 @@ public class ArtistaService {
 
         // Mapear a DTO
         List<ResponseAlbumDTO> albumsDTO = albumMapper.toDtos(albums);
-        List<ResponseCancionArtistaDTO> cancionesPopularesDTO = cancionMapper.toDtos(cancionesPopulares);
-        return artistaMapper.toDto(artista, cancionesPopularesDTO, albumsDTO, cancionesEnFavoritos, urlAvatar);
+        albumsDTO.forEach(albumDTO ->
+            albumDTO.setUrlPortada(firebaseService.obtenerUrlArchivoImagen(albumDTO.getUrlPortada(), albumDTO.getTitulo()))
+        );
+
+        return artistaMapper.toDto(artista, cancionesPopulares, albumsDTO, cancionesEnFavoritos, urlAvatar);
     }
 
     public List<ResponseMiAlbumDTO> obtenerMisAlbums(String substring) {

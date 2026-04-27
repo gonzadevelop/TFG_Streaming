@@ -60,7 +60,7 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "cancion_id"))
     private Set<Cancion> canciones = new LinkedHashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "favoritos",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "pista_id"))

@@ -6,7 +6,7 @@ import {
   inject,
   signal, WritableSignal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TokenService } from '../../../../services/tokenService';
 import { HomeService } from '../../../../services/homeService';
 import { IHome } from '../../../../model/home/IHome';
@@ -23,6 +23,7 @@ export class Home implements OnInit {
 
   private readonly tokenService:TokenService = inject(TokenService);
   private readonly homeService:HomeService = inject(HomeService);
+  private readonly router: Router = inject(Router);
 
   // ── Estado de sesión ────────────────────────────────────
   protected readonly estaLogueado = signal<boolean>(false);
@@ -71,5 +72,9 @@ export class Home implements OnInit {
           this.cargando.set(false);
         }
       });
+  }
+
+  protected navegarArtista(username: string): void {
+    this.router.navigate(['/artistas', username]);
   }
 }

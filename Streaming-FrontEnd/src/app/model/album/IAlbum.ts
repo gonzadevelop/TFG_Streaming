@@ -1,7 +1,7 @@
 export interface IAlbum {
   id: number;
-  titulo: string;
   artista: string;
+  titulo: string;
   urlPortada: string;
   anioLanzamiento: number;
   tipo: 'álbum' | 'sencillo';

@@ -1,13 +1,13 @@
 import { IPlaylist } from './IPlaylist';
 import { IArtistaHome } from './IArtistaHome';
-import { IAlbum } from './IAlbum';
+import { IAlbum } from '../album/IAlbum';
 import { IProximoAlbum } from './IProximoAlbum';
-import {IPistaPlaylist} from '../pista/IPistaPlaylist';
+import {IPista} from '../pista/IPista';
 
 export interface IHome {
   keySoundPlaylists: IPlaylist[];
   artistasSeguidos: IArtistaHome[];
   novedadesDeLaSemana: IAlbum[];
   proximosLanzmientos: IProximoAlbum[];
-  cancionesMasEscuchadas: IPistaPlaylist[];
+  cancionesMasEscuchadas: IPista[];
 }

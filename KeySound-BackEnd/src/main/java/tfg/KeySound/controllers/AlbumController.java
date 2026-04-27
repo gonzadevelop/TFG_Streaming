@@ -62,9 +62,9 @@ public class AlbumController {
      * @return {@link ResponseEntity}&lt;{@link ResponseAlbumCompletoDTO}&gt; Devuelve un status 200 (OK) con la información del album
      * @throws tfg.KeySound.exception.album.AlbumNotFoundException 404 (NOT_FOUND)
      * @throws tfg.KeySound.exception.cancion.CancionNotFoundException 404 (NOT_FOUND)
-     * @apiNote {@code GET /api/albums/visualizar/{albumId}}
+     * @apiNote {@code GET /api/albums/{albumId}}
      */
-    @GetMapping("/visualizar/{albumId}")
+    @GetMapping("/{albumId}")
     public ResponseEntity<ResponseAlbumCompletoDTO> visualizarAlbum(@PathVariable Long albumId) {
         return ResponseEntity.ok(albumService.visualizarAlbum(albumId));
     }

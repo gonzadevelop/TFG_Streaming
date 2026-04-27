@@ -1,47 +1,122 @@
-<section class="artista-page" aria-labelledby="titulo-zona-artista">
-  <header class="artista-hero">
-    <div>
-      <p class="kicker">Panel de control</p>
-      <h1 id="titulo-zona-artista">{{ nombreArtistico }}</h1>
-      <p class="description">Gestiona tu catalogo, revisa reproducciones y mantiene el control de tus lanzamientos.</p>
-    </div>
-
-    <button type="button" class="btn-principal">Subir nuevo tema</button>
-  </header>
-
-  <section class="stats-grid" aria-label="Resumen rapido de estadisticas">
-    <article class="stat-card">
-      <span class="label">Oyentes mensuales</span>
-      <strong class="value">42.1K</strong>
-    </article>
-
-    <article class="stat-card">
-      <span class="label">Reproducciones (30 dias)</span>
-      <strong class="value">315K</strong>
-    </article>
-
-    <article class="stat-card">
-      <span class="label">Seguidores</span>
-      <strong class="value">9.8K</strong>
-    </article>
+@if (cargando()) {
+  <section class="artista-page">
+    <p class="muted">Cargando artista…</p>
   </section>
+} @else if (error()) {
+  <section class="artista-page">
+    <p class="error">{{ error() }}</p>
+  </section>
+} @else if (artista(); as a) {
+  <section class="artista-page">
+    <div class="artista-gradient-bg"></div>
 
-  <section class="songs-card" aria-labelledby="titulo-canciones-top">
-    <div class="songs-head">
-      <h2 id="titulo-canciones-top">Canciones destacadas</h2>
-      <a href="#" class="link-secundario">Ver todas</a>
-    </div>
+    <header class="artista-header">
+      <div class="artista-cover-container">
+        @if (a.urlAvatar) {
+          <img
+            class="artista-avatar"
+            [src]="a.urlAvatar"
+            [alt]="'Avatar de ' + a.username"
+            loading="lazy"
+          />
+        } @else {
+          <div class="artista-avatar-placeholder">
+            <span class="artista-avatar-icon" aria-hidden="true">♪</span>
+          </div>
+        }
+      </div>
 
-    <div class="songs-list" role="table" aria-label="Lista de canciones top del artista">
-      @for (cancion of cancionesTop; track cancion.titulo; let i = $index) {
-        <div class="song-row" role="row">
-          <span class="song-index" role="cell">{{ i + 1 }}</span>
-          <span class="song-title" role="cell">{{ cancion.titulo }}</span>
-          <span class="song-plays" role="cell">{{ cancion.escuchas }}</span>
-          <span class="song-duration" role="cell">{{ cancion.duracion }}</span>
+      <div class="artista-info">
+        <h1 class="artista-name">{{ a.username }}</h1>
+        <div class="artista-meta">
+          <span class="artista-stats">
+            {{ a.seguidores }} seguidores
+          </span>
         </div>
-      }
+      </div>
+    </header>
+
+    <div class="artista-actions">
+      <button class="btn-play-large" aria-label="Reproducir">
+        ▶
+      </button>
+      <button class="btn-follow" aria-label="Seguir artista">
+        Seguir
+      </button>
+      <button class="btn-more" aria-label="Más opciones">
+        ⋯
+      </button>
     </div>
+
+    <!-- Popular canciones -->
+    @if (a.canciones && a.canciones.length > 0) {
+      <div class="artista-section">
+        <h2 class="section-title">Popular</h2>
+        @if (mostrarTodasLasCanciones()) {
+          <app-lista-canciones [pistas]="a.canciones" />
+        } @else {
+          <app-lista-canciones [pistas]="a.canciones.slice(0, 5)" />
+        }
+        @if (a.canciones.length > 5) {
+          <button class="btn-see-more mt-3" (click)="alternarCanciones()">
+            {{ mostrarTodasLasCanciones() ? 'Ver menos' : 'Ver más' }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Canciones en favoritos -->
+    <div class="artista-section">
+      <h2 class="section-title">Canciones en favoritos</h2>
+      <div class="artista-liked-songs">
+        <div class="liked-songs-card">
+          @if (a.urlAvatar) {
+            <img
+              [src]="a.urlAvatar"
+              [alt]="'Avatar de ' + a.username"
+              class="liked-songs-avatar"
+            />
+          }
+          <div class="liked-songs-info">
+            <p class="liked-songs-count">{{ a.cancionesEnFavoritos }}</p>
+            <p class="liked-songs-text">canciones en favoritos</p>
+            <p class="liked-songs-artist">Por {{ a.username }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discografía - Álbumes -->
+    @if (a.albums && a.albums.length > 0) {
+      <div class="artista-section">
+        <div class="discography-header d-flex align-items-center justify-content-between">
+          <h2 class="section-title mb-0">Discografía</h2>
+          <button class="btn-show-all">Ver todos</button>
+        </div>
+
+        <div class="albums-grid">
+          @for (album of a.albums.slice(0, 5); track album.id) {
+            <article class="album-card">
+              <div class="album-cover">
+                @if (album.urlPortada) {
+                  <img
+                    [src]="album.urlPortada"
+                    [alt]="'Portada de ' + album.titulo"
+                    class="album-img"
+                  />
+                } @else {
+                  <div class="album-cover-placeholder">♪</div>
+                }
+              </div>
+              <div class="album-info">
+                <p class="album-title">{{ album.titulo }}</p>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    }
   </section>
-</section>
+}
+
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MiniCancion } from '../mini-cancion/mini-cancion';
-import {IPistaPlaylist} from '../../../../../model/pista/IPistaPlaylist';
+import {IPista} from '../../../../../model/pista/IPista';
 
 @Component({
   selector: 'app-lista-canciones',
@@ -10,5 +10,5 @@ import {IPistaPlaylist} from '../../../../../model/pista/IPistaPlaylist';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListaCanciones {
-  readonly pistas = input.required<IPistaPlaylist[]>();
+  readonly pistas = input.required<IPista[]>();
 }

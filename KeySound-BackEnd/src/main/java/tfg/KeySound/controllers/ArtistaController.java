@@ -27,9 +27,9 @@ public class ArtistaController {
      * @param token {@link String}
      * @return {@link ResponseEntity}&lt;{@link ResponseArtistaDTO}&gt; Devuelve un status 200 (OK)
      * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
-     * @apiNote {@code GET /api/artistas/visualizar/{username}}
+     * @apiNote {@code GET /api/artistas/{username}}
      */
-    @GetMapping("/visualizar/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<ResponseArtistaDTO> obtenerInfoArtista(
             @PathVariable String username,
             @RequestHeader(value = "Authorization") String token) {

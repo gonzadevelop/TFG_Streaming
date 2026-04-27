@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {Observable} from 'rxjs';
-import {IPistaPlaylist} from '../model/pista/IPistaPlaylist';
+import {IPista} from '../model/pista/IPista';
 
 @Injectable({ providedIn: 'root' })
 export class CancionService {
@@ -23,7 +23,7 @@ export class CancionService {
    * Devuelve las canciones más reproducidas del usuario autenticado.
    * GET /api/canciones/mis-canciones-mas-reproducidas
    */
-  getCancionesMasReproducidas(): Observable<IPistaPlaylist[]> {
-    return this.http.get<IPistaPlaylist[]>(`${this.baseURL}/canciones/mis-canciones-mas-reproducidas`);
+  getCancionesMasReproducidas(): Observable<IPista[]> {
+    return this.http.get<IPista[]>(`${this.baseURL}/canciones/mis-canciones-mas-reproducidas`);
   }
 }

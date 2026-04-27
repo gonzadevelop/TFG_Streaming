@@ -1,0 +1,64 @@
+@if (cargando()) {
+  <section class="album-page">
+    <p class="muted">Cargando album…</p>
+  </section>
+} @else if (error()) {
+  <section class="album-page">
+    <p class="error">{{ error() }}</p>
+  </section>
+} @else if (album(); as a) {
+  <section class="album-page">
+    <div class="album-gradient-bg"></div>
+
+    <header class="album-header">
+      <div class="album-cover-container">
+        @if (a.portada) {
+          <img
+            class="album-cover"
+            [src]="a.portada"
+            [alt]="'Portada de ' + a.titulo"
+            loading="lazy"
+          />
+        } @else {
+          <div class="album-cover-placeholder">
+            <span class="album-cover-icon" aria-hidden="true">♪</span>
+          </div>
+        }
+      </div>
+
+      <div class="album-info">
+        <span class="album-type">{{ a.tipo === 'álbum' ? 'Álbum' : 'Sencillo' }}</span>
+        <h1 class="album-title">{{ a.titulo }}</h1>
+        <div class="album-meta">
+          <span class="album-stats">
+            <button
+              type="button"
+              class="album-artist-link"
+              (click)="navegarArtista(a.artista)"
+              [attr.aria-label]="'Ir a la página del artista ' + a.artista">
+              {{ a.artista }}
+            </button>
+            • {{ a.anioLanzamiento }} • {{ a.numCanciones }} canciones
+          </span>
+          @if (a.duracionTotalSegundos > 0) {
+            <span class="album-duration">
+              {{ formatearDuracion(a.duracionTotalSegundos) }}
+            </span>
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="album-actions">
+      <button class="btn-play-large" aria-label="Reproducir">
+        ▶
+      </button>
+    </div>
+
+    <div class="album-content">
+      <app-lista-canciones
+        [pistas]="a.canciones || []"/>
+    </div>
+  </section>
+}
+
