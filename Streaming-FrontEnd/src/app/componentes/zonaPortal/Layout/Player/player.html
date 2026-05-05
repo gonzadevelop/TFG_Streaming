@@ -167,7 +167,7 @@
       </div>
     </div>
 
-    <!-- Volumen -->
+    <!-- Volumen + Cola -->
     <div class="player-volume">
       <button
         class="player-btn player-btn--sm"
@@ -187,7 +187,24 @@
         (input)="onVolumeChange($event)"
         aria-label="Volumen"
         [attr.aria-valuenow]="volume()" />
+
+      <!-- Botón de cola -->
+      <button
+        class="player-btn player-btn--sm"
+        [class.player-btn--active]="colaVisible()"
+        (click)="toggleCola()"
+        [attr.aria-label]="colaVisible() ? 'Cerrar cola' : 'Abrir cola'"
+        [attr.aria-pressed]="colaVisible()">
+        <span class="material-icons">queue_music</span>
+        @if (colaLength() > 0) {
+          <span class="player-btn__badge" aria-label="{{ colaLength() }} canciones en cola">{{ colaLength() }}</span>
+        }
+      </button>
     </div>
 
   </div>
 }
+
+<!-- Panel de cola -->
+<app-cola [isOpen]="colaVisible()" (cerrar)="toggleCola()" />
+

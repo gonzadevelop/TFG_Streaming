@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, untracked 
 import { Router } from '@angular/router';
 import { IPista } from '../../../../../model/pista/IPista';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
+import { FavoritosService } from '../../../../../services/favoritosService';
 
 @Component({
   selector: 'app-mini-cancion',
@@ -16,6 +17,7 @@ export class MiniCancion {
 
   private readonly storage = inject(StorageGlobal);
   private readonly router = inject(Router);
+  private readonly favoritosService = inject(FavoritosService);
 
   /** true si esta pista es la que está sonando actualmente */
   protected readonly isReproduciendoEsta = computed(() => {
@@ -24,6 +26,16 @@ export class MiniCancion {
       && actual.urlCancion === this.pista().urlCancion
       && this.storage.reproduciendo();
   });
+
+  /** true si esta pista está en la lista de favoritos */
+  protected readonly esFavorito = computed(() =>
+    this.favoritosService.favoritosIds().has(this.pista().idPista)
+  );
+
+  protected toggleFavorito(event: Event): void {
+    event.stopPropagation();
+    this.favoritosService.toggleFavorito(this.pista());
+  }
 
   protected reproducir(): void {
     const p = this.pista();

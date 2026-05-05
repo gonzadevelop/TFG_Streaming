@@ -203,4 +203,19 @@ public class ArtistaService {
 
         return artistasDTO;
     }
+
+    public List<ResponseArtistaHomeDTO> buscarArtistas(String q) {
+        if (q == null || q.isBlank()) return List.of();
+
+        List<Usuario> artistas = usuarioRepository.buscarPorUsername(q);
+        List<ResponseArtistaHomeDTO> dtos = artistas.stream()
+                .map(artistaMapper::toHomeDto)
+                .toList();
+
+        for (int i = 0; i < artistas.size(); i++) {
+            dtos.get(i).setUrlAvatar(firebaseService.obtenerUrlArchivoImagen(
+                    artistas.get(i).getArchivoAvatar(), artistas.get(i).getUsername()));
+        }
+        return dtos;
+    }
 }

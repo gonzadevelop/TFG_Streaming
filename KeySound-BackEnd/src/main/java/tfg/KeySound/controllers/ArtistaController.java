@@ -87,4 +87,15 @@ public class ArtistaController {
             @RequestHeader(value = "Authorization") String token) {
         return ResponseEntity.ok(artistaService.obtenerArtistasQueSigo(token.substring(7)));
     }
+
+    /**
+     * Endpoint para buscar artistas por nombre de usuario.
+     * @param q {@link String} término de búsqueda
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseArtistaHomeDTO}&gt;&gt;
+     * @apiNote {@code GET /api/artistas/buscar?q=término}
+     */
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ResponseArtistaHomeDTO>> buscarArtistas(@RequestParam String q) {
+        return ResponseEntity.ok(artistaService.buscarArtistas(q));
+    }
 }

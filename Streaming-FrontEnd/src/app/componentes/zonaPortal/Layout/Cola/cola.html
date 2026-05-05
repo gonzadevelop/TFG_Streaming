@@ -1,0 +1,109 @@
+<aside
+  class="cola-panel"
+  [class.cola-panel--open]="isOpen()"
+  role="complementary"
+  aria-label="Cola de reproducción">
+
+  <!-- Cabecera -->
+  <div class="cola-header">
+    <h2 class="cola-header__title">
+      <span class="material-icons" aria-hidden="true">queue_music</span>
+      Cola de reproducción
+    </h2>
+    <div class="cola-header__actions">
+      @if (tieneCola()) {
+        <button
+          type="button"
+          class="cola-btn cola-btn--ghost"
+          (click)="vaciarCola()"
+          aria-label="Vaciar cola">
+          <span class="material-icons">delete_sweep</span>
+        </button>
+      }
+      <button
+        type="button"
+        class="cola-btn cola-btn--ghost"
+        (click)="onCerrar()"
+        aria-label="Cerrar cola">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Canción actual -->
+  <section class="cola-section" aria-label="Reproduciendo ahora">
+    <h3 class="cola-section__label">Reproduciendo ahora</h3>
+    @if (pistaActual().urlCancion) {
+      <div class="cola-item cola-item--active" aria-current="true">
+        <div class="cola-item__cover">
+          @if (pistaActual().urlPortada) {
+            <img [src]="pistaActual().urlPortada" [alt]="'Portada de ' + pistaActual().titulo" class="cola-item__img" />
+          } @else {
+            <span class="material-icons cola-item__icon-placeholder" aria-hidden="true">music_note</span>
+          }
+          <div class="cola-item__playing-indicator" aria-hidden="true">
+            <span class="cola-item__bar"></span>
+            <span class="cola-item__bar"></span>
+            <span class="cola-item__bar"></span>
+          </div>
+        </div>
+        <div class="cola-item__info">
+          <span class="cola-item__title">{{ pistaActual().titulo }}</span>
+          <span class="cola-item__artists">{{ pistaActual().artistas.join(', ') }}</span>
+        </div>
+        <span class="cola-item__duration">{{ formatTime(pistaActual().duracionSegundos) }}</span>
+      </div>
+    } @else {
+      <p class="cola-empty-text">Sin canción activa</p>
+    }
+  </section>
+
+  <!-- Próximas en cola -->
+  <section class="cola-section" aria-label="Próximas canciones">
+    <h3 class="cola-section__label">
+      Próximas
+      @if (tieneCola()) {
+        <span class="cola-section__count">({{ cola().length }})</span>
+      }
+    </h3>
+
+    @if (tieneCola()) {
+      <ol class="cola-list" aria-label="Lista de canciones en cola">
+        @for (pista of cola(); track pista.idPista; let i = $index) {
+          <li class="cola-item cola-item--queue">
+            <button
+              type="button"
+              class="cola-item__play-btn"
+              (click)="reproducirDeCola(i)"
+              [attr.aria-label]="'Reproducir ' + pista.titulo">
+              <span class="material-icons cola-item__play-icon" aria-hidden="true">play_arrow</span>
+            </button>
+            <div class="cola-item__cover">
+              @if (pista.urlPortada) {
+                <img [src]="pista.urlPortada" [alt]="'Portada de ' + pista.titulo" class="cola-item__img" />
+              } @else {
+                <span class="material-icons cola-item__icon-placeholder" aria-hidden="true">music_note</span>
+              }
+            </div>
+            <div class="cola-item__info">
+              <span class="cola-item__title">{{ pista.titulo }}</span>
+              <span class="cola-item__artists">{{ pista.artistas.join(', ') }}</span>
+            </div>
+            <span class="cola-item__duration">{{ formatTime(pista.duracionSegundos) }}</span>
+            <button
+              type="button"
+              class="cola-btn cola-btn--ghost cola-btn--remove"
+              (click)="eliminar(i)"
+              [attr.aria-label]="'Eliminar ' + pista.titulo + ' de la cola'">
+              <span class="material-icons">close</span>
+            </button>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p class="cola-empty-text">La cola está vacía</p>
+    }
+  </section>
+
+</aside>
+

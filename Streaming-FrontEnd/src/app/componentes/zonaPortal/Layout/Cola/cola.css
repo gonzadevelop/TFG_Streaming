@@ -1,0 +1,295 @@
+:host {
+  display: block;
+}
+
+/* ── Panel principal ────────────────────────── */
+
+.cola-panel {
+  position: fixed;
+  right: -340px;
+  bottom: 80px;
+  width: 320px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  background: linear-gradient(135deg, #e0e4e8 0%, #cee0f2 40%, #b8d4ec 70%, #d5dbe1 100%);
+  background-size: 400% 400%;
+  animation: cola-bg-shift 10s ease infinite;
+  border: 1px solid rgba(11, 117, 192, 0.15);
+  border-radius: 14px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(11, 117, 192, 0.15);
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 200;
+}
+
+.cola-panel--open {
+  right: 16px;
+  opacity: 1;
+  pointer-events: all;
+}
+
+@keyframes cola-bg-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Cabecera ────────────────────────── */
+
+.cola-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(11, 117, 192, 0.15);
+}
+
+.cola-header__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a2a38;
+  margin: 0;
+}
+
+.cola-header__title .material-icons {
+  font-size: 1.2rem;
+  color: #0b75c0;
+}
+
+.cola-header__actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* ── Botones ────────────────────────── */
+
+.cola-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 8px;
+  color: #4a6a8a;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cola-btn:hover,
+.cola-btn:focus-visible {
+  background: rgba(11, 117, 192, 0.1);
+  color: #0b75c0;
+  outline: none;
+}
+
+.cola-btn .material-icons {
+  font-size: 1.1rem;
+}
+
+.cola-btn--remove {
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+/* ── Secciones ────────────────────────── */
+
+.cola-section {
+  margin-bottom: 1rem;
+}
+
+.cola-section__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6c757d;
+  margin: 0 0 0.5rem;
+}
+
+.cola-section__count {
+  font-weight: 400;
+  color: #0b75c0;
+}
+
+.cola-empty-text {
+  font-size: 0.82rem;
+  color: #9ab;
+  text-align: center;
+  padding: 0.5rem 0;
+  margin: 0;
+}
+
+/* ── Lista ────────────────────────── */
+
+.cola-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ── Ítem de cola ────────────────────────── */
+
+.cola-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  transition: background 0.15s ease;
+  position: relative;
+}
+
+.cola-item--active {
+  background: rgba(11, 117, 192, 0.1);
+  border: 1px solid rgba(11, 117, 192, 0.2);
+}
+
+.cola-item--queue:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.cola-item--queue:hover .cola-btn--remove {
+  opacity: 1;
+}
+
+/* Botón de reproducir en hover del ítem */
+.cola-item__play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #0b75c0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+.cola-item--queue:hover .cola-item__play-btn {
+  opacity: 1;
+}
+
+.cola-item__play-icon {
+  font-size: 1.1rem;
+}
+
+/* Portada */
+
+.cola-item__cover {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(11, 117, 192, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cola-item__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cola-item__icon-placeholder {
+  font-size: 1.2rem;
+  color: #78bfda;
+}
+
+/* Indicador de reproducción animado */
+.cola-item__playing-indicator {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 117, 192, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  padding-bottom: 4px;
+  border-radius: 6px;
+}
+
+.cola-item__bar {
+  display: block;
+  width: 3px;
+  background: #fff;
+  border-radius: 2px;
+  animation: bar-bounce 0.8s ease infinite alternate;
+}
+
+.cola-item__bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+.cola-item__bar:nth-child(2) { height: 14px; animation-delay: 0.2s; }
+.cola-item__bar:nth-child(3) { height: 10px; animation-delay: 0.4s; }
+
+@keyframes bar-bounce {
+  from { transform: scaleY(0.4); }
+  to   { transform: scaleY(1); }
+}
+
+/* Info de la pista */
+
+.cola-item__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.cola-item__title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a2a38;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cola-item__artists {
+  font-size: 0.72rem;
+  color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cola-item__duration {
+  font-size: 0.72rem;
+  color: #9ab;
+  flex-shrink: 0;
+}
+
+/* ── Scrollbar ────────────────────────── */
+
+.cola-panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cola-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cola-panel::-webkit-scrollbar-thumb {
+  background: rgba(11, 117, 192, 0.3);
+  border-radius: 4px;
+}
+

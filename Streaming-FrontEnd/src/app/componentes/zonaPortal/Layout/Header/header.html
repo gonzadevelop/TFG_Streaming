@@ -1,5 +1,4 @@
 <header class="app-header">
-  <!-- Fila principal: Logo + Buscador + Usuario -->
   <div class="header-main">
     <div class="header-left">
       <button
@@ -25,28 +24,134 @@
       </div>
     </div>
 
-    <div class="search-container">
-      <span class="material-icons search-icon" aria-hidden="true">search</span>
-      <label for="search-input" class="visually-hidden">Buscar</label>
-      <input
-        id="search-input"
-        type="search"
-        class="search-input"
-        placeholder="Buscar artistas, canciones, álbumes..."
-        [value]="searchTerm()"
-        (input)="searchTerm.set($any($event.target).value)"
-        (keyup.enter)="onSearch()"
-        aria-label="Campo de búsqueda" />
-      @if (searchTerm()) {
-        <button
-          type="button"
-          class="clear-button"
-          (click)="clearSearch()"
-          aria-label="Limpiar búsqueda">
-          <span class="material-icons" aria-hidden="true">close</span>
-        </button>
+    <div class="search-wrapper">
+      <div class="search-container">
+        <span class="material-icons search-icon" aria-hidden="true">search</span>
+        <label for="search-input" class="visually-hidden">Buscar</label>
+        <input
+          id="search-input"
+          type="search"
+          class="search-input"
+          placeholder="Buscar canciones, álbumes, artistas..."
+          [value]="searchTerm()"
+          (input)="onInput($any($event.target).value)"
+          (keyup.enter)="onSearch()"
+          (focus)="mostrarResultados.set(hayResultados())"
+          aria-label="Campo de búsqueda"
+          [attr.aria-expanded]="mostrarResultados()"
+          aria-haspopup="listbox"
+          aria-controls="search-results"
+          autocomplete="off" />
+        @if (buscando()) {
+          <span class="material-icons search-spinner" aria-hidden="true">sync</span>
+        }
+        @if (searchTerm()) {
+          <button
+            type="button"
+            class="clear-button"
+            (click)="clearSearch()"
+            aria-label="Limpiar búsqueda">
+            <span class="material-icons" aria-hidden="true">close</span>
+          </button>
+        }
+      </div>
+
+      @if (mostrarResultados() && hayResultados()) {
+        <div id="search-results" class="search-results" role="listbox" aria-label="Resultados de búsqueda">
+
+          <!-- Canciones -->
+          @if (resultados().canciones.length > 0) {
+            <p class="search-category-label">Canciones</p>
+            @for (cancion of resultados().canciones; track cancion.id) {
+              <div class="search-result-item" role="option">
+                <img [src]="cancion.caratula" [alt]="'Portada de ' + cancion.titulo" class="result-portada" width="40" height="40" />
+                <div class="result-info">
+                  <span class="result-titulo">{{ cancion.titulo }}</span>
+                  <span class="result-artistas">{{ cancion.artista }} · {{ cancion.album }}</span>
+                </div>
+                <div class="result-actions">
+                  <button
+                    type="button"
+                    class="result-btn result-btn--play"
+                    (click)="reproducir(cancion)"
+                    [attr.aria-label]="'Reproducir ' + cancion.titulo">
+                    <span class="material-icons" aria-hidden="true">play_arrow</span>
+                  </button>
+                </div>
+              </div>
+            }
+          }
+
+          <!-- Álbumes -->
+          @if (resultados().albums.length > 0) {
+            <p class="search-category-label">Álbumes</p>
+            @for (album of resultados().albums; track album.id) {
+              <a
+                class="search-result-item search-result-item--link"
+                [routerLink]="['/album', album.id]"
+                (click)="cerrarResultados()"
+                [attr.aria-label]="'Ver álbum ' + album.titulo"
+                role="option">
+                <img [src]="album.urlPortada" [alt]="'Portada de ' + album.titulo" class="result-portada" width="40" height="40" />
+                <div class="result-info">
+                  <span class="result-titulo">{{ album.titulo }}</span>
+                  <span class="result-artistas">{{ album.artista }} · {{ album.tipo }}</span>
+                </div>
+                <span class="material-icons result-nav-icon" aria-hidden="true">chevron_right</span>
+              </a>
+            }
+          }
+
+          <!-- Artistas -->
+          @if (resultados().artistas.length > 0) {
+            <p class="search-category-label">Artistas</p>
+            @for (artista of resultados().artistas; track artista.id) {
+              <a
+                class="search-result-item search-result-item--link"
+                [routerLink]="['/artista', artista.username]"
+                (click)="cerrarResultados()"
+                [attr.aria-label]="'Ver artista ' + artista.username"
+                role="option">
+                <img [src]="artista.urlAvatar" [alt]="artista.username" class="result-portada result-portada--round" width="40" height="40" />
+                <div class="result-info">
+                  <span class="result-titulo">{{ artista.username }}</span>
+                  <span class="result-artistas">Artista</span>
+                </div>
+                <span class="material-icons result-nav-icon" aria-hidden="true">chevron_right</span>
+              </a>
+            }
+          }
+
+          <!-- Playlists -->
+          @if (resultados().playlists.length > 0) {
+            <p class="search-category-label">Playlists</p>
+            @for (playlist of resultados().playlists; track playlist.id) {
+              <a
+                class="search-result-item search-result-item--link"
+                [routerLink]="['/playlist', playlist.id]"
+                (click)="cerrarResultados()"
+                [attr.aria-label]="'Ver playlist ' + playlist.nombre"
+                role="option">
+                <img [src]="playlist.urlPortada" [alt]="playlist.nombre" class="result-portada" width="40" height="40" />
+                <div class="result-info">
+                  <span class="result-titulo">{{ playlist.nombre }}</span>
+                  @if (playlist.descripcion) {
+                    <span class="result-artistas">{{ playlist.descripcion }}</span>
+                  }
+                </div>
+                <span class="material-icons result-nav-icon" aria-hidden="true">chevron_right</span>
+              </a>
+            }
+          }
+
+        </div>
+      }
+
+      @if (mostrarResultados() && !buscando() && !hayResultados() && searchTerm().length >= 2) {
+        <div class="search-no-results" role="status" aria-live="polite">
+          No se encontraron resultados para "<strong>{{ searchTerm() }}</strong>"
+        </div>
       }
     </div>
   </div>
 </header>
-

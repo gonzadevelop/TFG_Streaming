@@ -141,4 +141,43 @@ public class PlaylistService {
                 firebaseService.obtenerUrlArchivoImagen(playlist.getFotoPortada(), ""),
                 pistas);
     }
+
+    public void eliminarPlaylist(Long id, String token) {
+        String username = jwtService.extractUsername(token);
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new PlaylistNotFoundException(id));
+
+        if (!playlist.getPropietario().getId().equals(usuario.getId())) {
+            throw new OwnershipRequiredException();
+        }
+
+        playlistPistaRepository.deleteAll(playlist.getPlaylistPistas());
+        playlistRepository.delete(playlist);
+    }
+
+    public List<ResponsePlaylistDTO> getMisPlaylists(String token) {
+        String username = jwtService.extractUsername(token);
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return usuario.getPlaylists()
+                .stream()
+                .map(p -> playlistMapper.toDto(
+                        p,
+                        firebaseService.obtenerUrlArchivoImagen(p.getFotoPortada(), p.getNombre())
+                ))
+                .toList();
+    }
+
+    public List<ResponsePlaylistDTO> buscarPlaylists(String q) {
+        if (q == null || q.isBlank()) return List.of();
+
+        List<Playlist> playlists = playlistRepository.buscarPorNombre(q);
+        return playlists.stream()
+                .map(p -> playlistMapper.toDto(p, firebaseService.obtenerUrlArchivoImagen(p.getFotoPortada(), "")))
+                .toList();
+    }
 }

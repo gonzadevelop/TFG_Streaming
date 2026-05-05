@@ -1,0 +1,49 @@
+@if (cargando()) {
+  <section class="favoritos-page">
+    <p class="muted">Cargando favoritos…</p>
+  </section>
+} @else if (error()) {
+  <section class="favoritos-page">
+    <p class="error">{{ error() }}</p>
+  </section>
+} @else {
+  <section class="favoritos-page">
+    <div class="favoritos-gradient-bg"></div>
+
+    <header class="favoritos-header">
+      <div class="favoritos-cover-container">
+        <div class="favoritos-cover-placeholder">
+          <span class="favoritos-cover-icon" aria-hidden="true">♥</span>
+        </div>
+      </div>
+
+      <div class="favoritos-info">
+        <span class="favoritos-type">Colección</span>
+        <h1 class="favoritos-title">Mis favoritos</h1>
+        <div class="favoritos-meta">
+          <span class="favoritos-stats">
+            {{ totalCanciones() }} {{ totalCanciones() === 1 ? 'canción' : 'canciones' }}
+          </span>
+        </div>
+      </div>
+    </header>
+
+    @if (totalCanciones() > 0) {
+      <div class="favoritos-actions">
+        <button class="btn-play-large" aria-label="Reproducir favoritos">
+          ▶
+        </button>
+      </div>
+
+      <div class="favoritos-content">
+        <app-lista-canciones [pistas]="pistas()" />
+      </div>
+    } @else {
+      <div class="favoritos-empty">
+        <span class="favoritos-empty-icon" aria-hidden="true">♡</span>
+        <p>Aún no tienes canciones favoritas.</p>
+        <p>Pulsa el corazón en cualquier canción para añadirla aquí.</p>
+      </div>
+    }
+  </section>
+}

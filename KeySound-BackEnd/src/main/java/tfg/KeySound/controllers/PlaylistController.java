@@ -74,10 +74,57 @@ public class PlaylistController {
         return ResponseEntity.ok(playlistService.getPlaylists());
     }
 
+    /**
+     * Endpoint para obtener el contenido completo de una playlist propia.
+     * Reutiliza el endpoint GET /{id} existente.
+     * @apiNote {@code GET /api/playlists/{id}}
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ResponsePlaylistCompletaDTO> getPlaylistById(
             @PathVariable Long id,
             @RequestParam (required = false) String fecha) {
         return ResponseEntity.ok(playlistService.getPlaylistById(id, fecha));
+    }
+
+    /**
+     * Endpoint para eliminar una playlist propia.
+     * @param id {@link Long} ID de la playlist a eliminar
+     * @param token {@link String} token JWT del usuario autenticado
+     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 204 (NO_CONTENT) si se elimina correctamente
+     * @throws tfg.KeySound.exception.playlist.OwnershipRequiredException 403 (FORBIDDEN)
+     * @throws tfg.KeySound.exception.playlist.PlaylistNotFoundException 404 (NOT_FOUND)
+     * @apiNote {@code DELETE /api/playlists/{id}}
+     */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> eliminarPlaylist(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
+        playlistService.eliminarPlaylist(id, token.substring(7));
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Endpoint para obtener las playlists del usuario autenticado.
+     * @param token {@link String} token JWT del usuario autenticado
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponsePlaylistDTO}&gt;&gt;
+     * @apiNote {@code GET /api/playlists/mis-playlists}
+     */
+    @GetMapping("/mis-playlists")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ResponsePlaylistDTO>> getMisPlaylists(
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(playlistService.getMisPlaylists(token.substring(7)));
+    }
+
+    /**
+     * Endpoint para buscar playlists por nombre.
+     * @param q {@link String} término de búsqueda
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponsePlaylistDTO}&gt;&gt;
+     * @apiNote {@code GET /api/playlists/buscar?q=término}
+     */
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ResponsePlaylistDTO>> buscarPlaylists(@RequestParam String q) {
+        return ResponseEntity.ok(playlistService.buscarPlaylists(q));
     }
 }

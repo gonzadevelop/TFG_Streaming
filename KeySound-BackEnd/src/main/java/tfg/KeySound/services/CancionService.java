@@ -2,12 +2,12 @@ package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tfg.KeySound.entitys.Cancion;
-import tfg.KeySound.entitys.HistorialReproducciones;
-import tfg.KeySound.entitys.Usuario;
+import tfg.KeySound.entitys.*;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.mappers.PistaMapper;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
+import tfg.KeySound.model.pista.ResponsePistaBusquedaDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.repositorys.CancionRepository;
 import tfg.KeySound.repositorys.HistorialReproduccionesRepository;
@@ -132,5 +132,21 @@ public class CancionService {
                         .stream()
                         .filter(artista -> !artista.getId().equals(artistaPrincipal.getId()))
         ).toList();
+    }
+
+    public List<ResponsePistaBusquedaDTO> buscarCanciones(String query) {
+        return pistaRepository.findByCancionTituloContainingIgnoreCase(query)
+                .stream()
+                .map(p -> new ResponsePistaBusquedaDTO(
+                        p.getId(),
+                        p.getCancion().getTitulo(),
+                        p.getAlbum().getUsuario().getUsername(),
+                        p.getAlbum().getTitulo(),
+                        firebaseService.obtenerUrlArchivoImagen(
+                                p.getAlbum().getArchivoPortada(),
+                                p.getAlbum().getTitulo()
+                        )
+                ))
+                .toList();
     }
 }
