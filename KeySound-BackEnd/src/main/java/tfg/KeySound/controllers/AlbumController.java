@@ -105,4 +105,15 @@ public class AlbumController {
     public ResponseEntity<List<ResponseAlbumDTO>> obtenerNovedades() {
         return ResponseEntity.ok(albumService.obtenerNovedades());
     }
+
+    /**
+     * Endpoint para buscar álbumes por título.
+     * @param q {@link String} término de búsqueda
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseAlbumDTO}&gt;&gt;
+     * @apiNote {@code GET /api/albums/buscar?q=término}
+     */
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ResponseAlbumDTO>> buscarAlbums(@RequestParam String q) {
+        return ResponseEntity.ok(albumService.buscarAlbums(q));
+    }
 }

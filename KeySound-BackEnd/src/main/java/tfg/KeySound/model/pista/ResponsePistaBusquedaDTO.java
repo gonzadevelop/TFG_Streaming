@@ -1,4 +1,9 @@
 package tfg.KeySound.model.pista;
 
-public class ResponsePistaBusquedaDTO {
-}
+public record ResponsePistaBusquedaDTO(
+        Long id,
+        String titulo,
+        String artista,
+        String album,
+        String caratula
+) {}

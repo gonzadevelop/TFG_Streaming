@@ -189,4 +189,15 @@ public class AlbumService {
 
         return albumMapper.toDtos(novedades);
     }
+
+    public List<ResponseAlbumDTO> buscarAlbums(String q) {
+        if (q == null || q.isBlank()) return List.of();
+
+        List<Album> albums = albumRepository.buscarPorTitulo(q);
+        List<ResponseAlbumDTO> dtos = albumMapper.toDtos(albums);
+        dtos.forEach(dto ->
+            dto.setUrlPortada(firebaseService.obtenerUrlArchivoImagen(dto.getUrlPortada(), dto.getTitulo()))
+        );
+        return dtos;
+    }
 }

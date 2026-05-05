@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tfg.KeySound.model.album.ResponseAlbumDTO;
+import tfg.KeySound.model.pista.ResponsePistaBusquedaDTO;
+import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.services.CancionService;
 
@@ -51,4 +54,16 @@ public class CancionController {
             @RequestHeader ("Authorization") String token) {
         return ResponseEntity.ok(cancionService.obtenerMisCancionesMasReproducidas(token.substring(7)));
     }
+
+    /**
+     * Endpoint para buscar canciones por nombre.
+     * @param q {@link String} texto de búsqueda
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponsePistaBusquedaDTO}&gt;&gt;
+     * @apiNote {@code GET /api/canciones/buscar?q=texto}
+     */
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ResponsePistaBusquedaDTO>> buscarCanciones(@RequestParam String q) {
+        return ResponseEntity.ok(cancionService.buscarCanciones(q));
+    }
+
 }
