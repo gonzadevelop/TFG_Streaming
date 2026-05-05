@@ -12,8 +12,8 @@ import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../../services/authService';
 import {TokenService} from '../../../../services/tokenService';
 import {Subscription} from 'rxjs';
-import {IAuthResponse} from '../../../../model/IAuth';
-import {IUserRegister} from '../../../../model/IUserRegister';
+import {IAuthResponse} from '../../../../model/auth/IAuth';
+import {IUserRegister} from '../../../../model/auth/IUserRegister';
 
 @Component({
   selector: 'app-registro',

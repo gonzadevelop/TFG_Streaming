@@ -12,8 +12,8 @@ import {Router, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {TokenService} from '../../../../services/tokenService';
 import {AuthService} from '../../../../services/authService';
-import {IAuthResponse} from '../../../../model/IAuth';
-import {IUserLogin} from '../../../../model/IUserLogin';
+import {IAuthResponse} from '../../../../model/auth/IAuth';
+import {IUserLogin} from '../../../../model/auth/IUserLogin';
 
 @Component({
   selector: 'app-login',

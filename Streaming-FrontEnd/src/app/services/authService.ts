@@ -1,10 +1,10 @@
-import {IUserLogin} from '../model/IUserLogin';
-import {IUserRegister} from '../model/IUserRegister';
+import {IUserLogin} from '../model/auth/IUserLogin';
+import {IUserRegister} from '../model/auth/IUserRegister';
 import {Injectable, inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {Observable} from 'rxjs';
-import {IAuthResponse, ICheckEmailResponse} from '../model/IAuth';
+import {IAuthResponse, ICheckEmailResponse} from '../model/auth/IAuth';
 
 @Injectable({
   providedIn: 'root'
