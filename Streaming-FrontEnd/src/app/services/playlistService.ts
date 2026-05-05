@@ -1,7 +1,8 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 import { IPlaylistRequest, ICancionesPlaylistRequest } from '../model/playlists/IPlaylistRequest';
 import {IPlaylistCompleta} from '../model/playlists/IPlaylistCompleta';
 import { IPlaylist } from '../model/home/IPlaylist';
@@ -42,11 +43,70 @@ export class PlaylistService {
   }
 
   /**
+   * Obtiene la lista de canciones favoritas del usuario autenticado.
+   * GET /api/favoritos
+   */
+  getFavoritos(): Observable<IPlaylistCompleta> {
+    return this.http.get<IPlaylistCompleta | null>(`${this.baseURL}/favoritos`).pipe(
+      map(res => res ?? ({ pistas: [] } as unknown as IPlaylistCompleta)),
+      catchError(err => {
+        // Si el status es 200 pero el body no es JSON válido (body vacío, texto plano, etc.)
+        // devolvemos una playlist vacía para no romper la UI
+        if (err?.status === 200) {
+          console.warn('getFavoritos: respuesta 200 con body no parseable, se asume lista vacía.');
+          return of({ pistas: [] } as unknown as IPlaylistCompleta);
+        }
+        throw err;
+      }),
+    );
+  }
+
+  /**
    * El usuario agrega una o varias canciones a una playlist existente.
    * El backend usa @RequestBody JSON.
    * POST /api/playlists/agregar-cancion
    */
   setAgregarCancionPlaylist(dto: ICancionesPlaylistRequest): Observable<void> {
     return this.http.post<void>(`${this.baseURL}/playlists/agregar-cancion`, dto);
+  }
+
+  /**
+   * Añade una pista a la lista de favoritos del usuario autenticado.
+   * POST /api/favoritos/{idPista}
+   */
+  addFavorito(idPista: number): Observable<void> {
+    return this.http.post<void>(`${this.baseURL}/favoritos/${idPista}`, {});
+  }
+
+  /**
+   * Elimina una pista de la lista de favoritos del usuario autenticado.
+   * DELETE /api/favoritos/{idPista}
+   */
+  removeFavorito(idPista: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseURL}/favoritos/${idPista}`);
+  }
+
+  /**
+   * Obtiene los IDs de las pistas favoritas del usuario autenticado.
+   * GET /api/favoritos/ids
+   */
+  getFavoritosIds(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.baseURL}/favoritos/ids`);
+  }
+
+  /**
+   * Obtiene las playlists del usuario autenticado.
+   * GET /api/playlists/mis-playlists
+   */
+  getMisPlaylists(): Observable<IPlaylist[]> {
+    return this.http.get<IPlaylist[]>(`${this.baseURL}/playlists/mis-playlists`);
+  }
+
+  /**
+   * Busca playlists por nombre.
+   * GET /api/playlists/buscar?q=término
+   */
+  buscarPlaylists(q: string): Observable<IPlaylist[]> {
+    return this.http.get<IPlaylist[]>(`${this.baseURL}/playlists/buscar`, { params: { q } });
   }
 }

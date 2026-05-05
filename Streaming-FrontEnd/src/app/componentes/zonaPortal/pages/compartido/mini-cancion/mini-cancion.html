@@ -27,7 +27,18 @@
     </div>
     }
     <div class="mini-cancion__info">
-      <p class="mini-cancion__titulo mb-0">{{ pista().titulo }}</p>
+      <div class="mini-cancion__titulo-row">
+        <p class="mini-cancion__titulo mb-0">{{ pista().titulo }}</p>
+        <button
+          type="button"
+          class="mini-cancion__favorito"
+          [class.mini-cancion__favorito--activo]="esFavorito()"
+          (click)="toggleFavorito($event)"
+          [attr.aria-label]="esFavorito() ? 'Quitar de favoritos ' + pista().titulo : 'Añadir a favoritos ' + pista().titulo"
+          [attr.aria-pressed]="esFavorito()">
+          {{ esFavorito() ? '♥' : '♡' }}
+        </button>
+      </div>
       <p class="mini-cancion__artistas mb-0">
         @for (artista of pista().artistas; track artista; let last = $last) {
           <button

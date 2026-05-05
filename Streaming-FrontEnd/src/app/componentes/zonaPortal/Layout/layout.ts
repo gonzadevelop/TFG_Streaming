@@ -1,16 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Header } from './Header/header';
+import { HeaderComponent } from './Header/header';
 import { Footer } from './Footer/footer';
 import { Sidebar } from './Sidebar/sidebar';
 import { Player } from './Player/player';
+import { FavoritosService } from '../../../services/favoritosService';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, Header, Footer, Sidebar, Player],
+  imports: [RouterOutlet, HeaderComponent, Footer, Sidebar, Player],
   styleUrl: './layout.css',
   template: `
-    <app-header (sidebarToggled)="sidebarOpen.set($event)" />
+    <app-header />
 
     <div class="layout-shell" [class.layout-shell--collapsed]="!sidebarOpen()">
       <app-sidebar
@@ -27,7 +28,9 @@ import { Player } from './Player/player';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Layout {
+export class Layout implements OnInit {
+  private readonly favoritosService = inject(FavoritosService);
+
   readonly sidebarOpen = signal(true);
 
   readonly userName = computed(() => {
@@ -39,4 +42,8 @@ export class Layout {
     }
     return 'Usuario';
   });
+
+  ngOnInit(): void {
+    this.favoritosService.cargarFavoritos();
+  }
 }

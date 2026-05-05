@@ -49,10 +49,10 @@ export class Sidebar implements OnInit {
   });
 
   readonly sidebarItems: SidebarItem[] = [
-    {label: 'Inicio', icon: 'home', route: '/home'},
+    {label: 'Inicio', icon: 'home', route: '/'},
     {label: 'Lista de favoritos', icon: 'favorite', route: '/favs'},
-    {label: 'Estadísticas', icon: 'insights', route: '/artista'},
-    {label: 'Explorar', icon: 'search', route: '/artista'},
+    {label: 'Estadísticas', icon: 'insights', route: '/stadistics'},
+    {label: 'Explorar', icon: 'search', route: '/explore'},
   ];
 
   toggleDropdown(): void {

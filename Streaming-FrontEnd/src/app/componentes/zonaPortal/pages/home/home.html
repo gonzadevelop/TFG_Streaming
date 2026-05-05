@@ -70,7 +70,53 @@
     </section>
 
     <!-- ══════════════════════════
-         2. ARTISTAS QUE SIGUES / POPULARES
+         2. MIS PLAYLISTS
+    ══════════════════════════ -->
+    <section class="home-section" aria-labelledby="mis-playlists-heading">
+      <div class="container-fluid px-4 px-md-5">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="section-title mb-0" id="mis-playlists-heading">Mis playlists</h2>
+            <p class="section-sub mb-0">Colecciones que has creado</p>
+          </div>
+          <button type="button" class="btn-crear-playlist" (click)="abrirModal()" aria-label="Crear nueva playlist">
+            <span class="material-icons" aria-hidden="true">add</span>
+            Nueva playlist
+          </button>
+        </div>
+
+        @if (homeData().misPlaylist.length > 0) {
+          <div class="cards-grid" role="list">
+            @for (playlist of homeData().misPlaylist; track playlist.id) {
+              <article class="ks-card" role="listitem" tabindex="0" [attr.aria-label]="playlist.nombre">
+                <a [routerLink]="['/playlists', playlist.id]" class="ks-card__link" tabindex="-1">
+                  <div class="ks-card__cover">
+                    <img [src]="playlist.urlPortada" [alt]="'Portada de ' + playlist.nombre" class="ks-card__img" />
+                    <button type="button" class="ks-card__play-btn" [attr.aria-label]="'Reproducir ' + playlist.nombre">
+                      <i class="bi bi-play-fill"></i>
+                    </button>
+                  </div>
+                  <div class="ks-card__body">
+                    <p class="ks-card__title mb-1">{{ playlist.nombre }}</p>
+                    @if (playlist.descripcion) {
+                      <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
+                    }
+                  </div>
+                </a>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-music-note-list empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">Aún no tienes playlists. ¡Crea la primera!</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ══════════════════════════
+         3. ARTISTAS QUE SIGUES / POPULARES
     ══════════════════════════ -->
     <section class="home-section" aria-labelledby="artistas-heading">
       <div class="container-fluid px-4 px-md-5">
@@ -261,3 +307,98 @@
   }
 
 </main>
+
+<!-- ══════════════════════════
+     MODAL CREAR PLAYLIST
+══════════════════════════ -->
+@if (modalAbierto()) {
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-titulo"
+    (click)="cerrarModal()" (keydown.escape)="cerrarModal()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-titulo" id="modal-titulo">
+          <span class="material-icons" aria-hidden="true">queue_music</span>
+          Nueva playlist
+        </h2>
+        <button type="button" class="modal-close" (click)="cerrarModal()" aria-label="Cerrar" [disabled]="creando()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="playlistForm" (ngSubmit)="crearPlaylist()" class="modal-body" novalidate>
+
+        <!-- Portada drag & drop -->
+        <div class="drop-zone"
+          [class.drop-zone--over]="draggingOver()"
+          [class.drop-zone--filled]="portadaPreview()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave()"
+          (drop)="onDrop($event)"
+          (click)="fileInput.click()"
+          (keydown.enter)="fileInput.click()"
+          (keydown.space)="$event.preventDefault(); fileInput.click()"
+          role="button" tabindex="0"
+          aria-label="Seleccionar portada de la playlist">
+          @if (portadaPreview()) {
+            <img [src]="portadaPreview()!" alt="Vista previa de la portada" class="drop-zone__preview" />
+            <button type="button" class="drop-zone__remove" (click)="$event.stopPropagation(); quitarPortada()" aria-label="Quitar portada">
+              <span class="material-icons" aria-hidden="true">delete</span>
+            </button>
+          } @else {
+            <span class="material-icons drop-zone__icon" aria-hidden="true">add_photo_alternate</span>
+            <span class="drop-zone__label">Arrastra una imagen o haz clic</span>
+            <span class="drop-zone__hint">PNG, JPG, WEBP — Opcional</span>
+          }
+        </div>
+        <input #fileInput type="file" accept="image/*" class="visually-hidden" aria-hidden="true" tabindex="-1" (change)="onFileSelected($event)" />
+
+        <!-- Nombre -->
+        <div class="form-field">
+          <label class="form-label" for="playlist-nombre">Nombre <span aria-hidden="true" class="required-mark">*</span></label>
+          <input id="playlist-nombre" type="text" class="form-input" formControlName="nombre"
+            placeholder="Mi playlist..." autocomplete="off" aria-required="true"
+            [attr.aria-invalid]="playlistForm.get('nombre')!.invalid && playlistForm.get('nombre')!.touched" />
+          @if (playlistForm.get('nombre')!.invalid && playlistForm.get('nombre')!.touched) {
+            <span class="form-error" role="alert">El nombre es obligatorio.</span>
+          }
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-field">
+          <label class="form-label" for="playlist-desc">Descripción</label>
+          <textarea id="playlist-desc" class="form-input form-input--textarea" formControlName="descripcion"
+            placeholder="Describe tu playlist... (opcional)" rows="3"></textarea>
+        </div>
+
+        <!-- Visibilidad -->
+        <div class="form-field form-field--row">
+          <label class="form-label" for="playlist-publica">Playlist pública</label>
+          <label class="toggle" aria-label="Hacer la playlist pública">
+            <input id="playlist-publica" type="checkbox" formControlName="esPublica" class="toggle__input" />
+            <span class="toggle__track" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        @if (errorModal()) {
+          <p class="form-error form-error--general" role="alert">{{ errorModal() }}</p>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal btn-modal--cancel" (click)="cerrarModal()" [disabled]="creando()">Cancelar</button>
+          <button type="submit" class="btn-modal btn-modal--confirm" [disabled]="playlistForm.invalid || creando()">
+            @if (creando()) {
+              <span class="modal-spinner" aria-hidden="true"></span>
+              Creando…
+            } @else {
+              <span class="material-icons" aria-hidden="true">check</span>
+              Crear
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+}
+

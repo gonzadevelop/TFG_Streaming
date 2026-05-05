@@ -26,4 +26,14 @@ export class CancionService {
   getCancionesMasReproducidas(): Observable<IPista[]> {
     return this.http.get<IPista[]>(`${this.baseURL}/canciones/mis-canciones-mas-reproducidas`);
   }
+
+  /**
+   * Busca canciones por título o artista.
+   * GET /api/canciones/buscar?q=término
+   */
+  buscarCanciones(q: string): Observable<IPista[]> {
+    return this.http.get<IPista[]>(`${this.baseURL}/canciones/buscar`, {
+      params: { q }
+    });
+  }
 }

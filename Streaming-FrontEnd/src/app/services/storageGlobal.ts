@@ -15,6 +15,33 @@ export class StorageGlobal {
   readonly volumen       = signal<number>(1);
   readonly silenciado    = signal<boolean>(false);
 
+  // Cola de reproducción
+  readonly cola = signal<IPistaReproduccion[]>([]);
+
+  /** Añade una pista al final de la cola */
+  AgregarACola(pista: IPistaReproduccion): void {
+    this.cola.update(c => [...c, pista]);
+  }
+
+  /** Elimina una pista de la cola por su índice */
+  EliminarDeCola(index: number): void {
+    this.cola.update(c => c.filter((_, i) => i !== index));
+  }
+
+  /** Vacía la cola completa */
+  VaciarCola(): void {
+    this.cola.set([]);
+  }
+
+  /** Reproduce la siguiente pista de la cola (si hay) */
+  ReproducirSiguienteDeCola(): void {
+    const colaActual = this.cola();
+    if (colaActual.length === 0) return;
+    const [siguiente, ...resto] = colaActual;
+    this.cola.set(resto);
+    this.Reproducir(siguiente);
+  }
+
   private _token: WritableSignal<string> = signal<string>('');
   private _reproduccion: WritableSignal<IPistaReproduccion> = signal<IPistaReproduccion>(
     {

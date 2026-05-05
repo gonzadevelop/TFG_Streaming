@@ -7,4 +7,12 @@ export interface IPista {
   reproducciones?: number;
   duracionSegundos: number;
   numeroPista?: number;
+  albumId?: number;
+
+  // Campos del DTO de búsqueda
+
+  id?: number;
+  artista?: string;
+  caratula?: string;
+  album?: string;
 }

@@ -31,6 +31,12 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'favs',
+        title: 'Mis canciones favs :) | KeySound',
+        loadComponent: () => import('./componentes/zonaPortal/pages/lista-favoritos/lista-favoritos')
+          .then(m => m.ListaFavoritos),
+      },
+      {
         path: 'artistas/:username',
         title: 'Artista | KeySound',
         loadComponent: () => import('./componentes/zonaPortal/pages/artista/artista')
