@@ -48,6 +48,12 @@ export const routes: Routes = [
         loadComponent: () => import('./componentes/zonaPortal/pages/album/album')
           .then(m => m.Album),
       },
+      {
+        path: 'perfil',
+        title: 'Mi perfil | KeySound',
+        loadComponent: () => import('./componentes/zonaPortal/pages/perfil/perfil')
+          .then(m => m.Perfil),
+      },
     ],
   },
   {

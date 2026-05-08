@@ -1,0 +1,216 @@
+<main class="perfil-page" aria-label="Página de perfil">
+
+  <!-- ── MENSAJES ───────────────────────────────────── -->
+  @if (successMessage()) {
+    <div class="alert alert--success" role="alert" aria-live="polite">
+      <span class="material-icons alert__icon" aria-hidden="true">check_circle</span>
+      <span class="alert__text">{{ successMessage() }}</span>
+      <button type="button" class="alert__close" (click)="cerrarSuccess()" aria-label="Cerrar mensaje de éxito">
+        <span class="material-icons" aria-hidden="true">close</span>
+      </button>
+      <div class="alert__progress" aria-hidden="true"></div>
+    </div>
+  }
+  @if (errorMessage()) {
+    <div class="alert alert--error" role="alert" aria-live="assertive">
+      <span class="material-icons alert__icon" aria-hidden="true">error</span>
+      <span class="alert__text">{{ errorMessage() }}</span>
+      <button type="button" class="alert__close" (click)="cerrarError()" aria-label="Cerrar mensaje de error">
+        <span class="material-icons" aria-hidden="true">close</span>
+      </button>
+      <div class="alert__progress" aria-hidden="true"></div>
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="perfil-loading" role="status" aria-live="polite">
+      <span class="material-icons perfil-loading__icon" aria-hidden="true">hourglass_top</span>
+      <p>Cargando perfil...</p>
+    </div>
+  } @else if (perfil()) {
+
+    <!-- ── CABECERA ────────────────────────────────────── -->
+    <section class="perfil-header" aria-label="Cabecera del perfil">
+
+      <!-- Avatar con drag & drop -->
+      <div
+        class="perfil-avatar-wrapper"
+        [class.drag-over]="isDragOver()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)"
+        role="group"
+        aria-label="Foto de perfil. Arrastra una imagen o haz clic para cambiarla."
+      >
+        <div class="perfil-avatar" aria-hidden="true">
+          @if (avatarSrc()) {
+            <img [src]="avatarSrc()!" [alt]="'Avatar de ' + perfil()!.username" class="perfil-avatar__img" />
+          } @else {
+            <span class="perfil-avatar__letra">{{ inicialAvatar() }}</span>
+          }
+          @if (isUploadingAvatar()) {
+            <div class="perfil-avatar__overlay" aria-hidden="true">
+              <span class="material-icons spin">sync</span>
+            </div>
+          } @else {
+            <div class="perfil-avatar__overlay" aria-hidden="true">
+              <span class="material-icons">photo_camera</span>
+            </div>
+          }
+        </div>
+
+        <label class="perfil-avatar__label" for="avatarInput" aria-label="Cambiar foto de perfil">
+          <input
+            id="avatarInput"
+            type="file"
+            accept="image/*"
+            class="sr-only"
+            (change)="onFileSelected($event)"
+            aria-label="Seleccionar imagen de perfil"
+          />
+        </label>
+
+        <p class="perfil-avatar__hint">Arrastra o haz clic para cambiar</p>
+      </div>
+
+      <!-- Info básica -->
+      <div class="perfil-header__info">
+        <span class="perfil-badge">
+          {{ perfil()!.username }}
+        </span>
+        <h1 class="perfil-nombre">{{ perfil()!.username }}</h1>
+        @if (perfil()!.biografia) {
+          <p class="perfil-bio">{{ perfil()!.biografia }}</p>
+        } @else {
+          <p class="perfil-bio perfil-bio--vacia">Sin biografía aún...</p>
+        }
+
+        @if (!modoEdicion()) {
+          <button
+            type="button"
+            class="btn-editar"
+            (click)="activarEdicion()"
+            aria-label="Editar perfil"
+          >
+            <span class="material-icons" aria-hidden="true">edit</span>
+            Editar perfil
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- ── FORMULARIO DE EDICIÓN ──────────────────────── -->
+    @if (modoEdicion()) {
+      <section class="perfil-form-section" aria-labelledby="edicion-heading">
+        <h2 id="edicion-heading" class="perfil-section-title">Editar información</h2>
+
+        <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()" class="perfil-form" novalidate>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="emailInput" class="form-label">Correo electrónico</label>
+            <input
+              id="emailInput"
+              type="email"
+              class="form-control"
+              formControlName="email"
+              autocomplete="email"
+              aria-required="true"
+              [attr.aria-invalid]="perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched"
+            />
+            @if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
+              <p class="form-error" role="alert">Introduce un email válido.</p>
+            }
+          </div>
+
+          <!-- Biografía -->
+          <div class="form-group">
+            <label for="biografiaInput" class="form-label">Biografía</label>
+            <textarea
+              id="biografiaInput"
+              class="form-control form-control--textarea"
+              formControlName="biografia"
+              rows="4"
+              maxlength="300"
+              placeholder="Cuéntanos algo sobre ti..."
+              aria-describedby="bioCounter"
+            ></textarea>
+            <span id="bioCounter" class="form-counter" aria-live="polite">
+              {{ perfilForm.get('biografia')?.value?.length ?? 0 }} / 300
+            </span>
+          </div>
+
+          <!-- Acciones -->
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn-guardar"
+              [attr.aria-disabled]="isSaving() || perfilForm.invalid"
+              [class.loading]="isSaving()"
+            >
+              @if (isSaving()) {
+                <span class="material-icons spin" aria-hidden="true">sync</span>
+                Guardando...
+              } @else {
+                <span class="material-icons" aria-hidden="true">save</span>
+                Guardar cambios
+              }
+            </button>
+            <button
+              type="button"
+              class="btn-cancelar"
+              (click)="cancelarEdicion()"
+              [attr.aria-disabled]="isSaving()"
+            >
+              Cancelar
+            </button>
+          </div>
+
+        </form>
+      </section>
+    }
+
+    <!-- ── MIS PLAYLISTS ──────────────────────────────── -->
+    <section class="perfil-section" aria-labelledby="playlists-heading">
+      <h2 id="playlists-heading" class="perfil-section-title">Mis playlists</h2>
+
+      @if (perfil()!.playlists.length > 0) {
+        <div class="perfil-playlists" role="list">
+          @for (playlist of perfil()!.playlists; track playlist.id) {
+            <a
+              [routerLink]="playlist.id === 0 ? ['/favs'] : ['/playlists', playlist.id]"
+              class="perfil-playlist-card"
+              role="listitem"
+              [attr.aria-label]="'Ir a la playlist ' + playlist.nombre"
+            >
+              <div class="perfil-playlist-card__cover">
+                @if (playlist.urlPortada) {
+                  <img [src]="playlist.urlPortada" [alt]="'Portada de ' + playlist.nombre" class="perfil-playlist-card__img" />
+                } @else {
+                  <span class="material-icons perfil-playlist-card__icon" aria-hidden="true">queue_music</span>
+                }
+              </div>
+              <p class="perfil-playlist-card__nombre">{{ playlist.nombre }}</p>
+              @if (playlist.descripcion) {
+                <p class="perfil-playlist-card__desc">{{ playlist.descripcion }}</p>
+              }
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-state" role="status">
+          <span class="material-icons empty-state__icon" aria-hidden="true">queue_music</span>
+          <p class="empty-state__text">Aún no tienes playlists creadas.</p>
+        </div>
+      }
+    </section>
+
+  } @else {
+    <div class="perfil-error" role="alert">
+      <span class="material-icons" aria-hidden="true">error_outline</span>
+      <p>No se pudo cargar el perfil. Inténtalo más tarde.</p>
+    </div>
+  }
+
+</main>
+

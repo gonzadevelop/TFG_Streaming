@@ -40,13 +40,35 @@
       <button class="btn-play-large" aria-label="Reproducir">
         ▶
       </button>
-      <button class="btn-follow" aria-label="Seguir artista">
-        Seguir
+      <button
+        class="btn-follow"
+        [class.btn-follow--siguiendo]="a.sigueAlArtista"
+        [class.btn-follow--loading]="siguiendoLoading()"
+        [attr.aria-pressed]="a.sigueAlArtista"
+        [attr.aria-label]="a.sigueAlArtista ? 'Dejar de seguir a ' + a.username : 'Seguir a ' + a.username"
+        [disabled]="siguiendoLoading()"
+        (click)="toggleSeguir()"
+      >
+        @if (siguiendoLoading()) {
+          <span class="btn-follow__spinner" aria-hidden="true"></span>
+          {{ a.sigueAlArtista ? 'Dejando de seguir…' : 'Siguiendo…' }}
+        } @else if (a.sigueAlArtista) {
+          <span class="material-icons btn-follow__icon" aria-hidden="true">check</span>
+          Siguiendo
+        } @else {
+          Seguir
+        }
       </button>
       <button class="btn-more" aria-label="Más opciones">
         ⋯
       </button>
     </div>
+
+    @if (siguiendoError()) {
+      <p class="artista-follow-error" role="alert" aria-live="assertive">
+        {{ siguiendoError() }}
+      </p>
+    }
 
     <!-- Popular canciones -->
     @if (a.canciones && a.canciones.length > 0) {
