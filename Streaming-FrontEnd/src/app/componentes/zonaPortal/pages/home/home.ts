@@ -16,10 +16,11 @@ import { PlaylistService } from '../../../../services/playlistService';
 import { IHome } from '../../../../model/home/IHome';
 import { IPlaylist } from '../../../../model/home/IPlaylist';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
+import { AlbumCard } from '../compartido/album-card/album-card';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ListaCanciones, ReactiveFormsModule],
+  imports: [RouterLink, ListaCanciones, ReactiveFormsModule, AlbumCard],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

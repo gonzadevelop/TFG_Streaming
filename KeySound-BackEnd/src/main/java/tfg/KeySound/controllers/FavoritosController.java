@@ -2,10 +2,11 @@ package tfg.KeySound.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tfg.KeySound.model.favoritos.ResponseFavoritosDTO;
+import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.services.FavoritosService;
-import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/favoritos")
@@ -15,19 +16,21 @@ public class FavoritosController {
     private final FavoritosService favoritosService;
 
     @GetMapping
-    public ResponseEntity<ResponseFavoritosDTO> obtenerFavoritos(Principal principal) {
-        return ResponseEntity.ok(favoritosService.obtenerFavoritos(principal.getName()));
+    public ResponseEntity<List<ResponsePistaPlaylistDTO>> obtenerFavoritos(@RequestHeader ("Authorization") String token) {
+        return ResponseEntity.ok(favoritosService.obtenerFavoritos(token.substring(7)));
     }
 
     @PostMapping("/{pistaId}")
-    public ResponseEntity<Void> añadirFavorito(@PathVariable Long pistaId, Principal principal) {
-        favoritosService.añadirFavorito(pistaId, principal.getName());
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> anadirFavorito(@PathVariable Long pistaId, @RequestHeader ("Authorization") String token) {
+        favoritosService.anadirFavorito(pistaId, token.substring(7));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{pistaId}")
-    public ResponseEntity<Void> eliminarFavorito(@PathVariable Long pistaId, Principal principal) {
-        favoritosService.eliminarFavorito(pistaId, principal.getName());
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> eliminarFavorito(@PathVariable Long pistaId, @RequestHeader ("Authorization") String token) {
+        favoritosService.eliminarFavorito(pistaId, token.substring(7));
         return ResponseEntity.noContent().build();
     }
 }

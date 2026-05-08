@@ -1,0 +1,184 @@
+:host {
+  display: block;
+}
+
+.ks-card {
+  border: none;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 14px rgba(11, 117, 192, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.ks-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(11, 117, 192, 0.18);
+}
+
+.ks-card:focus-visible {
+  outline: 2px solid #0b75c0;
+  outline-offset: 3px;
+}
+
+/* ══════════════════════════════════════════
+   Portada de la card
+   ══════════════════════════════════════════ */
+
+.ks-card__cover {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecf0 100%);
+}
+
+.ks-card__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Botón play superpuesto */
+.ks-card__play-btn {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #0b75c0;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 200ms ease, transform 200ms ease;
+  box-shadow: 0 3px 12px rgba(11, 117, 192, 0.4);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.ks-card:hover .ks-card__play-btn,
+.ks-card:focus-within .ks-card__play-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ks-card__play-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.ks-card__play-btn:active {
+  transform: scale(0.95) translateY(0);
+}
+
+/* ══════════════════════════════════════════
+   Link y enlace
+   ══════════════════════════════════════════ */
+
+.ks-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: all 200ms ease;
+}
+
+.ks-card__link:focus {
+  outline: none;
+}
+
+/* ══════════════════════════════════════════
+   Cuerpo de la card
+   ══════════════════════════════════════════ */
+
+.ks-card__body {
+  padding: 0.9rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ks-card__title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a2a38;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.ks-card__desc {
+  font-size: 0.78rem;
+  color: #6c757d;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════
+   Badge
+   ══════════════════════════════════════════ */
+
+.ks-card__badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: rgba(11, 117, 192, 0.1);
+  color: #0b75c0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+  width: fit-content;
+}
+
+/* ══════════════════════════════════════════
+   Responsive
+   ══════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .ks-card {
+    border-radius: 0.8rem;
+  }
+
+  .ks-card__play-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .ks-card__body {
+    padding: 0.75rem 0.9rem;
+  }
+
+  .ks-card__title {
+    font-size: 0.85rem;
+  }
+
+  .ks-card__desc {
+    font-size: 0.75rem;
+  }
+}
+

@@ -5,22 +5,18 @@ import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
 import tfg.KeySound.entitys.embeddedids.PlaylistPistaId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
-import tfg.KeySound.exception.pista.PistaNotFoundException;
 import tfg.KeySound.exception.playlist.OwnershipRequiredException;
 import tfg.KeySound.exception.playlist.PlaylistNotFoundException;
-import tfg.KeySound.mappers.CancionMapper;
-import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.model.cancion.RequestCancionesPlaylistDTO;
-import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.model.playlist.RequestPlaylistDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistCompletaDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import tfg.KeySound.repositorys.*;
-import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.services.external.JwtService;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +25,6 @@ public class PlaylistService {
     /**
      * Inyecciones por constructor
      */
-    private final FirebaseService firebaseService;
     private final JwtService jwtService;
     private final RankingService rankingService;
 
@@ -40,7 +35,6 @@ public class PlaylistService {
     private final UsuarioRepository usuarioRepository;
 
     private final PlaylistMapper playlistMapper;
-    private final PistaMapper pistaMapper;
 
     /**
      * Metodos llamados por endpoints
@@ -54,13 +48,8 @@ public class PlaylistService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        // Subir la foto de portada a Firebase Storage y obtener el nombre del archivo o usar una imagen por defecto si no se proporciona una foto de portada
-        String nombreArchivo = dto.getFotoPortada() != null ?
-                firebaseService.subirArchivo(dto.getFotoPortada() , "playlist_" + usuario.getId() + "_" + dto.getNombre() + "_")
-                : "";
-
-        // Mapear el DTO a la entidad Playlist y establecer el propietario
-        Playlist playlist = playlistMapper.toEntity(dto, usuario, nombreArchivo);
+        // Mapear el DTO a la entidad Playlist (el mapper gestiona la foto de portada)
+        Playlist playlist = playlistMapper.toEntity(dto, usuario);
 
         // Guardar la nueva playlist en la base de datos
         playlistRepository.save(playlist);
@@ -83,35 +72,35 @@ public class PlaylistService {
             throw new OwnershipRequiredException();
         }
 
-        dto.getPistaIds().stream()
-                .map(id -> pistaRepository.findById(id) // Buscar el album de canción por su ID
-                        .orElseThrow(() -> new PistaNotFoundException(id)))
-                .filter(pista -> !playlistPistaRepository // Evitar agregar canciones duplicadas a la playlist
-                        .existsByPlaylistIdAndPistaId(playlist.getId(), pista.getId()))
-                .map(pista -> { // Crear la relación entre la playlist y el album de canción
+        // Obtenemos todas las pistas
+        List<Pista> pistasNuevas = pistaRepository.findAllById(dto.getPistaIds());
+
+        // Validar si faltan pistas
+        if (pistasNuevas.size() != dto.getPistaIds().size()) {
+            throw new RuntimeException("Algunas pistas no fueron encontradas");
+        }
+
+        // Obtener IDs de pistas que están en la playlist para evitar duplicados
+        Set<Long> pistasExistentesIds = playlistPistaRepository.findPistaIdsByPlaylistId(playlist.getId());
+
+        // Crear nuevas relaciones PlaylistPista solo para las pistas que no están ya en la playlist
+        List<PlaylistPista> nuevasRelaciones = pistasNuevas.stream()
+                .filter(pista -> !pistasExistentesIds.contains(pista.getId()))
+                .map(pista -> {
                     PlaylistPista relacion = new PlaylistPista();
-                    relacion.setId(new PlaylistPistaId()); // El ID se generará automáticamente al guardar la entidad
+                    relacion.setId(new PlaylistPistaId(playlist.getId(), pista.getId()));
                     relacion.setPlaylist(playlist);
                     relacion.setPista(pista);
                     return relacion;
                 })
-                .forEach(playlistPistaRepository::save); // Guardar la relación en la base de datos
+                .toList();
+
+        // Guardar las nuevas relaciones en la base de datos
+        playlistPistaRepository.saveAll(nuevasRelaciones);
     }
 
-    public List<ResponsePlaylistDTO> getPlaylists() {
-
-        return playlistRepository
-                .findAll()
-                .stream()
-                .filter(p -> p.getPropietario().getId().equals(1L))
-                .map( p ->
-                        playlistMapper
-                                .toDto(
-                                        p,
-                                        firebaseService.obtenerUrlArchivoImagen(p.getFotoPortada(), "")
-                                )
-                )
-                .toList();
+    public List<ResponsePlaylistDTO> getKeysoundPlaylists() {
+        return playlistMapper.toDtos(playlistRepository.findByPropietarioId(1L));
     }
 
     public ResponsePlaylistCompletaDTO getPlaylistById(Long id, String fecha) {
@@ -122,24 +111,7 @@ public class PlaylistService {
         Playlist playlist = playlistRepository.findById(id)
                 .orElseThrow(() -> new PlaylistNotFoundException(id));
 
-        List<ResponsePistaPlaylistDTO> pistas = playlist
-                .getPlaylistPistas()
-                .stream()
-                .map( pp -> pistaMapper.pistaToPlaylistDto(
-                        pp.getPista(),
-                        firebaseService.obtenerUrlArchivoImagen(pp.getPista().getAlbum().getArchivoPortada(), ""),
-                        firebaseService.obtenerUrlArchivoAudio(pp.getPista().getCancion().getArchivoCancion()),
-                        pp.getPista().getCancion().getUsuarios()
-                                .stream()
-                                .map(Usuario::getUsername)
-                                .toList()
-                ))
-                .toList();
-
-        return playlistMapper.toDto(
-                playlist,
-                firebaseService.obtenerUrlArchivoImagen(playlist.getFotoPortada(), ""),
-                pistas);
+        return playlistMapper.toDtoCompleto(playlist);
     }
 
     public void eliminarPlaylist(Long id, String token) {
@@ -163,21 +135,17 @@ public class PlaylistService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return usuario.getPlaylists()
-                .stream()
-                .map(p -> playlistMapper.toDto(
-                        p,
-                        firebaseService.obtenerUrlArchivoImagen(p.getFotoPortada(), p.getNombre())
-                ))
-                .toList();
+        return playlistMapper.toDtos(
+                usuario
+                        .getPlaylists()
+                        .stream()
+                        .toList()
+        );
     }
 
     public List<ResponsePlaylistDTO> buscarPlaylists(String q) {
         if (q == null || q.isBlank()) return List.of();
 
-        List<Playlist> playlists = playlistRepository.buscarPorNombre(q);
-        return playlists.stream()
-                .map(p -> playlistMapper.toDto(p, firebaseService.obtenerUrlArchivoImagen(p.getFotoPortada(), "")))
-                .toList();
+        return playlistMapper.toDtos(playlistRepository.buscarPorNombre(q));
     }
 }

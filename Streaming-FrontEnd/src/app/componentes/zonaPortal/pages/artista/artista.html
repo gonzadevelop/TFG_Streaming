@@ -95,28 +95,15 @@
         </div>
 
         <div class="albums-grid">
-          @for (album of a.albums.slice(0, 5); track album.id) {
-            <article class="album-card">
-              <div class="album-cover">
-                @if (album.urlPortada) {
-                  <img
-                    [src]="album.urlPortada"
-                    [alt]="'Portada de ' + album.titulo"
-                    class="album-img"
-                  />
-                } @else {
-                  <div class="album-cover-placeholder">♪</div>
-                }
-              </div>
-              <div class="album-info">
-                <p class="album-title">{{ album.titulo }}</p>
-              </div>
-            </article>
+          @for (album of a.albums.slice(0, 5); track album.id!) {
+            <app-album-card
+              [album]="album"
+              [routerLink]="['/album', album.id.toString()]"
+              [contentType]="album.tipo === 'sencillo' ? 'sencillo' : 'album'"
+            />
           }
         </div>
       </div>
     }
   </section>
 }
-
-

@@ -1,0 +1,42 @@
+<article
+  class="ks-card"
+  role="listitem"
+  tabindex="0"
+  [attr.aria-label]="titulo() + (album().artista ? ' de ' + album().artista : '')"
+>
+  <a [routerLink]="routerLink()" class="ks-card__link" [attr.aria-label]="'Ir a ' + titulo()" tabindex="-1">
+    <div class="ks-card__cover">
+      <img
+        [src]="album().urlPortada"
+        [alt]="'Portada de ' + titulo()"
+        class="ks-card__img"
+        loading="lazy"
+      />
+
+      <button
+        type="button"
+        class="ks-card__play-btn"
+        [attr.aria-label]="'Reproducir ' + titulo()"
+        (click)="onPlayClick($event)"
+        tabindex="-1"
+      >
+        <i class="bi bi-play-fill"></i>
+      </button>
+    </div>
+    <div class="ks-card__body">
+      <p class="ks-card__title mb-1">{{ titulo() }}</p>
+      @if (album().artista) {
+        <p class="ks-card__desc mb-0">{{ album().artista }}</p>
+      } @else if (album().descripcion) {
+        <p class="ks-card__desc mb-0">{{ album().descripcion }}</p>
+      }
+      @if (contentTypeLabel()) {
+        <span class="ks-card__badge mt-2">{{ contentTypeLabel() }}</span>
+      } @else if (showBadge() && album().tipo) {
+        <span class="ks-card__badge mt-2">{{ album().tipo }}</span>
+      }
+    </div>
+  </a>
+</article>
+
+

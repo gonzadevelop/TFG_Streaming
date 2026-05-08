@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, untracked, output } from '@angular/core';
 import { Router } from '@angular/router';
 import { IPista } from '../../../../../model/pista/IPista';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
@@ -14,6 +14,8 @@ import { FavoritosService } from '../../../../../services/favoritosService';
 export class MiniCancion {
   readonly pista    = input.required<IPista>();
   readonly posicion = input<number | null>(null);
+
+  readonly reproducirEvento = output<IPista>();
 
   private readonly storage = inject(StorageGlobal);
   private readonly router = inject(Router);
@@ -47,15 +49,7 @@ export class MiniCancion {
       return;
     }
 
-    this.storage.Reproducir({
-      idPista:          p.idPista ?? 0,
-      titulo:           p.titulo,
-      artistas:         p.artistas,
-      urlPortada:       p.urlPortada,
-      urlCancion:       p.urlCancion,
-      duracionSegundos: p.duracionSegundos,
-      reproduciendo:    true,
-    });
+    this.reproducirEvento.emit(p);
   }
 
   protected formatearDuracion(segundos: number): string {
@@ -68,4 +62,3 @@ export class MiniCancion {
     this.router.navigate(['/artistas', nombreArtista]);
   }
 }
-

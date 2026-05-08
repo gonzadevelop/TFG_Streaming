@@ -71,7 +71,7 @@ public class PlaylistController {
      */
     @GetMapping("/keysound")
     public ResponseEntity<List<ResponsePlaylistDTO>> getKeySoundPlaylists() {
-        return ResponseEntity.ok(playlistService.getPlaylists());
+        return ResponseEntity.ok(playlistService.getKeysoundPlaylists());
     }
 
     /**

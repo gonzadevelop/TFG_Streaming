@@ -63,18 +63,18 @@
     <h3 class="cola-section__label">
       Próximas
       @if (tieneCola()) {
-        <span class="cola-section__count">({{ cola().length }})</span>
+        <span class="cola-section__count">({{ colaRestante().length }})</span>
       }
     </h3>
 
     @if (tieneCola()) {
       <ol class="cola-list" aria-label="Lista de canciones en cola">
-        @for (pista of cola(); track pista.idPista; let i = $index) {
+        @for (pista of colaRestante(); track pista.idPista; let i = $index) {
           <li class="cola-item cola-item--queue">
             <button
               type="button"
               class="cola-item__play-btn"
-              (click)="reproducirDeCola(i)"
+              (click)="reproducirDeCola(pista.idPista)"
               [attr.aria-label]="'Reproducir ' + pista.titulo">
               <span class="material-icons cola-item__play-icon" aria-hidden="true">play_arrow</span>
             </button>
@@ -93,7 +93,7 @@
             <button
               type="button"
               class="cola-btn cola-btn--ghost cola-btn--remove"
-              (click)="eliminar(i)"
+              (click)="eliminar(pista.idPista)"
               [attr.aria-label]="'Eliminar ' + pista.titulo + ' de la cola'">
               <span class="material-icons">close</span>
             </button>

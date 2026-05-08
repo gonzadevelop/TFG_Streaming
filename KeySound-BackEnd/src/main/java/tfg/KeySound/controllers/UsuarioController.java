@@ -18,33 +18,13 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     /**
-     * Endpoint para que un usuario agregue una canción a su lista de favoritos.
-     * Se puede agregar una canción a favoritos, siempre que no esté ya en favoritos
-     * @param pistaId {@link Long}
-     * @param token {@link String} token JWT del usuario autenticado
-     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
-     * @throws tfg.KeySound.exception.pista.PistaNotFoundException 404 (NOT_FOUND)
-     * @throws tfg.KeySound.exception.playlist.FavoriteAlreadyExistsException 409 (CONFLICT)
-     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si la canción se agrega correctamente a favoritos
-     * @apiNote {@code POST /api/usuarios/agregar-cancion-favoritos}
-     */
-    @PostMapping("/agregar-cancion-favoritos")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> agregarCancionAFavoritos(
-            @RequestBody Long pistaId,
-            @RequestHeader ("Authorization") String token) {
-        usuarioService.agregarCancionAFavoritos(pistaId, token.substring(7));
-        return ResponseEntity.ok().build();
-    }
-
-    /**
      * Endpoint para obtener la información de un usuario.
      * @param username {@link String}
      * @return {@link ResponseEntity}&lt;{@link ResponseUsuarioDTO}&gt; Devuelve un status 200 (OK) con la información del usuario
      * @throws tfg.KeySound.exception.auth.UsernameNotFoundException 404 (NOT_FOUND)
      * @apiNote {@code GET /api/usuarios/visualizar/{username}}
      */
-    @GetMapping("/visualizar/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<ResponseUsuarioDTO> obtenerInfoUsuario(@PathVariable String username) {
         return ResponseEntity.ok(usuarioService.obtenerInfoUsuario(username));
     }
@@ -80,7 +60,6 @@ public class UsuarioController {
     @GetMapping("/obtener-username")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> obtenerUsername(@RequestHeader ("Authorization") String token) {
-        String username = usuarioService.obtenerUsername(token.substring(7));
-        return ResponseEntity.ok(username);
+        return ResponseEntity.ok(usuarioService.obtenerUsername(token.substring(7)));
     }
 }

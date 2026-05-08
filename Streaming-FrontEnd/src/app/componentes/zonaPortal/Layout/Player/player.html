@@ -119,7 +119,7 @@
           <span class="material-icons">shuffle</span>
         </button>
 
-        <button class="player-btn player-btn--sm" aria-label="Canción anterior">
+        <button class="player-btn player-btn--sm" aria-label="Canción anterior" (click)="prevTrack()">
           <span class="material-icons">skip_previous</span>
         </button>
 
@@ -130,7 +130,7 @@
           <span class="material-icons">{{ isPlaying() ? 'pause' : 'play_arrow' }}</span>
         </button>
 
-        <button class="player-btn player-btn--sm" aria-label="Siguiente canción">
+        <button class="player-btn player-btn--sm" aria-label="Siguiente canción" (click)="nextTrack()">
           <span class="material-icons">skip_next</span>
         </button>
 

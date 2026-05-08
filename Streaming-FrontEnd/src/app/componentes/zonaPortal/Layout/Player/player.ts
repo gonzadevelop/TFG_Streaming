@@ -33,7 +33,7 @@ export class Player implements OnDestroy {
   protected readonly duration    = computed(() => Math.floor(this.storage.duracion()));
   protected readonly progress    = this.currentTime;
 
-  // ─── Info de la canción actual ────────────────────────────────────────────
+  // ─── Info de la cancin actual ────────────────────────────────────────────
 
   protected readonly currentSong = computed(() => {
     const pista = this.storage.GetReproduccion()();
@@ -59,7 +59,7 @@ export class Player implements OnDestroy {
 
   // ─── Estado local de UI ───────────────────────────────────────────────────
 
-  protected readonly isShuffled  = signal(false);
+  protected readonly isShuffled  = this.storage.isShuffled;
   protected readonly repeatMode  = signal<'none' | 'all' | 'one'>('none');
   protected readonly isVisible   = signal(true);
   protected readonly isExpanded  = signal(false);
@@ -84,12 +84,12 @@ export class Player implements OnDestroy {
     }
   });
 
-  // ─── Métodos de UI ───────────────────────────────────────────────────────
+  // ─── Mtodos de UI ───────────────────────────────────────────────────────
 
   toggleVisible(): void   { this.isVisible.update(v => !v); }
   toggleExpanded(): void  { this.isExpanded.update(v => !v); }
   toggleCola(): void      { this.colaVisible.update(v => !v); }
-  toggleShuffle(): void   { this.isShuffled.update(v => !v); }
+  toggleShuffle(): void   { this.storage.ToggleShuffle(); }
 
   toggleRepeat(): void {
     this.repeatMode.update(m => {
@@ -99,10 +99,13 @@ export class Player implements OnDestroy {
     });
   }
 
-  // ─── Métodos de reproducción (delegados al servicio) ─────────────────────
+  // ─── Mtodos de reproduccin (delegados al servicio) ─────────────────────
 
   togglePlay(): void  { this.storage.TogglePlay(); }
   toggleMute(): void  { this.storage.ToggleSilencio(); }
+
+  nextTrack(): void { this.storage.ReproducirSiguienteDeCola(); }
+  prevTrack(): void { this.storage.ReproducirAnteriorDeCola(); }
 
   onVolumeChange(event: Event): void {
     const input = event.target as HTMLInputElement;
