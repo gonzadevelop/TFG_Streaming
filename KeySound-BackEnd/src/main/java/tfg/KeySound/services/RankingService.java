@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
 import tfg.KeySound.mappers.ArtistaMapper;
+import tfg.KeySound.mappers.PistaMapper;
 import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.mappers.TopMusicalDiarioMapper;
 import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
@@ -19,17 +20,17 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class RankingService {
 
+
     /**
-     * Inyección de dependencias de los repositorios necesarios para acceder a los datos de canciones y reproducciones.
+     * Inyecciones por constructor
      */
     private final TopMusicalDiarioRepository topMusicalDiarioRepository;
     private final HistorialReproduccionesRepository historialReproduccionesRepository;
-    private final TopMusicalDiarioMapper topMusicalDiarioMapper;
-    private final CancionRepository cancionRepository;
-    private final FirebaseService firebaseService;
-    private final ArtistaMapper artistaMapper;
     private final PlaylistRepository playlistRepository;
-    private final PlaylistMapper playlistMapper;
+
+    private final TopMusicalDiarioMapper topMusicalDiarioMapper;
+    private final PistaMapper pistaMapper;
+
     /**
      * Metodo para obtener el ranking diario actual.
      * Si no se proporciona una fecha, se devuelve el ranking del día anterior (ya que el ranking se actualiza a las 00:00).
@@ -39,49 +40,25 @@ public class RankingService {
                 ? LocalDate.now().minusDays(1)
                 : LocalDate.parse(fecha);
 
-        List<ResponsePistaPlaylistDTO> pistas = topMusicalDiarioMapper.toDtos(topMusicalDiarioRepository.findByFecha(fechaConsulta));
-
-        pistas
-                .stream()
-                .peek(
-                        r-> {
-                            Cancion cancion = cancionRepository.findById(r.getIdPista()).orElseThrow();
-
-                            // obtener usuario principal del album (si existe) y mapear a MiniArtistaDTO
-                            List<String> artistas = Stream.concat(
-                                            cancion
-                                                    .getPistas()
-                                                    .stream()
-                                                    .limit(1)
-                                                    .map(pista -> pista.getAlbum().getUsuario().getUsername()),
-                                            cancion
-                                                    .getUsuarios()
-                                                    .stream()
-                                                    .map(Usuario::getUsername)
-                                    )
-                                    .toList();
-                            r.setIdPista(cancion.getPistas().stream().findFirst().get().getId());
-                            r.setArtistas(artistas);
-                            r.setUrlPortada(cancion.getPistas().stream().findFirst().map(p -> firebaseService.obtenerUrlArchivoImagen(p.getAlbum().getArchivoPortada(), "")).orElse(null));
-                            r.setUrlCancion(firebaseService.obtenerUrlArchivoAudio(cancion.getArchivoCancion()));
-                        }
-                )
-                .toList();
-
         Playlist entity = playlistRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("No se encontró la playlist de ranking diario"));
 
-        String imagen = firebaseService.obtenerUrlArchivoImagen(entity.getFotoPortada(), "");
+        // Obtener las pistas del ranking diario para la fecha dada y mapear a ResponsePistaPlaylistDTO
+        List<ResponsePistaPlaylistDTO> pistas = pistaMapper.pistasToPlaylistDtos(
+                topMusicalDiarioRepository.findPistasByFecha(fechaConsulta)
+        );
 
-        return playlistMapper.toDto(entity, imagen, pistas);
+        return topMusicalDiarioMapper.toDto(entity, pistas);
     }
 
     /**
      * Metodo que calcula el top 30 de canciones más escuchadas en las últimas 24 horas y actualiza la tabla correspondiente.
      */
     public void updateDailyTop30() {
+        // Obtener el top 30 de canciones más escuchadas en las últimas 24 horas
         List<TopMusicalDiario> topMusicalDiario = historialReproduccionesRepository.findTop30ByFecha(LocalDate.now().minusDays(1));
 
+        // Guardar el ranking del dia de hoy en la BD
         topMusicalDiarioRepository.saveAll(topMusicalDiario);
     }
 

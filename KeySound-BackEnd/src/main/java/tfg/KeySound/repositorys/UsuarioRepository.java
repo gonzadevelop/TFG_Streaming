@@ -31,4 +31,44 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     """)
     int countFavoritosByUsuarioAndArtista(@Param("usuarioId") Long usuarioId,
                                            @Param("artistaId") Long artistaId);
+    
+    /**
+     * Obtiene los artistas que sigue un usuario (usuarios con rol ROLE_ARTISTA)
+     * @param usuarioId ID del usuario
+     * @return Lista de artistas que el usuario sigue
+     */
+    @Query("""
+            SELECT u FROM Usuario u
+            WHERE u IN (
+                SELECT s FROM Usuario usr
+                JOIN usr.seguidos s
+                WHERE usr.id = :usuarioId
+            )
+            AND u.rol.id = 3
+            """)
+    List<Usuario> findArtistasQueSigue(@Param("usuarioId") Long usuarioId);
+
+    /**
+     * Obtiene los artistas de una canción (propietario del álbum + colaboradores)
+     * @param cancionId ID de la canción
+     * @return Lista de nombres de usuario de los artistas
+     */
+    @Query(value = """
+            SELECT DISTINCT u.username
+            FROM usuarios u
+            WHERE u.id IN (
+                -- Propietario del álbum
+                SELECT a.usuario_id
+                FROM pistas p
+                INNER JOIN albums a ON p.album_id = a.id
+                WHERE p.cancion_id = :cancionId
+                UNION
+                -- Artistas colaboradores
+                SELECT usuario_id
+                FROM cancion_artista
+                WHERE cancion_id = :cancionId
+            )
+            ORDER BY u.username
+    """, nativeQuery = true)
+    List<String> findArtistasDeCancion(@Param("cancionId") Long cancionId);
 }

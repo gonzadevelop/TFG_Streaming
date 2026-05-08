@@ -23,7 +23,7 @@ public class HomeService {
     public HomeDTO getHome(String token) {
         return HomeDTO
                 .builder()
-                .keySoundPlaylists(playlistService.getPlaylists())
+                .keySoundPlaylists(playlistService.getKeysoundPlaylists())
                 .artistasSeguidos(artistaService.obtenerArtistasQueSigo(token))
                 .novedadesDeLaSemana(albumService.obtenerNovedades())
                 .proximosLanzmientos(albumService.obtenerProximosLanzamientos())

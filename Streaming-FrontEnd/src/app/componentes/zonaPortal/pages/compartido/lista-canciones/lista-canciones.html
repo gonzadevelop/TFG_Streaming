@@ -16,7 +16,8 @@
       <div class="playlist-tracks__item" role="listitem">
         <app-mini-cancion
           [pista]="pista"
-          [posicion]="i + 1" />
+          [posicion]="i + 1"
+          (reproducirEvento)="onReproducirPista($event)" />
       </div>
     }
   </div>

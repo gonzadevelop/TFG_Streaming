@@ -13,5 +13,7 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
     @Query("SELECT p FROM Playlist p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :q, '%'))")
     List<Playlist> buscarPorNombre(@Param("q") String q);
+
+    List<Playlist> findByPropietarioId(Long propietarioId);
 }
 

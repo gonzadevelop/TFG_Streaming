@@ -1,6 +1,7 @@
 import {inject, Injectable, PLATFORM_ID, signal, untracked, WritableSignal} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import IPistaReproduccion from '../model/pista/IPistaReproduccion';
+import IPistaCola from '../model/pista/IPistaCola';
 
 @Injectable ({ providedIn: 'root' })
 export class StorageGlobal {
@@ -16,10 +17,75 @@ export class StorageGlobal {
   readonly silenciado    = signal<boolean>(false);
 
   // Cola de reproducción
-  readonly cola = signal<IPistaReproduccion[]>([]);
+  readonly colaOriginal = signal<IPistaCola[]>([]);
+  readonly cola = signal<IPistaCola[]>([]);
+  readonly isShuffled = signal<boolean>(false);
+
+  SetCola(lista: IPistaCola[]): void {
+    this.colaOriginal.set(lista);
+    if (this.isShuffled()) {
+      this.aplicarShuffle(lista);
+    } else {
+      this.cola.set(lista);
+    }
+    const toPlay = this.cola().find(p => p.reproduciendo);
+    if (toPlay) {
+      this.ReproducirConCola(toPlay);
+    }
+  }
+
+  ToggleShuffle(): void {
+    const shuffle = !this.isShuffled();
+    this.isShuffled.set(shuffle);
+    if (shuffle) {
+      this.aplicarShuffle(this.colaOriginal());
+    } else {
+      const curr = this.cola().find(p => p.reproduciendo);
+      const original = [...this.colaOriginal()].map(p => ({
+        ...p,
+        reproduciendo: curr ? p.idPista === curr.idPista : p.reproduciendo
+      }));
+      this.cola.set(original);
+    }
+  }
+
+  private aplicarShuffle(lista: IPistaCola[]): void {
+    const arr = [...lista];
+    const curr = arr.find(p => p.reproduciendo);
+    const withoutCurr = curr ? arr.filter(p => !p.reproduciendo) : arr;
+    for (let i = withoutCurr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [withoutCurr[i], withoutCurr[j]] = [withoutCurr[j], withoutCurr[i]];
+    }
+    if (curr) {
+      this.cola.set([curr, ...withoutCurr]);
+    } else {
+      this.cola.set(withoutCurr);
+    }
+  }
+
+  /** Reproduce a partir de elemento de la cola */
+  private ReproducirConCola(pista: IPistaCola): void {
+    const lista = this.cola().map(p => ({
+      ...p,
+      reproduciendo: p.idPista === pista.idPista
+    }));
+    this.cola.set(lista);
+
+    this.Reproducir({
+      idPista: pista.idPista || 0,
+      titulo: pista.titulo,
+      artistas: pista.artistas,
+      urlPortada: pista.urlPortada,
+      urlCancion: pista.urlCancion,
+      duracionSegundos: pista.duracionSegundos,
+      reproduciendo: true
+    });
+  }
 
   /** Añade una pista al final de la cola */
-  AgregarACola(pista: IPistaReproduccion): void {
+  AgregarACola(pista: IPistaCola): void {
+    this.colaOriginal.update(c => [...c, pista]);
     this.cola.update(c => [...c, pista]);
   }
 
@@ -30,16 +96,26 @@ export class StorageGlobal {
 
   /** Vacía la cola completa */
   VaciarCola(): void {
+    this.colaOriginal.set([]);
     this.cola.set([]);
   }
 
   /** Reproduce la siguiente pista de la cola (si hay) */
   ReproducirSiguienteDeCola(): void {
     const colaActual = this.cola();
-    if (colaActual.length === 0) return;
-    const [siguiente, ...resto] = colaActual;
-    this.cola.set(resto);
-    this.Reproducir(siguiente);
+    const idx = colaActual.findIndex(p => p.reproduciendo);
+    if (idx !== -1 && idx + 1 < colaActual.length) {
+      this.ReproducirConCola(colaActual[idx + 1]);
+    }
+  }
+
+  /** Reproduce la anterior pista de la cola (si hay) */
+  ReproducirAnteriorDeCola(): void {
+    const colaActual = this.cola();
+    const idx = colaActual.findIndex(p => p.reproduciendo);
+    if (idx > 0) {
+      this.ReproducirConCola(colaActual[idx - 1]);
+    }
   }
 
   private _token: WritableSignal<string> = signal<string>('');
@@ -171,6 +247,7 @@ export class StorageGlobal {
       this.reproduciendo.set(false);
       this.tiempoActual.set(0);
       this._actualizarEstadoReproduccion(false);
+      this.ReproducirSiguienteDeCola();
     });
 
     this._audio.addEventListener('error', () => {

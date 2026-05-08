@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { IPlaylistCompleta } from '../../../../model/playlists/IPlaylistCompleta';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { PlaylistService } from '../../../../services/playlistService';
+import { StorageGlobal } from '../../../../services/storageGlobal';
+import IPistaCola from '../../../../model/pista/IPistaCola';
 
 @Component({
   selector: 'app-playlist',
@@ -21,6 +23,7 @@ import { PlaylistService } from '../../../../services/playlistService';
 export class Playlist implements OnInit {
   private readonly playlistService: PlaylistService = inject(PlaylistService);
   private readonly router: Router = inject(Router);
+  private readonly storage = inject(StorageGlobal);
 
   /**
    * Playlist obtenida del backend
@@ -49,5 +52,17 @@ export class Playlist implements OnInit {
         this.cargando.set(false);
       },
     });
+  }
+
+  protected reproducirTodo(): void {
+    const playlistData = this.playlist();
+    if (!playlistData || !playlistData.pistas || playlistData.pistas.length === 0) return;
+
+    const cola: IPistaCola[] = playlistData.pistas.map((p, index) => ({
+      ...p,
+      orden: index, // Add orden here properly matching definition
+      reproduciendo: index === 0
+    }));
+    this.storage.SetCola(cola);
   }
 }

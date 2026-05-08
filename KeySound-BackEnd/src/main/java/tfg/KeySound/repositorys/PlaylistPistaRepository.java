@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository;
 import tfg.KeySound.entitys.PlaylistPista;
 import tfg.KeySound.entitys.embeddedids.PlaylistPistaId;
 
+import java.util.Set;
+
 @Repository
 public interface PlaylistPistaRepository extends JpaRepository<PlaylistPista, PlaylistPistaId> {
-    boolean existsByPlaylistIdAndPistaId(Long playlistId, Long pistaId);
+    Set<Long> findPistaIdsByPlaylistId(Long playlistId);
 }

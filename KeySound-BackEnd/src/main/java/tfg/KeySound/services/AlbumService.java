@@ -10,13 +10,11 @@ import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.exception.album.AlbumNotFoundException;
-import tfg.KeySound.mappers.ArtistaMapper;
+import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.mappers.CancionMapper;
 import tfg.KeySound.mappers.PistaMapper;
-import tfg.KeySound.mappers.AlbumMapper;
 import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.album.ResponseProximoAlbumDTO;
-import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.album.RequestAlbumDTO;
 import tfg.KeySound.model.album.ResponseAlbumCompletoDTO;
 import tfg.KeySound.repositorys.CancionRepository;
@@ -32,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +40,6 @@ public class AlbumService {
      */
     private final FirebaseService firebaseService;
     private final JwtService jwtService;
-    private final CancionService cancionService;
 
     private final UsuarioRepository usuarioRepository;
     private final CancionRepository cancionRepository;
@@ -53,7 +49,6 @@ public class AlbumService {
     private final CancionMapper cancionMapper;
     private final AlbumMapper albumMapper;
     private final PistaMapper pistaMapper;
-    private final ArtistaMapper artistaMapper;
 
     /**
      * Metodos llamados por endpoints
@@ -64,37 +59,15 @@ public class AlbumService {
         Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
                 .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(token)));
 
-        /*
-            -------------- PORTADA Y ALBUM --------------
-         */
-        // Validar el formato de la portada
-        ArtistaUtils.validarFormatoImagen(portada.getContentType());
-
-        // Crear nombres únicos para la portada y subirla a Firebase Storage
-
-        String nombreArchivoPortada  = portada != null
-                ? firebaseService.subirArchivo(portada, artista.getUsername() + "_" + dto.getNombreAlbum() + "_portada")
-                : "";
-
-        String tipo = dto.getCanciones().size() == 1
-                ? "Sencillo"
-                : "Album";
-
-        LocalDateTime fechaLanzamiento = dto.getFechaLanzamiento() != null ?
-                dto.getFechaLanzamiento() :
-                null;
-
         // Crear la entidad album sin canciones (se añaden más tarde)
-        Album album = albumMapper.createAlbum(dto.getNombreAlbum(), nombreArchivoPortada, tipo, artista, fechaLanzamiento);
-
-         /*
-            -------------- CANCIONES --------------
-         */
+        Album album = albumMapper.toEntity(dto, artista, portada);
 
         // Mapear cada canción del DTO a entidad, subiendo el archivo de audio a Firebase Storage y obteniendo colaboradores y duración
         Iterator<MultipartFile> archivoIt = archivos.iterator();
 
-        List<Cancion> canciones = dto.getCanciones().stream()
+        List<Cancion> canciones = dto
+                .getCanciones()
+                .stream()
                 .map(rc -> {
                     // Si la canción ya existe, la recuperamos y no consumimos archivo de la lista
                     if (rc.getIdCancionExistente() != null) {
@@ -121,7 +94,8 @@ public class AlbumService {
         cancionRepository.saveAllAndFlush(canciones);
 
         // Crear las relaciones de pista de forma funcional, preservando el orden y el número de pista (1-based)
-        List<Pista> pistas = IntStream.range(0, canciones.size())
+        List<Pista> pistas = IntStream
+                .range(0, canciones.size())
                 .mapToObj(i -> pistaMapper.toEntity(canciones.get(i), album, i + 1))
                 .collect(Collectors.toList());
 
@@ -133,29 +107,11 @@ public class AlbumService {
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new AlbumNotFoundException(albumId));
 
-        if (album.getEsBorrador() || album.getFechaLanzamiento().isAfter(LocalDateTime.now())) throw new RuntimeException("El album no está disponible para su visualización");
+        if (album.getEsBorrador() || album.getFechaLanzamiento().isAfter(LocalDateTime.now()))
+            throw new RuntimeException("El album no está disponible para su visualización"); // TODO: crear excepción personalizada
 
-        // Obtener la URL de la portada del album desde Firebase Storage o usar una imagen por defecto si no tiene portada
-        String urlPortada = firebaseService.obtenerUrlArchivoImagen(album.getArchivoPortada(), album.getTitulo());
-
-        // Mapear el album a un DTO y obtener la URL de la portada ordenados por el número de pista
-        List <ResponsePistaDTO> cancionesDto = album
-                .getPistas()
-                .stream()
-                .map(p -> {
-                    String urlCancion = firebaseService.obtenerUrlArchivoAudio(p.getCancion().getArchivoCancion());
-
-                    List<String> artistas = cancionService.obtenerArtistasDeCancion(p.getCancion().getId())
-                            .stream()
-                            .map(Usuario::getUsername)
-                            .toList();
-
-                    return cancionMapper.toAlbumDto(p, urlCancion, artistas);
-                })
-                .sorted(Comparator.comparingInt(ResponsePistaDTO::getNumeroPista))
-                .toList();
-
-        return albumMapper.toResponseDto(album, cancionesDto, urlPortada);
+        // Mapear el album a un DTO
+        return albumMapper.toResponseDto(album);
     }
 
     public void publicarAlbum(Long albumId, String token) {
@@ -165,10 +121,8 @@ public class AlbumService {
 
         // Verificar que el usuario autenticado es el artista del álbum
         String username = jwtService.extractUsername(token);
-        if (!album.getUsuario().getUsername().equalsIgnoreCase(username)) throw new RuntimeException("No tienes permiso para publicar este álbum");
-
-        // Verificar que el álbum tiene al menos una canción
-        if (album.getPistas() == null || album.getPistas().isEmpty()) throw new RuntimeException("El álbum debe tener al menos una canción para ser publicado");
+        if (!album.getUsuario().getUsername().equalsIgnoreCase(username))
+            throw new RuntimeException("No tienes permiso para publicar este álbum"); // TODO: crear excepción personalizada
 
         // Publicar el álbum estableciendo esBorrador a falso y guardarlo en la base de datos
         album.setEsBorrador(false);
@@ -177,7 +131,8 @@ public class AlbumService {
 
     public List<ResponseProximoAlbumDTO> obtenerProximosLanzamientos() {
         // Obtener los próximos lanzamientos ordenados por fecha de lanzamiento (solo álbumes que no son borradores y con fecha de lanzamiento en el futuro)
-        List<Album> proximosLanzamientos = albumRepository.findByEsBorradorFalseAndFechaLanzamientoAfterOrderByFechaLanzamientoAsc(LocalDateTime.now());
+        List<Album> proximosLanzamientos = albumRepository
+                .findByEsBorradorFalseAndFechaLanzamientoAfterOrderByFechaLanzamientoAsc(LocalDateTime.now());
 
         return albumMapper.toProximosAlbumsDtos(proximosLanzamientos);
     }

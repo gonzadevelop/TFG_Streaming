@@ -64,7 +64,7 @@ public class AuthService {
                     throw new UsernameAlreadyExistsException(request.getUsername());
                 });
 
-        // pendiente mailjet o similar para verificacion de email
+        // TODO: mailjet o similar para verificacion de email
 
         // Encriptado de la contraseña
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

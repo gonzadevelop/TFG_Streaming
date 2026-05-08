@@ -9,12 +9,13 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { IArtista } from '../../../../model/artista/IArtista';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
+import { AlbumCard } from '../compartido/album-card/album-card';
 import { ArtistaService } from '../../../../services/artistaService';
 import { UserService } from '../../../../services/userService';
 
 @Component({
   selector: 'app-artista',
-  imports: [ListaCanciones],
+  imports: [ListaCanciones, AlbumCard],
   templateUrl: './artista.html',
   styleUrl: './artista.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

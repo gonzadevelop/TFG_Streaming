@@ -6,6 +6,7 @@ import {catchError, map} from 'rxjs/operators';
 import { IPlaylistRequest, ICancionesPlaylistRequest } from '../model/playlists/IPlaylistRequest';
 import {IPlaylistCompleta} from '../model/playlists/IPlaylistCompleta';
 import { IPlaylist } from '../model/home/IPlaylist';
+import { IPista } from '../model/pista/IPista';
 
 @Injectable({ providedIn: 'root' })
 export class PlaylistService {
@@ -46,15 +47,15 @@ export class PlaylistService {
    * Obtiene la lista de canciones favoritas del usuario autenticado.
    * GET /api/favoritos
    */
-  getFavoritos(): Observable<IPlaylistCompleta> {
-    return this.http.get<IPlaylistCompleta | null>(`${this.baseURL}/favoritos`).pipe(
-      map(res => res ?? ({ pistas: [] } as unknown as IPlaylistCompleta)),
+  getFavoritos(): Observable<IPista[]> {
+    return this.http.get<IPista[] | null>(`${this.baseURL}/favoritos`).pipe(
+      map(res => res ?? []),
       catchError(err => {
         // Si el status es 200 pero el body no es JSON válido (body vacío, texto plano, etc.)
-        // devolvemos una playlist vacía para no romper la UI
+        // devolvemos un array vacío para no romper la UI
         if (err?.status === 200) {
           console.warn('getFavoritos: respuesta 200 con body no parseable, se asume lista vacía.');
-          return of({ pistas: [] } as unknown as IPlaylistCompleta);
+          return of([]);
         }
         throw err;
       }),

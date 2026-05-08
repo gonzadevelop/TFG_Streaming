@@ -11,7 +11,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../../services/authService';
 import {Subscription} from 'rxjs';
-import {IUserRegister} from '../../../../model/IUserRegister';
+import {IUserRegister} from '../../../../model/auth/IUserRegister';
 
 @Component({
   selector: 'app-registro',

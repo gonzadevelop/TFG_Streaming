@@ -10,6 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IAlbumCompleto } from '../../../../model/album/IAlbumCompleto';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { AlbumService } from '../../../../services/albumService';
+import { StorageGlobal } from '../../../../services/storageGlobal';
+import IPistaCola from '../../../../model/pista/IPistaCola';
 
 @Component({
   selector: 'app-album',
@@ -22,6 +24,7 @@ export class Album implements OnInit {
   private readonly albumService: AlbumService = inject(AlbumService);
   private readonly router: Router = inject(Router);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly storage = inject(StorageGlobal);
 
   /**
    * Album obtenido del backend
@@ -74,6 +77,16 @@ export class Album implements OnInit {
     }
     return `${minutos}min ${segs}seg`;
   }
+
+  protected reproducirTodo(): void {
+    const albumData = this.album();
+    if (!albumData || !albumData.canciones || albumData.canciones.length === 0) return;
+
+    const cola: IPistaCola[] = albumData.canciones.map((p, index) => ({
+      ...p,
+      orden: index,
+      reproduciendo: index === 0
+    }));
+    this.storage.SetCola(cola);
+  }
 }
-
-

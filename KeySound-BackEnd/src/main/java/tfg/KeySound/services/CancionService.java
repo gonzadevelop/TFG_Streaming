@@ -6,7 +6,6 @@ import tfg.KeySound.entitys.*;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.mappers.PistaMapper;
-import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaBusquedaDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.repositorys.CancionRepository;
@@ -18,7 +17,6 @@ import tfg.KeySound.services.external.JwtService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,6 @@ public class CancionService {
     private final JwtService jwtService;
     private final FirebaseService firebaseService;
 
-    private final CancionRepository cancionRepository;
     private final PistaRepository pistaRepository;
     private final UsuarioRepository usuarioRepository;
     private final HistorialReproduccionesRepository historialReproduccionesRepository;
@@ -73,65 +70,11 @@ public class CancionService {
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        // Obtener las 10 canciones más reproducidas del usuario
         List<Cancion> canciones = historialReproduccionesRepository.findTop10MostPlayed(usuario.getId());
 
-        List<ResponsePistaHomeDTO> pistaDto = pistaMapper.toDtos(canciones);
-
-        for (int i = 0; i < pistaDto.size(); i++) {
-            pistaDto.get(i)
-                            .setIdPista(canciones.get(i).getPistas().stream().findFirst().get().getId());
-
-            pistaDto.get(i).setReproducciones(
-                    historialReproduccionesRepository.countReproduccionesByUsuarioAndCancion(usuario.getId(), canciones.get(i).getId())
-            );
-            pistaDto.get(i).setArtistas(
-                    obtenerArtistasDeCancion(canciones.get(i).getId())
-                            .stream()
-                            .map(Usuario::getUsername)
-                            .toList()
-            );
-        }
-
-        for (int i = 0; i < pistaDto.size(); i++) {
-            pistaDto.get(i).setUrlPortada(firebaseService.obtenerUrlArchivoImagen(
-                    canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getArchivoPortada(),
-                    canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getTitulo())
-            );
-
-            pistaDto.get(i).setUrlCancion(firebaseService.obtenerUrlArchivoAudio(canciones.get(i).getArchivoCancion()));
-
-            pistaDto.get(i)
-                    .setIdAlbum(
-                            canciones.get(i).getPistas().stream().findFirst().get().getAlbum().getId()
-                    );
-        }
-
-        return pistaDto;
-    }
-
-    /**
-     * Métodos auxiliares
-     */
-    public List<Usuario> obtenerArtistasDeCancion(Long cancionId) {
-        Cancion cancion = cancionRepository.findById(cancionId)
-                .orElseThrow(() -> new CancionNotFoundException(cancionId));
-
-        Usuario artistaPrincipal = cancion.getPistas()
-                .stream()
-                .findFirst()
-                .get()
-                .getAlbum()
-                .getUsuario();
-
-        return Stream.concat(
-                Stream.of(
-                        artistaPrincipal
-                ),
-                cancion
-                        .getUsuarios()
-                        .stream()
-                        .filter(artista -> !artista.getId().equals(artistaPrincipal.getId()))
-        ).toList();
+        // Mapear a DTO con reproducciones específicas del usuario (el mapper maneja toda la lógica)
+        return pistaMapper.toDtosConReproduccionesDelUsuario(canciones, usuario.getId());
     }
 
     public List<ResponsePistaBusquedaDTO> buscarCanciones(String query) {
@@ -148,5 +91,5 @@ public class CancionService {
                         )
                 ))
                 .toList();
-    }
+    }       // TODO: mejorar este endpoint (añadir mapeo con la clase correspondiente)
 }

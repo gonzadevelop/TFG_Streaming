@@ -32,37 +32,13 @@
 
         @if (homeData().keySoundPlaylists.length > 0) {
           <div class="cards-grid" role="list">
-            @for (playlist of homeData().keySoundPlaylists; track playlist.id) {
-              <article
-                class="ks-card"
+            @for (playlist of homeData().keySoundPlaylists; track playlist.id!) {
+              <app-album-card
+                [album]="playlist"
+                [routerLink]="['/playlists', playlist.id.toString()]"
+                [contentType]="'playlist'"
                 role="listitem"
-                tabindex="0"
-                [attr.aria-label]="playlist.nombre"
-              >
-                <a [routerLink]="['/playlists', playlist.id]" class="ks-card__link" [attr.aria-label]="'Ir a la playlist ' + playlist.nombre" tabindex="-1">
-                <div class="ks-card__cover ks-card__cover--playlist">
-                    <img
-                      [src]="playlist.urlPortada"
-                      [alt]="'Portada de ' + playlist.nombre"
-                      class="ks-card__img"
-                    />
-
-                  <button
-                    type="button"
-                    class="ks-card__play-btn"
-                    [attr.aria-label]="'Reproducir ' + playlist.nombre"
-                  >
-                    <i class="bi bi-play-fill"></i>
-                  </button>
-                </div>
-                <div class="ks-card__body">
-                  <p class="ks-card__title mb-1">{{ playlist.nombre }}</p>
-                  @if (playlist.descripcion) {
-                    <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
-                  }
-                </div>
-                </a>
-              </article>
+              />
             }
           </div>
         }
@@ -87,23 +63,13 @@
 
         @if (homeData().misPlaylist.length > 0) {
           <div class="cards-grid" role="list">
-            @for (playlist of homeData().misPlaylist; track playlist.id) {
-              <article class="ks-card" role="listitem" tabindex="0" [attr.aria-label]="playlist.nombre">
-                <a [routerLink]="['/playlists', playlist.id]" class="ks-card__link" tabindex="-1">
-                  <div class="ks-card__cover">
-                    <img [src]="playlist.urlPortada" [alt]="'Portada de ' + playlist.nombre" class="ks-card__img" />
-                    <button type="button" class="ks-card__play-btn" [attr.aria-label]="'Reproducir ' + playlist.nombre">
-                      <i class="bi bi-play-fill"></i>
-                    </button>
-                  </div>
-                  <div class="ks-card__body">
-                    <p class="ks-card__title mb-1">{{ playlist.nombre }}</p>
-                    @if (playlist.descripcion) {
-                      <p class="ks-card__desc mb-0">{{ playlist.descripcion }}</p>
-                    }
-                  </div>
-                </a>
-              </article>
+            @for (playlist of homeData().misPlaylist; track playlist.id!) {
+              <app-album-card
+                [album]="playlist"
+                [routerLink]="['/playlists', playlist.id.toString()]"
+                [contentType]="'playlist'"
+                role="listitem"
+              />
             }
           </div>
         } @else {
@@ -180,33 +146,11 @@
         @if (homeData().novedadesDeLaSemana.length > 0) {
           <div class="cards-grid cards-grid--novedades" role="list">
             @for (novedad of homeData().novedadesDeLaSemana; track novedad.id) {
-              <article
-                class="ks-card ks-card--novedad"
+              <app-album-card
+                [album]="novedad"
+                [showBadge]="true"
                 role="listitem"
-                tabindex="0"
-                [attr.aria-label]="novedad.titulo + ' de ' + novedad.artista"
-              >
-                <div class="ks-card__cover">
-                    <img
-                      [src]="novedad.urlPortada"
-                      [alt]="'Portada de ' + novedad.titulo"
-                      class="ks-card__img"
-                    />
-
-                  <button
-                    type="button"
-                    class="ks-card__play-btn"
-                    [attr.aria-label]="'Reproducir ' + novedad.titulo"
-                  >
-                    <i class="bi bi-play-fill"></i>
-                  </button>
-                </div>
-                <div class="ks-card__body">
-                  <p class="ks-card__title mb-1">{{ novedad.titulo }}</p>
-                  <p class="ks-card__desc mb-0">{{ novedad.artista }}</p>
-                  <span class="ks-card__badge mt-2">{{ novedad.tipo }}</span>
-                </div>
-              </article>
+              />
             }
           </div>
         } @else {

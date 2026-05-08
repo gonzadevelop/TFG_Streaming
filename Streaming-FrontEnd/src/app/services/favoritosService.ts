@@ -33,14 +33,14 @@ export class FavoritosService {
       return;
     }
     this.playlistService.getFavoritos().subscribe({
-      next: (playlist) => {
+      next: (listaFavoritos) => {
 
         // Log temporal para identificar la estructura exacta que devuelve el backend
 
-        if (playlist.pistas?.length) {
-          console.log('[FavoritosService] Ejemplo artistas del backend:', playlist.pistas[0].artistas);
+        if (listaFavoritos?.length) {
+          console.log('[FavoritosService] Ejemplo artistas del backend:', listaFavoritos[0].artistas);
         }
-        const pistas = (playlist.pistas ?? []).map(p => ({
+        const pistas = (listaFavoritos ?? []).map(p => ({
           ...p,
 
           // El endpoint de favoritos puede devolver artistas como objetos con distintas claves.
