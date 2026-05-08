@@ -12,13 +12,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ArtistaMapper {
+    @Mapping(target = "id", source = "artista.id")
     @Mapping(target = "username", source = "artista.username")
     @Mapping(target = "canciones", source = "canciones")
     @Mapping(target = "albums", source = "albums")
     @Mapping(target = "seguidores", expression = "java(artista.getSeguidores() != null ? artista.getSeguidores().size() : 0)")
     @Mapping(target = "cancionesEnFavoritos", source = "cancionesEnFavoritos")
     @Mapping(target = "urlAvatar", source = "urlAvatar")
-    ResponseArtistaDTO toDto(Usuario artista, List<ResponsePistaHomeDTO> canciones, List<ResponseAlbumDTO> albums, int cancionesEnFavoritos, String urlAvatar);
+    @Mapping(target = "sigueAlArtista", source = "sigueAlArtista")
+    ResponseArtistaDTO toDto(Usuario artista, List<ResponsePistaHomeDTO> canciones, List<ResponseAlbumDTO> albums, int cancionesEnFavoritos, String urlAvatar, boolean sigueAlArtista);
 
     @Mapping(target = "id", source = "artista.id")
     @Mapping(target = "username", source = "artista.username")

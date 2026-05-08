@@ -54,12 +54,14 @@ public class ArtistaService {
 
         // Buscar el usuario que hace la peticion en la bd (si viene el header) para contar cuántas canciones del artista tiene en favoritos
         int cancionesEnFavoritos = 0;
+        boolean sigueAlArtista = false;
         if (!token.isEmpty()) {
             String usernameToken = jwtService.extractUsername(token);
             Usuario usuarioToken = usuarioRepository.findByUsernameIgnoreCase(usernameToken)
                     .orElseThrow(() -> new UsernameNotFoundException(usernameToken));
 
             cancionesEnFavoritos = usuarioRepository.countFavoritosByUsuarioAndArtista(usuarioToken.getId(), artista.getId());
+            sigueAlArtista = usuarioToken.getSeguidos() != null && usuarioToken.getSeguidos().contains(artista);
         }
 
         // Sacar todos los albums del artista.
@@ -125,7 +127,7 @@ public class ArtistaService {
             albumDTO.setUrlPortada(firebaseService.obtenerUrlArchivoImagen(albumDTO.getUrlPortada(), albumDTO.getTitulo()))
         );
 
-        return artistaMapper.toDto(artista, cancionesPopulares, albumsDTO, cancionesEnFavoritos, urlAvatar);
+        return artistaMapper.toDto(artista, cancionesPopulares, albumsDTO, cancionesEnFavoritos, urlAvatar, sigueAlArtista);
     }
 
     public List<ResponseMiAlbumDTO> obtenerMisAlbums(String substring) {

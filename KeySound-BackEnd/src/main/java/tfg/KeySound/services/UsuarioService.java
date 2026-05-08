@@ -17,6 +17,8 @@ import tfg.KeySound.mappers.UsuarioMapper;
 import tfg.KeySound.model.usuario.ResponseUsuarioDTO;
 import tfg.KeySound.services.external.JwtService;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -110,10 +112,49 @@ public class UsuarioService {
 
         // Agregar el seguidor a la lista de seguidores del usuario a seguir
         usuario.getSeguidos().add(usuarioASeguir);
-        usuarioRepository.save(usuarioASeguir);
+        usuarioRepository.save(usuario);
+    }
+
+    public void dejarDeSeguirUsuario(Long id, String token) {
+        String usernameFollower = jwtService.extractUsername(token);
+
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(usernameFollower)
+                .orElseThrow(() -> new UsernameNotFoundException(usernameFollower));
+
+        Usuario usuarioADejarDeSeguir = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException(id));
+
+        usuario.getSeguidos().remove(usuarioADejarDeSeguir);
+        usuarioRepository.save(usuario);
     }
 
     public String obtenerUsername(String token) {
         return jwtService.extractUsername(token);
+    }
+
+    public ResponseUsuarioDTO actualizarPerfil(ResponseUsuarioDTO dto, String token) {
+        String username = jwtService.extractUsername(token);
+
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        if (dto.getEmail() != null) usuario.setEmail(dto.getEmail());
+        if (dto.getBiografia() != null) usuario.setBiografia(dto.getBiografia());
+
+        usuarioRepository.save(usuario);
+        return obtenerInfoUsuario(usuario.getUsername());
+    }
+
+    public void actualizarAvatar(MultipartFile avatar, String token) {
+        String username = jwtService.extractUsername(token);
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        if (usuario.getArchivoAvatar() != null && !usuario.getArchivoAvatar().isBlank()) {
+            firebaseService.borrarArchivo(usuario.getArchivoAvatar());
+        }
+        String nombreArchivo = firebaseService.subirArchivo(avatar, "avatar_" + username + "_");
+        usuario.setArchivoAvatar(nombreArchivo);
+        usuarioRepository.save(usuario);
     }
 }
