@@ -69,7 +69,7 @@
 
     @if (tieneCola()) {
       <ol class="cola-list" aria-label="Lista de canciones en cola">
-        @for (pista of colaRestante(); track pista.idPista; let i = $index) {
+        @for (pista of colaRestante(); track pista.orden !== undefined ? pista.orden : $index; let i = $index) {
           <li class="cola-item cola-item--queue">
             <button
               type="button"

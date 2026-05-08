@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output } from '@angular/core';
 import { StorageGlobal } from '../../../../services/storageGlobal';
 
 @Component({
@@ -24,6 +24,14 @@ export class Cola {
   protected readonly pistaActual = computed(() => this.storage.GetReproduccion()());
   protected readonly tieneCola = computed(() => this.colaRestante().length > 0);
 
+  constructor() {
+    // Mostrar la cola completa cada vez que se actualiza
+    effect(() => {
+      const cola = this.storage.cola();
+      console.log('📋 Cola completa:', cola);
+    });
+  }
+
   reproducirDeCola(pistaId: number): void {
     const pistaActualInd = this.storage.cola().findIndex(p => p.idPista === pistaId);
     if (pistaActualInd === -1) return;
@@ -36,6 +44,8 @@ export class Cola {
     this.storage.cola.set(lista);
 
     const pista = lista[pistaActualInd];
+    console.log('🎵 Pista a reproducir desde cola:', pista);
+
     this.storage.Reproducir({
       idPista: pista.idPista || 0,
       titulo: pista.titulo,

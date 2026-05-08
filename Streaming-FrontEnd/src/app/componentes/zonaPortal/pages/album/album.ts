@@ -84,6 +84,7 @@ export class Album implements OnInit {
 
     const cola: IPistaCola[] = albumData.canciones.map((p, index) => ({
       ...p,
+      urlPortada: p.urlPortada || albumData.portada,
       orden: index,
       reproduciendo: index === 0
     }));
