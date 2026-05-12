@@ -89,6 +89,26 @@ export class StorageGlobal {
     this.cola.update(c => [...c, pista]);
   }
 
+  /** Añade una pista justo después del último bloque prioritario (prioridad FIFO) */
+  AgregarSiguienteEnCola(pista: IPistaCola): void {
+    const insertarEnBloquePrioridad = (lista: IPistaCola[]): IPistaCola[] => {
+      const currIdx = lista.findIndex(p => p.reproduciendo);
+      if (currIdx === -1) return [...lista, { ...pista, esPrioridad: true }];
+
+      // Busca el último índice del bloque de canciones prioritarias tras la actual
+      let insertIdx = currIdx + 1;
+      while (insertIdx < lista.length && lista[insertIdx].esPrioridad) {
+        insertIdx++;
+      }
+
+      const result = [...lista];
+      result.splice(insertIdx, 0, { ...pista, esPrioridad: true });
+      return result;
+    };
+    this.colaOriginal.update(insertarEnBloquePrioridad);
+    this.cola.update(insertarEnBloquePrioridad);
+  }
+
   /** Elimina una pista de la cola por su índice */
   EliminarDeCola(index: number): void {
     this.cola.update(c => c.filter((_, i) => i !== index));

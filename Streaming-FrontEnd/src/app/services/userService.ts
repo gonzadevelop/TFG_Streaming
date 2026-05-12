@@ -1,7 +1,8 @@
 import {Injectable, inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
-import {Observable} from 'rxjs';
+import {Observable, EMPTY} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 import IUser from '../model/IUser';
 import IFavorito from '../model/IFavorito';
 import {IResponseUsuario, IUpdatePerfilRequest} from '../model/IResponseUsuario';
@@ -56,7 +57,7 @@ export class UserService {
 
   // *** obtener info completa del perfil por username ***
   getPerfilUsuario(username: string): Observable<IResponseUsuario> {
-    return this.http.get<IResponseUsuario>(`${this.baseURL}/visualizar/${username}`);
+    return this.http.get<IResponseUsuario>(`${this.baseURL}/${username}`);
   }
 
   // *** actualizar datos de perfil (biografia, email) ***

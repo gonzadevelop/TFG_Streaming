@@ -1,4 +1,5 @@
-<article class="mini-cancion track-row" tabindex="0" [attr.aria-label]="pista().titulo">
+<article class="mini-cancion track-row" tabindex="0" [attr.aria-label]="pista().titulo"
+  (contextmenu)="abrirContextMenu($event)">
 
   <div class="track-row__index">
     @if (posicion() !== null && !isReproduciendoEsta()) {
@@ -69,3 +70,11 @@
   </div>
 
 </article>
+
+<!-- Menú contextual -->
+<app-context-menu
+  [pista]="pista()"
+  [position]="ctxPosition()"
+  [visible]="ctxVisible()"
+  (cerrar)="cerrarContextMenu()"
+/>
