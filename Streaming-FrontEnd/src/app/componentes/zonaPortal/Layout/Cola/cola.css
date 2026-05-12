@@ -165,6 +165,35 @@
   opacity: 1;
 }
 
+/* ── Drag & Drop ────────────────────────── */
+
+.cola-item--queue {
+  cursor: grab;
+}
+
+.cola-item--queue:active {
+  cursor: grabbing;
+}
+
+.cola-item__drag-handle {
+  font-size: 1rem;
+  color: #b0bec5;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  cursor: grab;
+}
+
+.cola-item--queue:hover .cola-item__drag-handle {
+  opacity: 1;
+}
+
+.cola-item--drag-over {
+  background: rgba(11, 117, 192, 0.12) !important;
+  border-top: 2px solid #0b75c0;
+  border-radius: 10px;
+}
+
 /* Botón de reproducir en hover del ítem */
 .cola-item__play-btn {
   display: flex;
@@ -262,6 +291,52 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.cola-item__duration-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Botón con prioridad: siempre visible, muestra 📌 en reposo y X en hover */
+.cola-btn--priority {
+  opacity: 1 !important;
+  position: relative;
+}
+
+.cola-btn--priority .cola-btn__icon-priority {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+  transition: opacity 150ms ease, transform 150ms ease;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cola-btn--priority .cola-btn__icon-close {
+  position: absolute;
+  font-size: 1.1rem;
+  opacity: 0;
+  transform: scale(0.6) rotate(-90deg);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.cola-item--queue:hover .cola-btn--priority .cola-btn__icon-priority {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.cola-item--queue:hover .cola-btn--priority .cola-btn__icon-close {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* Botón eliminar normal (sin prioridad) */
+.cola-btn__icon-close {
+  font-size: 1.1rem;
 }
 
 .cola-item__artists {

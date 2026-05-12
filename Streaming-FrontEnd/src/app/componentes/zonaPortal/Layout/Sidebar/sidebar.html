@@ -17,7 +17,11 @@
       aria-label="Menú de usuario"
     >
       <div class="welcome-avatar" aria-hidden="true">
-        <span class="welcome-avatar-letter">{{ inicialAvatar() }}</span>
+        @if (avatarUrl()) {
+          <img [src]="avatarUrl()!" [alt]="'Avatar de ' + userName()" class="welcome-avatar-img" />
+        } @else {
+          <span class="welcome-avatar-letter">{{ inicialAvatar() }}</span>
+        }
       </div>
       <div class="flex-grow-1">
         <p class="welcome-saludo mb-0">{{ saludo() }},</p>

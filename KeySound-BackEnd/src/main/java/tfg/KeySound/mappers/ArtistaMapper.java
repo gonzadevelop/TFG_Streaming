@@ -17,7 +17,7 @@ public abstract class ArtistaMapper {
 
     @Autowired
     protected FirebaseService firebaseService;
-
+    
     @Mapping(target = "username", source = "artista.username")
     @Mapping(target = "canciones", source = "canciones")
     @Mapping(target = "albums", source = "albums")

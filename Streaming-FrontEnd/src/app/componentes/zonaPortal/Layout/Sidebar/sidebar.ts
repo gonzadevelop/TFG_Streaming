@@ -12,6 +12,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TokenService } from '../../../../services/tokenService';
 import {SidebarService} from '../../../../services/SidebarService';
 import {Router} from '@angular/router';
+import {UserService} from '../../../../services/userService';
 
 interface SidebarItem {
   label: string;
@@ -29,10 +30,12 @@ interface SidebarItem {
 export class Sidebar implements OnInit {
   private readonly tokenService = inject(TokenService);
   private readonly sidebarService = inject(SidebarService);
+  private readonly userService = inject(UserService);
   private readonly router = inject(Router);
 
   readonly isOpen = input<boolean>(true);
   userName: WritableSignal<string> = signal<string>('');
+  avatarUrl: WritableSignal<string | null> = signal<string | null>(null);
 
   protected readonly dropdownOpen = signal<boolean>(false);
   protected readonly estaLogueado = signal<boolean>(false);
@@ -67,6 +70,7 @@ export class Sidebar implements OnInit {
     this.tokenService.removeToken();
     this.estaLogueado.set(false);
     this.userName.set('');
+    this.avatarUrl.set(null);
     this.closeDropdown();
     this.router.navigate(['/']);
   }
@@ -75,9 +79,16 @@ export class Sidebar implements OnInit {
     this.estaLogueado.set(this.tokenService.isLogged());
     if (this.estaLogueado()) {
       this.sidebarService.getUsername().subscribe({
-        next: (data) => {
-          this.userName.set(data);
-          console.log(data);
+        next: (username) => {
+          this.userName.set(username);
+          this.userService.getPerfilUsuario(username).subscribe({
+            next: (perfil) => {
+              if (perfil.urlAvatar && !perfil.urlAvatar.includes('ui-avatars')) {
+                this.avatarUrl.set(perfil.urlAvatar);
+              }
+            },
+            error: () => { /* avatar por defecto, sin acción */ }
+          });
         },
         error: (err) => {
           console.error('Error al obtener el nombre de usuario:', err);

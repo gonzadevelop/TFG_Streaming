@@ -1,0 +1,55 @@
+@if (visible()) {
+  <div
+    class="ctx-menu"
+    role="menu"
+    aria-label="Opciones de canción"
+    [style.top]="estiloMenu().top"
+    [style.left]="estiloMenu().left"
+  >
+    <!-- Añadir a la cola -->
+    <button type="button" class="ctx-menu__item" role="menuitem" (click)="agregarACola()">
+      <span class="ctx-menu__icon" aria-hidden="true"></span>
+      Añadir a la cola
+    </button>
+
+    <!-- Añadir a playlist -->
+    <div class="ctx-menu__item ctx-menu__item--submenu" role="none">
+      <button
+        type="button"
+        class="ctx-menu__item-btn"
+        role="menuitem"
+        aria-haspopup="true"
+        [attr.aria-expanded]="subMenuAbierto()"
+        (click)="toggleSubMenu($event)"
+      >
+        <span class="ctx-menu__icon" aria-hidden="true"></span>
+        Añadir a playlist
+        <span class="ctx-menu__arrow" aria-hidden="true">›</span>
+      </button>
+
+      @if (subMenuAbierto()) {
+        <div class="ctx-menu__submenu" role="menu" aria-label="Mis playlists">
+          @if (misPlaylists().length === 0) {
+            <p class="ctx-menu__empty">Sin playlists</p>
+          }
+          @for (playlist of misPlaylists(); track playlist.id) {
+            <button
+              type="button"
+              class="ctx-menu__item"
+              role="menuitem"
+              (click)="agregarAPlaylist(playlist)"
+            >
+              @if (playlist.urlPortada) {
+                <img class="ctx-menu__playlist-img" [src]="playlist.urlPortada" [alt]="playlist.nombre" loading="lazy" />
+              } @else {
+                <span class="ctx-menu__icon" aria-hidden="true">🎶</span>
+              }
+              {{ playlist.nombre }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}
+

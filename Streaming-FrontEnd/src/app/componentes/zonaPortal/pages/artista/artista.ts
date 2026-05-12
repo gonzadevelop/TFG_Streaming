@@ -11,6 +11,7 @@ import { IArtista } from '../../../../model/artista/IArtista';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { AlbumCard } from '../compartido/album-card/album-card';
 import { ArtistaService } from '../../../../services/artistaService';
+import { UserService } from '../../../../services/userService';
 
 @Component({
   selector: 'app-artista',
@@ -21,6 +22,7 @@ import { ArtistaService } from '../../../../services/artistaService';
 })
 export class Artista implements OnInit {
   private readonly artistaService: ArtistaService = inject(ArtistaService);
+  private readonly userService: UserService = inject(UserService);
   private readonly router: Router = inject(Router);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
 
@@ -32,6 +34,8 @@ export class Artista implements OnInit {
   protected readonly cargando: WritableSignal<boolean> = signal(true);
   protected readonly error: WritableSignal<string | null> = signal<string | null>(null);
   protected readonly mostrarTodasLasCanciones: WritableSignal<boolean> = signal(false);
+  protected readonly siguiendoLoading: WritableSignal<boolean> = signal(false);
+  protected readonly siguiendoError: WritableSignal<string> = signal('');
 
   ngOnInit(): void {
     // Usar paramMap para reaccionar a cambios en los parámetros de ruta
@@ -65,5 +69,31 @@ export class Artista implements OnInit {
   protected alternarCanciones(): void {
     this.mostrarTodasLasCanciones.update(valor => !valor);
   }
-}
 
+  protected toggleSeguir(): void {
+    const a = this.artista();
+    if (!a || this.siguiendoLoading()) return;
+
+    this.siguiendoLoading.set(true);
+    this.siguiendoError.set('');
+
+    const accion$ = a.sigueAlArtista
+      ? this.userService.dejarDeSeguirArtista(a.id)
+      : this.userService.seguirArtista(a.id);
+
+    accion$.subscribe({
+      next: () => {
+        this.artista.set({
+          ...a,
+          sigueAlArtista: !a.sigueAlArtista,
+          seguidores: a.sigueAlArtista ? a.seguidores - 1 : a.seguidores + 1,
+        });
+        this.siguiendoLoading.set(false);
+      },
+      error: () => {
+        this.siguiendoError.set('No se pudo realizar la acción. Inténtalo de nuevo.');
+        this.siguiendoLoading.set(false);
+      },
+    });
+  }
+}

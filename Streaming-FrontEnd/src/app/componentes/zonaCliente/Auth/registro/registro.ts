@@ -10,9 +10,7 @@ import {
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../../services/authService';
-import {TokenService} from '../../../../services/tokenService';
 import {Subscription} from 'rxjs';
-import {IAuthResponse} from '../../../../model/auth/IAuth';
 import {IUserRegister} from '../../../../model/auth/IUserRegister';
 
 @Component({
@@ -22,8 +20,7 @@ import {IUserRegister} from '../../../../model/auth/IUserRegister';
   styleUrl: './registro.css',
 })
 export class Registro implements OnInit, OnDestroy {
-  private authService: AuthService = inject( AuthService );
-  private tokenService: TokenService = inject(TokenService);
+  private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
   private suscripcionRegistro?: Subscription;
 
@@ -50,12 +47,10 @@ export class Registro implements OnInit, OnDestroy {
       ...this.registroForm.value
     };
       this.suscripcionRegistro = this.authService.register(userData).subscribe({
-        next: (response: IAuthResponse): void => {
-          const token = response.token ?? '';
-          this.tokenService.setToken(token);
-          console.log('Registro exitoso. Token guardado:', token);
+        next: (): void => {
+          console.log('Registro exitoso. Redirigiendo a verificación de email...');
           this.router.navigate(['/verificar-email'], {
-              queryParams: { email: this.email() }
+            queryParams: { email: userData.email }
           });
         },
         error: (err): void => {

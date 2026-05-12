@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, untracked, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, untracked, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IPista } from '../../../../../model/pista/IPista';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
 import { FavoritosService } from '../../../../../services/favoritosService';
+import { ContextMenuService } from '../../../../../services/contextMenuService';
+import { ContextMenu, ContextMenuPosition } from '../context-menu/context-menu';
 
 @Component({
   selector: 'app-mini-cancion',
-  imports: [],
+  imports: [ContextMenu],
   templateUrl: './mini-cancion.html',
   styleUrl: './mini-cancion.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,9 +19,20 @@ export class MiniCancion {
 
   readonly reproducirEvento = output<IPista>();
 
-  private readonly storage = inject(StorageGlobal);
-  private readonly router = inject(Router);
-  private readonly favoritosService = inject(FavoritosService);
+  private readonly storage           = inject(StorageGlobal);
+  private readonly router            = inject(Router);
+  private readonly favoritosService  = inject(FavoritosService);
+  private readonly ctxMenuService    = inject(ContextMenuService);
+
+  /** ID único para esta instancia del menú */
+  private readonly menuId = crypto.randomUUID();
+
+  protected readonly ctxPosition = signal<ContextMenuPosition>({ x: 0, y: 0 });
+
+  /** Solo visible si este componente es el menú activo global */
+  protected readonly ctxVisible = computed(() =>
+    this.ctxMenuService.activeMenuId() === this.menuId
+  );
 
   /** true si esta pista es la que está sonando actualmente */
   protected readonly isReproduciendoEsta = computed(() => {
@@ -50,6 +63,17 @@ export class MiniCancion {
     }
 
     this.reproducirEvento.emit(p);
+  }
+
+  protected abrirContextMenu(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.ctxPosition.set({ x: event.clientX, y: event.clientY });
+    this.ctxMenuService.abrir(this.menuId);
+  }
+
+  protected cerrarContextMenu(): void {
+    this.ctxMenuService.cerrar();
   }
 
   protected formatearDuracion(segundos: number): string {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { StorageGlobal } from '../../../../services/storageGlobal';
 
 @Component({
@@ -14,6 +14,9 @@ export class Cola {
   readonly isOpen = input<boolean>(false);
   readonly cerrar = output<void>();
 
+  protected readonly dragOverIndex = signal<number | null>(null);
+  private dragFromIndex: number | null = null;
+
   protected readonly colaRestante = computed(() => {
     const pistas = this.storage.cola();
     const currIdx = pistas.findIndex(p => p.reproduciendo);
@@ -24,19 +27,57 @@ export class Cola {
   protected readonly pistaActual = computed(() => this.storage.GetReproduccion()());
   protected readonly tieneCola = computed(() => this.colaRestante().length > 0);
 
-  constructor() {
-    // Mostrar la cola completa cada vez que se actualiza
-    effect(() => {
-      const cola = this.storage.cola();
-      console.log('📋 Cola completa:', cola);
-    });
+  // ── Drag & Drop ──────────────────────────────────────────────────────────
+
+  protected onDragStart(event: DragEvent, index: number): void {
+    this.dragFromIndex = index;
+    event.dataTransfer?.setData('text/plain', String(index));
+    if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
   }
 
+  protected onDragOver(event: DragEvent, index: number): void {
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+    this.dragOverIndex.set(index);
+  }
+
+  protected onDragLeave(): void {
+    this.dragOverIndex.set(null);
+  }
+
+  protected onDrop(event: DragEvent, toRelativeIndex: number): void {
+    event.preventDefault();
+    this.dragOverIndex.set(null);
+
+    const fromRelative = this.dragFromIndex;
+    this.dragFromIndex = null;
+    if (fromRelative === null || fromRelative === toRelativeIndex) return;
+
+    const cola = this.storage.cola();
+    const currIdx = cola.findIndex(p => p.reproduciendo);
+    const offset = currIdx === -1 ? 0 : currIdx + 1;
+
+    const fromAbs = fromRelative + offset;
+    const toAbs   = toRelativeIndex + offset;
+
+    const nueva = [...cola];
+    const [moved] = nueva.splice(fromAbs, 1);
+    nueva.splice(toAbs, 0, moved);
+
+    this.storage.cola.set(nueva);
+    this.storage.colaOriginal.set(nueva);
+  }
+
+  protected onDragEnd(): void {
+    this.dragOverIndex.set(null);
+    this.dragFromIndex = null;
+  }
+
+  // ── Reproducción / eliminación ───────────────────────────────────────────
   reproducirDeCola(pistaId: number): void {
     const pistaActualInd = this.storage.cola().findIndex(p => p.idPista === pistaId);
     if (pistaActualInd === -1) return;
 
-    // Simulate setting cola with reproduciendo adjusted
     const lista = this.storage.cola().map(p => ({
       ...p,
       reproduciendo: p.idPista === pistaId

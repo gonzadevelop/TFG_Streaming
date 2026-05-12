@@ -108,7 +108,7 @@
             @for (artista of resultados().artistas; track artista.id) {
               <a
                 class="search-result-item search-result-item--link"
-                [routerLink]="['/artista', artista.username]"
+                [routerLink]="['/artistas', artista.username]"
                 (click)="cerrarResultados()"
                 [attr.aria-label]="'Ver artista ' + artista.username"
                 role="option">
