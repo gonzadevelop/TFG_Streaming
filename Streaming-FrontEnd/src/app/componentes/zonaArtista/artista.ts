@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 interface CancionTop {
@@ -17,6 +17,7 @@ interface CancionTop {
 export class Artista {
   readonly nombreArtistico = 'Tu Perfil Artistico';
   readonly uploadMessage = signal<string>('');
+  readonly mostrarFormulario = signal<boolean>(false);
 
   readonly cancionesTop: CancionTop[] = [
     { titulo: 'Luz de Medianoche', escuchas: '128K', duracion: '3:42' },
@@ -25,6 +26,11 @@ export class Artista {
   ];
 
   submitNewSong(): void {
-    this.uploadMessage.set('Funcionalidad de subir tema preparada para conectar con el formulario real.');
+    this.mostrarFormulario.set(true);
+    //this.uploadMessage.set('Aquí se abriría el formulario de subida para artista.');
+  }
+
+  cerrarFormulario(): void {
+    this.mostrarFormulario.set(false);
   }
 }
