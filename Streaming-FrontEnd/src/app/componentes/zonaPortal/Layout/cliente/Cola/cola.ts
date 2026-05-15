@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { StorageGlobal } from '../../../../services/storageGlobal';
+import { StorageGlobal } from '../../../../../services/storageGlobal';
 
 @Component({
   selector: 'app-cola',

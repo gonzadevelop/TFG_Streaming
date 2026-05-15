@@ -12,4 +12,3 @@ import { SidebarArtista } from './sidebar-artista';
 export class LayoutArtista {
   readonly sidebarOpen = signal(true);
 }
-

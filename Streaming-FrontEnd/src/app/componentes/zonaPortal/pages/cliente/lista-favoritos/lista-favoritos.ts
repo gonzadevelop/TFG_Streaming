@@ -9,7 +9,7 @@ import {
   Signal,
 } from '@angular/core';
 import { IPista } from '../../../../../model/pista/IPista';
-import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
+import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { FavoritosService } from '../../../../../services/favoritosService';
 
 @Component({

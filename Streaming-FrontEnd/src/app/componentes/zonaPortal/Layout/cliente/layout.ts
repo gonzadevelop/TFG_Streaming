@@ -4,7 +4,7 @@ import { HeaderComponent } from './Header/header';
 import { Footer } from './Footer/footer';
 import { Sidebar } from './Sidebar/sidebar';
 import { Player } from './Player/player';
-import { FavoritosService } from '../../../services/favoritosService';
+import { FavoritosService } from '../../../../services/favoritosService';
 
 @Component({
   selector: 'app-layout',

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MiniCancion } from '../mini-cancion/mini-cancion';
-import { IPista } from '../../../../../model/pista/IPista';
-import { StorageGlobal } from '../../../../../services/storageGlobal';
-import IPistaCola from '../../../../../model/pista/IPistaCola';
+import { IPista } from '../../../../../../model/pista/IPista';
+import { StorageGlobal } from '../../../../../../services/storageGlobal';
+import IPistaCola from '../../../../../../model/pista/IPistaCola';
 
 @Component({
   selector: 'app-lista-canciones',

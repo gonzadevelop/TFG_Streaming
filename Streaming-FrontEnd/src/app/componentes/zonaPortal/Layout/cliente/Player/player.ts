@@ -1,8 +1,9 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, signal, OnDestroy } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { StorageGlobal } from '../../../../services/storageGlobal';
+import { StorageGlobal } from '../../../../../services/storageGlobal';
 import { Cola } from '../Cola/cola';
+import { CancionService } from '../../../../../services/cancionService';
 
 @Component({
   selector: 'app-player',
@@ -14,12 +15,33 @@ import { Cola } from '../Cola/cola';
 export class Player implements OnDestroy {
   private readonly storage = inject(StorageGlobal);
   private readonly router  = inject(Router);
+  private readonly cancionService = inject(CancionService);
+
+  private readonly registeredTrackKey = signal<string | null>(null);
 
   constructor() {
     afterNextRender(() => {
       const pistaGuardada = this.storage.GetReproduccion()();
       if (pistaGuardada.urlCancion && !this.storage.reproduciendo()) {
         this.storage.CargarSinReproducir(pistaGuardada);
+      }
+    });
+
+    effect(() => {
+      const pista = this.storage.GetReproduccion()();
+      const time = this.storage.tiempoActual();
+      const trackKey = pista.idPista > 0 ? `${pista.idPista}:${pista.urlCancion}` : null;
+
+      if (!trackKey) {
+        this.registeredTrackKey.set(null);
+        return;
+      }
+
+      if (this.registeredTrackKey() !== trackKey && time >= 30) {
+        this.cancionService.setReproducirCancion(pista.idPista).subscribe({
+          next: () => this.registeredTrackKey.set(trackKey),
+          error: () => this.registeredTrackKey.set(trackKey),
+        });
       }
     });
   }

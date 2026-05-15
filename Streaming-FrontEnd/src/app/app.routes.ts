@@ -7,7 +7,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./componentes/zonaPortal/Layout/layout').then(m => m.Layout),
+      import('./componentes/zonaPortal/Layout/cliente/layout').then(m => m.Layout),
     canActivate: [nonArtistGuard],
     children: [
       {
@@ -90,7 +90,7 @@ export const routes: Routes = [
     path: 'artista',
     canActivate: [artistGuard],
     loadComponent: () =>
-      import('./componentes/zonaPortal/LayoutArtista/layout-artista').then(m => m.LayoutArtista),
+      import('./componentes/zonaPortal/Layout/artista/layout-artista').then(m => m.LayoutArtista),
     children: [
       {
         path: 'home',

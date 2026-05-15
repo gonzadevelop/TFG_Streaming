@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IAlbumCompleto } from '../../../../../model/album/IAlbumCompleto';
-import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
+import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { AlbumService } from '../../../../../services/albumService';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
 import { FavoritosService } from '../../../../../services/favoritosService';

@@ -10,12 +10,12 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { IPista } from '../../../../../model/pista/IPista';
-import { IPlaylist } from '../../../../../model/home/IPlaylist';
-import { StorageGlobal } from '../../../../../services/storageGlobal';
-import { PlaylistService } from '../../../../../services/playlistService';
-import { ContextMenuService } from '../../../../../services/contextMenuService';
-import IPistaCola from '../../../../../model/pista/IPistaCola';
+import { IPista } from '../../../../../../model/pista/IPista';
+import { IPlaylist } from '../../../../../../model/home/IPlaylist';
+import { StorageGlobal } from '../../../../../../services/storageGlobal';
+import { PlaylistService } from '../../../../../../services/playlistService';
+import { ContextMenuService } from '../../../../../../services/contextMenuService';
+import IPistaCola from '../../../../../../model/pista/IPistaCola';
 
 export interface ContextMenuPosition {
   x: number;

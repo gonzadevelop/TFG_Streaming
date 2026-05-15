@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, untracked, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IPista } from '../../../../../model/pista/IPista';
-import { StorageGlobal } from '../../../../../services/storageGlobal';
-import { FavoritosService } from '../../../../../services/favoritosService';
-import { ContextMenuService } from '../../../../../services/contextMenuService';
+import { IPista } from '../../../../../../model/pista/IPista';
+import { StorageGlobal } from '../../../../../../services/storageGlobal';
+import { FavoritosService } from '../../../../../../services/favoritosService';
+import { ContextMenuService } from '../../../../../../services/contextMenuService';
 import { ContextMenu, ContextMenuPosition } from '../context-menu/context-menu';
 
 @Component({

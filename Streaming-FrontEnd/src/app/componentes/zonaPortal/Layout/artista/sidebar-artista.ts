@@ -9,9 +9,9 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { TokenService } from '../../../services/tokenService';
-import { SidebarService } from '../../../services/SidebarService';
-import { UserService } from '../../../services/userService';
+import { TokenService } from '../../../../services/tokenService';
+import { SidebarService } from '../../../../services/SidebarService';
+import { UserService } from '../../../../services/userService';
 
 interface SidebarItem {
   label: string;

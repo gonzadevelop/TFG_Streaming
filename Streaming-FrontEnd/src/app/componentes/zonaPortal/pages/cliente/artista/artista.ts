@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
-import { AlbumCard } from '../../compartido/album-card/album-card';
+import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
+import { AlbumCard } from '../compartido/album-card/album-card';
 import { IArtista } from '../../../../../model/artista/IArtista';
 import { ArtistaService } from '../../../../../services/artistaService';
 import { UserService } from '../../../../../services/userService';

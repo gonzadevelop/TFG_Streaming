@@ -7,8 +7,8 @@ import { HomeService } from '../../../../../services/homeService';
 import { PlaylistService } from '../../../../../services/playlistService';
 import { IHome } from '../../../../../model/home/IHome';
 import { IPlaylist } from '../../../../../model/home/IPlaylist';
-import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
-import { AlbumCard } from '../../compartido/album-card/album-card';
+import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
+import { AlbumCard } from '../compartido/album-card/album-card';
 
 @Component({
   selector: 'app-home',
