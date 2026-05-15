@@ -144,6 +144,6 @@ public class ArtistaService {
     public List<ResponseArtistaHomeDTO> buscarArtistas(String q) {
         return q.isBlank() ?
                 List.of() :
-                artistaMapper.toHomeDtos(usuarioRepository.buscarPorUsername(q));
+                artistaMapper.toHomeDtos(usuarioRepository.buscarArtistaPorUsername(q));
     }
 }

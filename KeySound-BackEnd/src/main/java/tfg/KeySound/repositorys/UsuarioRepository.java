@@ -12,8 +12,26 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmailIgnoreCase(String email);
     Optional<Usuario> findByUsernameIgnoreCase(String username);
 
-    @Query("SELECT u FROM Usuario u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%'))")
-    List<Usuario> buscarPorUsername(@Param("q") String q);
+    /**
+     * Busca usuarios por coincidencia parcial de username (case-insensitive) y rol de artista (id = 3)
+     * @param q Cadena de búsqueda para el username
+     * @return Lista de usuarios que coinciden con la búsqueda y son artistas
+     */
+    @Query("""
+            SELECT u
+            FROM Usuario u
+            WHERE LOWER(u.username)
+            LIKE LOWER(CONCAT('%', :q, '%'))
+            AND u.rol.id = 3
+    """)
+    List<Usuario> buscarArtistaPorUsername(@Param("q") String q);
+
+    /**
+     * Cuenta cuántas canciones de un artista tiene un usuario en favoritos. Se consideran canciones del artista aquellas que son propiedad de un álbum del artista o que tienen al artista como colaborador.
+     * @param usuarioId ID del usuario
+     * @param artistaId ID del artista
+     * @return Número de canciones del artista que el usuario tiene en favoritos
+     */
     @Query("""
             SELECT COUNT(DISTINCT p) FROM Pista p
             JOIN p.cancion c
