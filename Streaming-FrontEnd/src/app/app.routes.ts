@@ -54,6 +54,12 @@ export const routes: Routes = [
         loadComponent: () => import('./componentes/zonaPortal/pages/perfil/perfil')
           .then(m => m.Perfil),
       },
+      {
+        path: 'stadistics',
+        title: 'Mis estadísticas | KeySound',
+        loadComponent: () => import('./componentes/zonaPortal/pages/estadistica/estadistica')
+          .then(m => m.Estadistica),
+      },
     ],
   },
   {

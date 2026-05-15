@@ -92,7 +92,7 @@
                 (click)="cerrarResultados()"
                 [attr.aria-label]="'Ver álbum ' + album.titulo"
                 role="option">
-                <img [src]="album.urlPortada" [alt]="'Portada de ' + album.titulo" class="result-portada" width="40" height="40" />
+                <img [src]="album.urlPortada || album.portada" [alt]="'Portada de ' + album.titulo" class="result-portada" width="40" height="40" />
                 <div class="result-info">
                   <span class="result-titulo">{{ album.titulo }}</span>
                   <span class="result-artistas">{{ album.artista }} · {{ album.tipo }}</span>
