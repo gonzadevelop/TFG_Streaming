@@ -7,6 +7,7 @@ import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.pista.PistaNotFoundException;
 import tfg.KeySound.mappers.PistaMapper;
+import tfg.KeySound.model.pista.ResponsePistaAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.repositorys.PistaRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
@@ -61,5 +62,17 @@ public class FavoritosService {
             return List.of();
 
         return pistaMapper.pistasToPlaylistDtos(usuario.getFavoritos().stream().toList());
+    }
+
+    public List<ResponsePistaAlbumDTO> obtenerFavoritosAlbum(String token) {
+        String username = jwtService.extractUsername(token);
+
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        if (usuario.getFavoritos() == null || usuario.getFavoritos().isEmpty())
+            return List.of();
+
+        return pistaMapper.pistasToAlbumDtos(usuario.getFavoritos().stream().toList());
     }
 }
