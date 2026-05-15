@@ -8,6 +8,7 @@ export class StorageGlobal {
   private readonly _platformId = inject(PLATFORM_ID);
 
   private _audio: HTMLAudioElement | null = null;
+  private _audioGeneration = 0;
 
   // Señales de estado del reproductor
   readonly reproduciendo = signal<boolean>(false);
@@ -20,6 +21,7 @@ export class StorageGlobal {
   readonly colaOriginal = signal<IPistaCola[]>([]);
   readonly cola = signal<IPistaCola[]>([]);
   readonly isShuffled = signal<boolean>(false);
+  private readonly _currentColaIndex = signal<number>(-1);
 
   SetCola(lista: IPistaCola[]): void {
     this.colaOriginal.set(lista);
@@ -28,9 +30,12 @@ export class StorageGlobal {
     } else {
       this.cola.set(lista);
     }
-    const toPlay = this.cola().find(p => p.reproduciendo);
+    const idx = this.cola().findIndex(p => p.reproduciendo);
+    const playIdx = idx !== -1 ? idx : 0;
+    this._currentColaIndex.set(playIdx);
+    const toPlay = this.cola()[playIdx];
     if (toPlay) {
-      this.ReproducirConCola(toPlay);
+      this._reproducirEnIndice(playIdx);
     }
   }
 
@@ -66,12 +71,27 @@ export class StorageGlobal {
 
   /** Reproduce a partir de elemento de la cola */
   private ReproducirConCola(pista: IPistaCola): void {
-    const lista = this.cola().map(p => ({
-      ...p,
-      reproduciendo: p.idPista === pista.idPista
-    }));
+    const idx = this.cola().findIndex(p => p === pista || (p.idPista && p.idPista === pista.idPista && p.orden === pista.orden));
+    if (idx !== -1) {
+      this._reproducirEnIndice(idx);
+    }
+  }
+
+  /** Reproduce la pista en el índice absoluto de la cola (público para componentes) */
+  reproducirEnIndicePublico(idx: number): void {
+    this._reproducirEnIndice(idx);
+  }
+
+  /** Reproduce la pista en el índice absoluto de la cola */
+  private _reproducirEnIndice(idx: number): void {
+    const colaActual = this.cola();
+    if (idx < 0 || idx >= colaActual.length) return;
+
+    this._currentColaIndex.set(idx);
+    const lista = colaActual.map((p, i) => ({ ...p, reproduciendo: i === idx }));
     this.cola.set(lista);
 
+    const pista = lista[idx];
     this.Reproducir({
       idPista: pista.idPista || 0,
       titulo: pista.titulo,
@@ -122,19 +142,18 @@ export class StorageGlobal {
 
   /** Reproduce la siguiente pista de la cola (si hay) */
   ReproducirSiguienteDeCola(): void {
-    const colaActual = this.cola();
-    const idx = colaActual.findIndex(p => p.reproduciendo);
-    if (idx !== -1 && idx + 1 < colaActual.length) {
-      this.ReproducirConCola(colaActual[idx + 1]);
+    const idx = this._currentColaIndex();
+    const siguiente = idx + 1;
+    if (siguiente < this.cola().length) {
+      this._reproducirEnIndice(siguiente);
     }
   }
 
   /** Reproduce la anterior pista de la cola (si hay) */
   ReproducirAnteriorDeCola(): void {
-    const colaActual = this.cola();
-    const idx = colaActual.findIndex(p => p.reproduciendo);
+    const idx = this._currentColaIndex();
     if (idx > 0) {
-      this.ReproducirConCola(colaActual[idx - 1]);
+      this._reproducirEnIndice(idx - 1);
     }
   }
 
@@ -248,6 +267,7 @@ export class StorageGlobal {
     if (!isPlatformBrowser(this._platformId)) return;
 
     this._destruirAudio();
+    const generation = ++this._audioGeneration;
 
     this.SetReproduccion(pista);
 
@@ -256,14 +276,17 @@ export class StorageGlobal {
     this._audio.muted  = this.silenciado();
 
     this._audio.addEventListener('loadedmetadata', () => {
+      if (this._audioGeneration !== generation) return;
       this.duracion.set(this._audio!.duration);
     });
 
     this._audio.addEventListener('timeupdate', () => {
+      if (this._audioGeneration !== generation) return;
       this.tiempoActual.set(this._audio!.currentTime);
     });
 
     this._audio.addEventListener('ended', () => {
+      if (this._audioGeneration !== generation) return;
       this.reproduciendo.set(false);
       this.tiempoActual.set(0);
       this._actualizarEstadoReproduccion(false);

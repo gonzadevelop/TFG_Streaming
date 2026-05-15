@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class ResponsePistaDTO {
+    private Long idPista;
     private String titulo;
     private List<String> artistas;
     private String urlCancion;

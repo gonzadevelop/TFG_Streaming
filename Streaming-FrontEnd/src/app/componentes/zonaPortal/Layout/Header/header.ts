@@ -18,7 +18,7 @@ import {IAlbum} from '../../../../model/album/IAlbum';
 import {IArtistaHome} from '../../../../model/home/IArtistaHome';
 import {IPlaylist} from '../../../../model/home/IPlaylist';
 import {StorageGlobal} from '../../../../services/storageGlobal';
-import IPistaReproduccion from '../../../../model/pista/IPistaReproduccion';
+import IPistaCola from '../../../../model/pista/IPistaCola';
 export interface IResultadosBusqueda {
   canciones: IPista[];
   albums: IAlbum[];
@@ -100,18 +100,14 @@ export class HeaderComponent {
       catchError(() => of(null))
     ).subscribe(albumCompleto => {
       if (!albumCompleto) return;
-      const pista = albumCompleto.canciones.find(p => p.titulo === cancion.titulo);
-      if (!pista) return;
-      const reproduccion: IPistaReproduccion = {
-        idPista: pista.idPista,
-        titulo: pista.titulo,
-        artistas: pista.artistas ?? [cancion.artista],
-        urlPortada: pista.urlPortada ?? cancion.caratula,
-        urlCancion: pista.urlCancion,
-        duracionSegundos: pista.duracionSegundos,
-        reproduciendo: true,
-      };
-      this.storage.Reproducir(reproduccion);
+      const portadaAlbum = albumCompleto.portada || cancion.caratula || '';
+      const colaCompleta: IPistaCola[] = albumCompleto.canciones.map((p, index) => ({
+        ...p,
+        urlPortada: p.urlPortada || portadaAlbum,
+        orden: index,
+        reproduciendo: p.titulo === cancion.titulo || p.urlCancion === cancion.urlCancion
+      }));
+      this.storage.SetCola(colaCompleta);
       this.mostrarResultados.set(false);
     });
   }

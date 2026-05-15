@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tfg.KeySound.model.pista.ResponsePistaAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.services.FavoritosService;
 import java.util.List;
@@ -18,6 +19,11 @@ public class FavoritosController {
     @GetMapping
     public ResponseEntity<List<ResponsePistaPlaylistDTO>> obtenerFavoritos(@RequestHeader ("Authorization") String token) {
         return ResponseEntity.ok(favoritosService.obtenerFavoritos(token.substring(7)));
+    }
+
+    @GetMapping("/album")
+    public ResponseEntity<List<ResponsePistaAlbumDTO>> obtenerFavoritosAlbum(@RequestHeader ("Authorization") String token) {
+        return ResponseEntity.ok(favoritosService.obtenerFavoritosAlbum(token.substring(7)));
     }
 
     @PostMapping("/{pistaId}")

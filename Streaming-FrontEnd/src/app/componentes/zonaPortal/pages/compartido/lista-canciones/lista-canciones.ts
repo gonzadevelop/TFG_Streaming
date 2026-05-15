@@ -13,15 +13,20 @@ import IPistaCola from '../../../../../model/pista/IPistaCola';
 })
 export class ListaCanciones {
   readonly pistas = input.required<IPista[]>();
-  readonly albumPortada = input<string>(''); // Portada del álbum para las canciones sin portada
+  readonly portadaFallback = input<string>('');
   private readonly storage = inject(StorageGlobal);
 
   onReproducirPista(pista: IPista): void {
-    const cola: IPistaCola[] = this.pistas().map((p, index) => ({
+    const pistasList = this.pistas();
+    const fallback = this.portadaFallback();
+    const clickedIndex = pistasList.findIndex(p => p === pista || (p.urlCancion && p.urlCancion === pista.urlCancion));
+    const resolvedIndex = clickedIndex !== -1 ? clickedIndex : 0;
+
+    const cola: IPistaCola[] = pistasList.map((p, index) => ({
       ...p,
-      urlPortada: p.urlPortada || this.albumPortada(),
+      urlPortada: p.urlPortada || fallback,
       orden: index,
-      reproduciendo: p.idPista === pista.idPista
+      reproduciendo: index === resolvedIndex
     }));
     this.storage.SetCola(cola);
   }

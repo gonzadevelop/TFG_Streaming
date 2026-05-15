@@ -98,6 +98,13 @@ export class Cola {
     });
   }
 
+  /** Convierte un índice relativo de colaRestante al índice absoluto en cola */
+  protected getGlobalIndex(relativeIndex: number): number {
+    const currIdx = this.storage.cola().findIndex(p => p.reproduciendo);
+    const offset = currIdx === -1 ? 0 : currIdx + 1;
+    return relativeIndex + offset;
+  }
+
   eliminar(pistaId: number): void {
     this.storage.cola.update(c => c.filter(p => p.idPista !== pistaId));
   }

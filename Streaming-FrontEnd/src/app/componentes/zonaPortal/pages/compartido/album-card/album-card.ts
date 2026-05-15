@@ -6,7 +6,8 @@ export interface AlbumCardData {
   titulo?: string;
   nombre?: string;
   artista?: string;
-  urlPortada: string;
+  urlPortada?: string;
+  portada?: string;
   descripcion?: string;
   tipo?: string;
   fechaLanzamiento?: string;

@@ -32,6 +32,7 @@ public abstract class CancionMapper {
     @Mapping(target = "topMusicalDiarios", ignore = true)
     public abstract Cancion fromData(String titulo, String archivo, List<Usuario> usuarios, Integer duracionSegundos);
 
+    @Mapping(target = "idPista", source = "pista.id")
     @Mapping(target = "titulo", source = "pista.cancion.titulo")
     @Mapping(target = "artistas", expression = "java(usuarioRepository.findArtistasDeCancion(pista.getCancion().getId()))")
     @Mapping(target = "urlCancion", expression = "java(firebaseService.obtenerUrlArchivoAudio(pista.getCancion().getArchivoCancion()))")

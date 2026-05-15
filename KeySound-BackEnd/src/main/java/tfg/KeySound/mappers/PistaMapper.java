@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import tfg.KeySound.entitys.Album;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Pista;
+import tfg.KeySound.model.pista.ResponsePistaAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.repositorys.HistorialReproduccionesRepository;
@@ -95,4 +96,15 @@ public abstract class PistaMapper {
     public abstract ResponsePistaPlaylistDTO pistaToPlaylistDto(Pista pista);
 
     public abstract List<ResponsePistaPlaylistDTO> pistasToPlaylistDtos(List<Pista> pistas);
+
+    @Mapping(target = "id", source = "pista.id")
+    @Mapping(target = "titulo", source = "pista.cancion.titulo")
+    @Mapping(target = "urlCancion", expression = "java(firebaseService.obtenerUrlArchivoAudio(pista.getCancion().getArchivoCancion()))")
+    @Mapping(target = "artistas", expression = "java(usuarioRepository.findArtistasDeCancion(pista.getCancion().getId()))")
+    @Mapping(target = "reproducciones", expression = "java(pista.getCancion().getHistorialReproducciones() != null ? pista.getCancion().getHistorialReproducciones().size() : 0)")
+    @Mapping(target = "duracionSegundos", source = "pista.cancion.duracionSegundos")
+    @Mapping(target = "numeroPista", source = "pista.numeroPista")
+    public abstract ResponsePistaAlbumDTO pistaToAlbumDto(Pista pista);
+
+    public abstract List<ResponsePistaAlbumDTO> pistasToAlbumDtos(List<Pista> pistas);
 }

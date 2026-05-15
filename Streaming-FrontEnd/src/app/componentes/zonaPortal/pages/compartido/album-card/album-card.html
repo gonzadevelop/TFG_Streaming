@@ -7,7 +7,7 @@
   <a [routerLink]="routerLink()" class="ks-card__link" [attr.aria-label]="'Ir a ' + titulo()" tabindex="-1">
     <div class="ks-card__cover">
       <img
-        [src]="album().urlPortada"
+        [src]="album().urlPortada || album().portada"
         [alt]="'Portada de ' + titulo()"
         class="ks-card__img"
         loading="lazy"

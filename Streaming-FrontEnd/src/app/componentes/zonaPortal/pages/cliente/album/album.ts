@@ -11,6 +11,7 @@ import { IAlbumCompleto } from '../../../../../model/album/IAlbumCompleto';
 import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
 import { AlbumService } from '../../../../../services/albumService';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
+import { FavoritosService } from '../../../../../services/favoritosService';
 import IPistaCola from '../../../../../model/pista/IPistaCola';
 
 @Component({
@@ -25,6 +26,7 @@ export class Album implements OnInit {
   private readonly router: Router = inject(Router);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly storage = inject(StorageGlobal);
+  private readonly favoritosService = inject(FavoritosService);
 
   /**
    * Album obtenido del backend
@@ -35,6 +37,9 @@ export class Album implements OnInit {
   protected readonly error: WritableSignal<string | null> = signal<string | null>(null);
 
   ngOnInit(): void {
+    // Cargamos favoritos (sin force) para que los corazones reflejen el estado actual
+    this.favoritosService.cargarFavoritos();
+
     // Usar paramMap para reaccionar a cambios en los parámetros de ruta
     this.activatedRoute.paramMap.subscribe(params => {
       const albumId = params.get('id');
@@ -50,9 +55,27 @@ export class Album implements OnInit {
 
       this.albumService.getAlbum(Number(albumId)).subscribe({
         next: (data: IAlbumCompleto) => {
-          this.album.set(data);
+          const albumNormalizado: IAlbumCompleto = {
+            ...data,
+            canciones: (data.canciones ?? []).map(p => {
+              const raw = p as unknown as Record<string, unknown>;
+              const idNormalizado = (p.idPista && p.idPista !== 0)
+                ? p.idPista
+                : (p.id && p.id !== 0)
+                  ? p.id
+                  : ((raw['idCancion'] as number) || (raw['cancionId'] as number) || 0);
+              return {
+                ...p,
+                idPista: idNormalizado,
+                urlPortada: p.urlPortada || p.caratula || data.portada || '',
+                artistas: p.artistas?.length
+                  ? p.artistas
+                  : p.artista ? [p.artista] : [],
+              };
+            }),
+          };
+          this.album.set(albumNormalizado);
           this.cargando.set(false);
-          console.log('Album cargado:', this.album());
         },
         error: (err: unknown) => {
           console.error('Error cargando album:', err);

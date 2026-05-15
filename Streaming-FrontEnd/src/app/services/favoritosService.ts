@@ -34,35 +34,34 @@ export class FavoritosService {
     }
     this.playlistService.getFavoritos().subscribe({
       next: (listaFavoritos) => {
+        const raw = listaFavoritos ?? [];
+        const pistas = raw.map(p => {
+          // El backend puede devolver el id bajo `id` en lugar de `idPista`
+          const idNormalizado = (p.idPista && p.idPista !== 0)
+            ? p.idPista
+            : ((p as unknown as Record<string, number>)['id'] ?? 0);
 
-        // Log temporal para identificar la estructura exacta que devuelve el backend
+          return {
+            ...p,
+            idPista: idNormalizado,
+            artistas: (p.artistas as unknown as Array<string | Record<string, unknown>>)
+              .map(a => {
+                if (typeof a === 'string') return a;
+                return (
+                  (a['nombreArtistico'] as string | undefined) ??
+                  (a['username'] as string | undefined) ??
+                  (a['nombre'] as string | undefined) ??
+                  (a['alias'] as string | undefined) ??
+                  (a['name'] as string | undefined) ??
+                  ''
+                );
+              })
+              .filter(a => a !== ''),
+          };
+        });
 
-        if (listaFavoritos?.length) {
-          console.log('[FavoritosService] Ejemplo artistas del backend:', listaFavoritos[0].artistas);
-        }
-        const pistas = (listaFavoritos ?? []).map(p => ({
-          ...p,
-
-          // El endpoint de favoritos puede devolver artistas como objetos con distintas claves.
-          // Normalizamos a string[] probando los campos más comunes.
-
-          artistas: (p.artistas as unknown as Array<string | Record<string, unknown>>)
-            .map(a => {
-              if (typeof a === 'string') return a;
-              // Intentamos las claves más habituales en backends Spring Boot
-              return (
-                (a['nombreArtistico'] as string | undefined) ??
-                (a['username'] as string | undefined) ??
-                (a['nombre'] as string | undefined) ??
-                (a['alias'] as string | undefined) ??
-                (a['name'] as string | undefined) ??
-                ''
-              );
-            })
-            .filter(a => a !== ''),
-        }));
         this._favoritosPistas.set(pistas);
-        this._favoritosIds.set(new Set(pistas.map(p => p.idPista)));
+        this._favoritosIds.set(new Set(pistas.map(p => p.idPista).filter(id => id !== 0)));
         this._cargado = true;
         callbacks?.onComplete?.();
       },
@@ -82,7 +81,15 @@ export class FavoritosService {
    * Alterna el estado de favorito de una pista.
    * Actualiza ambas signals de forma optimista y revierte en caso de error.
    */
-  toggleFavorito(pista: IPista): void {
+  toggleFavorito(pistaRaw: IPista): void {
+    const rawRecord = pistaRaw as unknown as Record<string, unknown>;
+    const pista: IPista = {
+      ...pistaRaw,
+      idPista: (pistaRaw.idPista && pistaRaw.idPista !== 0)
+        ? pistaRaw.idPista
+        : ((rawRecord['id'] as number) ?? 0),
+    };
+
     const eraFavorito = this._favoritosIds().has(pista.idPista);
 
     // Actualización optimista de IDs
