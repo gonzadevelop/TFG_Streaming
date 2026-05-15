@@ -1,0 +1,50 @@
+<section class="artist-home">
+  <header class="artist-home__header">
+    <div>
+      <h1>Panel de artista</h1>
+      <p>Gestiona tus lanzamientos, tu perfil y las publicaciones.</p>
+    </div>
+    <a routerLink="/artista/subir" class="artist-home__cta">Subir nuevo álbum</a>
+  </header>
+
+  @if (isLoading()) {
+    <p class="artist-home__status">Cargando datos...</p>
+  } @else if (errorMessage()) {
+    <p class="artist-home__status artist-home__status--error">{{ errorMessage() }}</p>
+  }
+
+  <div class="artist-home__stats">
+    <div class="artist-home__stat">
+      <span class="artist-home__stat-number">{{ totalAlbums() }}</span>
+      <span class="artist-home__stat-label">Lanzamientos</span>
+    </div>
+    <div class="artist-home__stat">
+      <span class="artist-home__stat-number">{{ publicados() }}</span>
+      <span class="artist-home__stat-label">Publicados</span>
+    </div>
+    <div class="artist-home__stat">
+      <span class="artist-home__stat-number">{{ borradores() }}</span>
+      <span class="artist-home__stat-label">Borradores</span>
+    </div>
+  </div>
+
+  <div class="artist-home__grid">
+    <a routerLink="/artista/albumes" class="artist-home__card">
+      <h2>Gestionar lanzamientos</h2>
+      <p>Publica y elimina álbumes, revisa tus borradores.</p>
+    </a>
+    <a routerLink="/artista/subir" class="artist-home__card">
+      <h2>Subir nuevo álbum</h2>
+      <p>Carga portada, pistas y colaboradores en un solo flujo.</p>
+    </a>
+    <a routerLink="/artista/perfil" class="artist-home__card">
+      <h2>Gestión de perfil</h2>
+      <p>Edita tu biografía, email y avatar.</p>
+    </a>
+    <div class="artist-home__card artist-home__card--disabled">
+      <h2>Estadísticas</h2>
+      <p>Próximamente: desempeño y audiencia.</p>
+    </div>
+  </div>
+</section>
+

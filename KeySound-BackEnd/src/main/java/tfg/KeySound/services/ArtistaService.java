@@ -3,6 +3,7 @@ package tfg.KeySound.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.Album;
+import tfg.KeySound.entitys.Pista;
 import tfg.KeySound.entitys.Usuario;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.mappers.ArtistaMapper;
@@ -15,6 +16,7 @@ import tfg.KeySound.model.artista.ResponseArtistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.repositorys.AlbumRepository;
 import tfg.KeySound.repositorys.CancionRepository;
+import tfg.KeySound.repositorys.PistaRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
 import tfg.KeySound.services.external.JwtService;
 
@@ -33,6 +35,7 @@ public class ArtistaService {
     private final UsuarioRepository usuarioRepository;
     private final AlbumRepository albumRepository;
     private final CancionRepository cancionRepository;
+    private final PistaRepository pistaRepository;
 
     private final AlbumMapper albumMapper;
     private final ArtistaMapper artistaMapper;
@@ -100,13 +103,27 @@ public class ArtistaService {
         if (album.getFechaLanzamiento() == null)
             throw new RuntimeException("El album debe tener fecha de lanzamiento para ser publicado"); // TODO: crear excepción personalizada
 
-        // comprobar que la fecha de album no es anterior a hoy
-        if (album.getFechaLanzamiento().isBefore(LocalDateTime.now()) || album.getFechaLanzamiento().equals(LocalDateTime.now()))
-            throw new RuntimeException("La fecha de album debe ser posterior a hoy para ser publicado"); // TODO: crear excepción personalizada
-
         // publicar el album
         album.setEsBorrador(false);
         albumRepository.save(album);
+    }
+
+    public void eliminarAlbum(Long idAlbum, String token) {
+        Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
+                .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(token)));
+
+        Album album = albumRepository.findById(idAlbum)
+                .orElseThrow(() -> new RuntimeException("Album no encontrado"));
+
+        if (!album.getUsuario().getId().equals(artista.getId()))
+            throw new RuntimeException("El album no pertenece al artista autenticado");
+
+        if (!Boolean.TRUE.equals(album.getEsBorrador()))
+            throw new RuntimeException("Solo se pueden eliminar albumes en borrador");
+
+        List<Pista> pistas = pistaRepository.findByAlbumId(idAlbum);
+        pistaRepository.deleteAll(pistas);
+        albumRepository.delete(album);
     }
 
     public List<ResponseArtistaHomeDTO> obtenerArtistasQueSigo(String token) {

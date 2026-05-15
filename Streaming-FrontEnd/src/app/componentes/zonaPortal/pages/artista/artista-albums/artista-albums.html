@@ -1,0 +1,65 @@
+<section class="artist-albums">
+  <header class="artist-albums__header">
+    <div>
+      <h1>Mis lanzamientos</h1>
+      <p>Publica y elimina álbumes cuando estén listos.</p>
+    </div>
+    <a routerLink="/artista/subir" class="artist-albums__cta">Subir nuevo</a>
+  </header>
+
+  @if (isLoading()) {
+    <p class="artist-albums__status">Cargando álbumes...</p>
+  } @else if (errorMessage()) {
+    <p class="artist-albums__status artist-albums__status--error">{{ errorMessage() }}</p>
+  } @else if (albums().length === 0) {
+    <p class="artist-albums__status">Aún no tienes álbumes subidos.</p>
+  }
+
+  <div class="artist-albums__grid">
+    @for (album of albums(); track album.id) {
+      <article class="artist-albums__card">
+        <div class="artist-albums__cover">
+          @if (album.portada) {
+            <img [src]="album.portada" [alt]="album.titulo" />
+          } @else {
+            <div class="artist-albums__cover-placeholder">Sin portada</div>
+          }
+        </div>
+        <div class="artist-albums__info">
+          <h2>{{ album.titulo }}</h2>
+          <p>{{ album.numeroCanciones }} canciones · {{ album.tipo }}</p>
+          <p>
+            Lanzamiento: {{ album.fechaLanzamiento }}
+            @if (album.esBorrador) {
+              <span class="artist-albums__badge">Borrador</span>
+            } @else {
+              <span class="artist-albums__badge artist-albums__badge--published">Publicado</span>
+            }
+          </p>
+        </div>
+        <div class="artist-albums__actions">
+          @if (album.esBorrador) {
+            <button
+              type="button"
+              (click)="publicar(album)"
+              [disabled]="processingIds().has(album.id)"
+            >
+              Publicar
+            </button>
+            <button
+              type="button"
+              class="danger"
+              (click)="eliminar(album)"
+              [disabled]="processingIds().has(album.id)"
+            >
+              Eliminar
+            </button>
+          } @else {
+            <span class="artist-albums__hint">Publicado</span>
+          }
+        </div>
+      </article>
+    }
+  </div>
+</section>
+

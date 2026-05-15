@@ -1,0 +1,400 @@
+.artist-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  color: #f3f3f3;
+}
+
+.artist-upload__header h1 {
+  margin-bottom: 6px;
+}
+
+.artist-upload__status {
+  margin: 0;
+}
+
+.artist-upload__status--error {
+  color: #ff8a8a;
+}
+
+.artist-upload__status--success {
+  color: #9be59b;
+}
+
+.artist-upload__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.artist-upload__section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  background: #1a1a28;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.artist-upload__section label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.artist-upload__section input {
+  background: #12121c;
+  border: 1px solid #30304a;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.artist-upload__preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.artist-upload__preview img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.artist-upload__tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.artist-upload__track {
+  display: grid;
+  gap: 10px;
+  background: #1a1a28;
+  padding: 14px;
+  border-radius: 10px;
+}
+
+.artist-upload__track label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.artist-upload__track input {
+  background: #12121c;
+  border: 1px solid #30304a;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.artist-upload__hint {
+  margin: 0;
+  color: #b8b8c5;
+  font-size: 13px;
+}
+
+.artist-upload__results {
+  display: grid;
+  gap: 8px;
+}
+
+.artist-upload__result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #12121c;
+  border: 1px solid #2c2c40;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.artist-upload__result--song {
+  gap: 12px;
+}
+
+.artist-upload__result--song div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.artist-upload__result-title {
+  font-weight: 600;
+}
+
+.artist-upload__result-subtitle {
+  color: #b8b8c5;
+  font-size: 12px;
+}
+
+.artist-upload__selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.artist-upload__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #2a2a3f;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.artist-upload__chip img,
+.artist-upload__chip-fallback {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #3a3a55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.artist-upload__chip button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.artist-upload__remove {
+  align-self: flex-start;
+  background: #d32f2f;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.artist-upload__add {
+  align-self: flex-start;
+  background: #5c6bc0;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.artist-upload__submit {
+  align-self: flex-start;
+  background: #6c63ff;
+  border: none;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.artist-upload__selected-song {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #12121c;
+  border: 1px solid #2c2c40;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.artist-upload__selected-song img,
+.artist-upload__selected-song .artist-upload__avatar-fallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.artist-upload__selected-song div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.artist-upload__selected-song span {
+  color: #b8b8c5;
+  font-size: 12px;
+}
+
+.artist-upload__selected-song button {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid #4b4b6a;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.artist-upload__result img,
+.artist-upload__avatar-fallback {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #2c2c40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.artist-upload__field-error {
+  margin: 0;
+  color: #ff8a8a;
+  font-size: 12px;
+}
+
+.artist-upload__steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.artist-upload__steps button {
+  background: #12121c;
+  border: 1px solid #2c2c40;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.artist-upload__steps button.is-active {
+  background: #6c63ff;
+  border-color: #6c63ff;
+}
+
+.artist-upload__nav {
+  display: flex;
+  gap: 12px;
+}
+
+.artist-upload__back,
+.artist-upload__next {
+  background: #2c2c40;
+  border: 1px solid #3a3a55;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.artist-upload__next {
+  background: #6c63ff;
+  border-color: #6c63ff;
+}
+
+.artist-upload__preview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.artist-upload__preview-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.artist-upload__preview-summary img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.artist-upload__preview-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.artist-upload__preview-track {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #12121c;
+  border: 1px solid #2c2c40;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.artist-upload__preview-track-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.artist-upload__preview-track-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.artist-upload__preview-separator {
+  color: #6f6f88;
+}
+
+.artist-upload__preview-status {
+  color: #b8b8c5;
+  font-size: 12px;
+}
+
+.artist-upload__preview-existing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.artist-upload__preview-existing-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.artist-upload__preview-existing img,
+.artist-upload__preview-existing .artist-upload__avatar-fallback {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.artist-upload__preview-existing small {
+  color: #b8b8c5;
+  font-size: 12px;
+}
+
+.artist-upload__preview-collab {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.artist-upload__preview-collab-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

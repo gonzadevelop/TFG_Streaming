@@ -59,11 +59,21 @@ public class AlbumService {
         Usuario artista = usuarioRepository.findByUsernameIgnoreCase(jwtService.extractUsername(token))
                 .orElseThrow(() -> new UsernameNotFoundException(jwtService.extractUsername(token)));
 
+        List<MultipartFile> archivosSafe = archivos == null ? List.of() : archivos;
+        long cancionesNuevas = dto.getCanciones()
+                .stream()
+                .filter(rc -> rc.getIdCancionExistente() == null)
+                .count();
+
+        if (archivosSafe.size() != cancionesNuevas) {
+            throw new RuntimeException("El numero de archivos no coincide con las canciones nuevas");
+        }
+
         // Crear la entidad album sin canciones (se añaden más tarde)
         Album album = albumMapper.toEntity(dto, artista, portada);
 
         // Mapear cada canción del DTO a entidad, subiendo el archivo de audio a Firebase Storage y obteniendo colaboradores y duración
-        Iterator<MultipartFile> archivoIt = archivos.iterator();
+        Iterator<MultipartFile> archivoIt = archivosSafe.iterator();
 
         List<Cancion> canciones = dto
                 .getCanciones()
@@ -71,8 +81,17 @@ public class AlbumService {
                 .map(rc -> {
                     // Si la canción ya existe, la recuperamos y no consumimos archivo de la lista
                     if (rc.getIdCancionExistente() != null) {
-                        return cancionRepository.findById(rc.getIdCancionExistente())
+                        Cancion cancionExistente = cancionRepository.findById(rc.getIdCancionExistente())
                                 .orElseThrow(() -> new CancionNotFoundException(rc.getIdCancionExistente()));
+
+                        boolean perteneceAlArtista = pistaRepository
+                                .existsByCancionIdAndAlbumUsuarioId(cancionExistente.getId(), artista.getId());
+
+                        if (!perteneceAlArtista) {
+                            throw new RuntimeException("La cancion no pertenece al artista autenticado");
+                        }
+
+                        return cancionExistente;
                     }
 
                     // Si es nueva, extraemos el siguiente binario de la lista recibida

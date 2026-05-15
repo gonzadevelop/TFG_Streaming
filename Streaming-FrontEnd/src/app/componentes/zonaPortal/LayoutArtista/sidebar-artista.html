@@ -1,0 +1,29 @@
+<nav class="artist-sidebar" [class.artist-sidebar--collapsed]="!isOpen()">
+  <div class="artist-sidebar__profile">
+    @if (avatarUrl()) {
+      <img [src]="avatarUrl()!" alt="Avatar" />
+    } @else {
+      <div class="artist-sidebar__avatar-fallback">{{ inicialAvatar() }}</div>
+    }
+    <div class="artist-sidebar__profile-info">
+      <span class="artist-sidebar__name">{{ userName() }}</span>
+      <span class="artist-sidebar__role">Artista</span>
+    </div>
+  </div>
+
+  <ul class="artist-sidebar__menu">
+    @for (item of sidebarItems; track item.route) {
+      <li>
+        <a [routerLink]="item.route" routerLinkActive="is-active">
+          <span class="material-icons">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  <button type="button" class="artist-sidebar__logout" (click)="cerrarSesion()">
+    Cerrar sesion
+  </button>
+</nav>
+

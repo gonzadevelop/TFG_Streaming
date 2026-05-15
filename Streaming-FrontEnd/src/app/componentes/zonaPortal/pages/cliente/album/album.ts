@@ -7,11 +7,11 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IAlbumCompleto } from '../../../../model/album/IAlbumCompleto';
-import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
-import { AlbumService } from '../../../../services/albumService';
-import { StorageGlobal } from '../../../../services/storageGlobal';
-import IPistaCola from '../../../../model/pista/IPistaCola';
+import { IAlbumCompleto } from '../../../../../model/album/IAlbumCompleto';
+import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
+import { AlbumService } from '../../../../../services/albumService';
+import { StorageGlobal } from '../../../../../services/storageGlobal';
+import IPistaCola from '../../../../../model/pista/IPistaCola';
 
 @Component({
   selector: 'app-album',

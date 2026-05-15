@@ -7,8 +7,8 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PlaylistService } from '../../../../services/playlistService';
-import { IPlaylist } from '../../../../model/home/IPlaylist';
+import { PlaylistService } from '../../../../../services/playlistService';
+import { IPlaylist } from '../../../../../model/home/IPlaylist';
 
 @Component({
   selector: 'app-keysound-playlists',
@@ -46,4 +46,3 @@ export class Playlists implements OnInit {
     });
   }
 }
-

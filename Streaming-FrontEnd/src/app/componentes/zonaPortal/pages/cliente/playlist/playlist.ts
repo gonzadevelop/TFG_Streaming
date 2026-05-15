@@ -7,11 +7,11 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { IPlaylistCompleta } from '../../../../model/playlists/IPlaylistCompleta';
-import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
-import { PlaylistService } from '../../../../services/playlistService';
-import { StorageGlobal } from '../../../../services/storageGlobal';
-import IPistaCola from '../../../../model/pista/IPistaCola';
+import { IPlaylistCompleta } from '../../../../../model/playlists/IPlaylistCompleta';
+import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
+import { PlaylistService } from '../../../../../services/playlistService';
+import { StorageGlobal } from '../../../../../services/storageGlobal';
+import IPistaCola from '../../../../../model/pista/IPistaCola';
 
 @Component({
   selector: 'app-playlist',

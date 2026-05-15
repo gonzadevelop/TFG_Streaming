@@ -51,7 +51,7 @@ public class AlbumController {
             @RequestHeader("Authorization") String token,
             @RequestPart("datos") RequestAlbumDTO dto,
             @RequestPart("portada") MultipartFile portada,
-            @RequestPart("archivos") List<MultipartFile> archivos) {
+            @RequestPart(value = "archivos", required = false) List<MultipartFile> archivos) {
         albumService.subirAlbum(dto, portada, archivos, token.substring(7));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

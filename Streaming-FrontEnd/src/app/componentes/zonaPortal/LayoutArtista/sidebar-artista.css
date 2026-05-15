@@ -1,0 +1,79 @@
+.artist-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 16px;
+  gap: 18px;
+  color: #f3f3f3;
+}
+
+.artist-sidebar__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1f1f32;
+}
+
+.artist-sidebar__profile img,
+.artist-sidebar__avatar-fallback {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #2c2c40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.artist-sidebar__profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.artist-sidebar__name {
+  font-weight: 600;
+}
+
+.artist-sidebar__role {
+  color: #b8b8c5;
+  font-size: 12px;
+}
+
+.artist-sidebar__menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.artist-sidebar__menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #f3f3f3;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.artist-sidebar__menu a.is-active {
+  background: #2c2c40;
+  border-color: #3a3a55;
+}
+
+.artist-sidebar__logout {
+  margin-top: auto;
+  background: #2c2c40;
+  border: 1px solid #3a3a55;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+

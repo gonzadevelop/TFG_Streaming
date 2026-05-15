@@ -74,6 +74,22 @@ public class ArtistaController {
     }
 
     /**
+     * Endpoint para eliminar un album en borrador.
+     * @param idAlbum {@link Long}
+     * @param token {@link String}
+     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK)
+     * @apiNote {@code DELETE /api/artistas/eliminar/{idAlbum}}
+     */
+    @DeleteMapping("/eliminar/{idAlbum}")
+    @PreAuthorize("hasRole('ARTISTA')")
+    public ResponseEntity<Void> eliminarAlbum(
+            @PathVariable Long idAlbum,
+            @RequestHeader(value = "Authorization") String token) {
+        artistaService.eliminarAlbum(idAlbum, token.substring(7));
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * Endpoint para obtener los artistas que sigo.
      * @param token {@link String}
      * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseArtistaHomeDTO}&gt;&gt; Devuelve un status 200 (OK)

@@ -1,20 +1,15 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  inject,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IArtista } from '../../../../model/artista/IArtista';
-import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
-import { AlbumCard } from '../compartido/album-card/album-card';
-import { ArtistaService } from '../../../../services/artistaService';
-import { UserService } from '../../../../services/userService';
+import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
+import { AlbumCard } from '../../compartido/album-card/album-card';
+import { IArtista } from '../../../../../model/artista/IArtista';
+import { ArtistaService } from '../../../../../services/artistaService';
+import { UserService } from '../../../../../services/userService';
+import { signal, WritableSignal } from '@angular/core';
 
 @Component({
   selector: 'app-artista',
+  standalone: true,
   imports: [ListaCanciones, AlbumCard],
   templateUrl: './artista.html',
   styleUrl: './artista.css',
@@ -23,8 +18,8 @@ import { UserService } from '../../../../services/userService';
 export class Artista implements OnInit {
   private readonly artistaService: ArtistaService = inject(ArtistaService);
   private readonly userService: UserService = inject(UserService);
-  private readonly router: Router = inject(Router);
-  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   /**
    * Artista obtenido del backend

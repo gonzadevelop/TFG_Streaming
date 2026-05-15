@@ -6,9 +6,9 @@ import tfg.KeySound.entitys.*;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
 import tfg.KeySound.exception.cancion.CancionNotFoundException;
 import tfg.KeySound.mappers.PistaMapper;
+import tfg.KeySound.model.cancion.ResponseCancionExistenteDTO;
 import tfg.KeySound.model.pista.ResponsePistaBusquedaDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
-import tfg.KeySound.repositorys.CancionRepository;
 import tfg.KeySound.repositorys.HistorialReproduccionesRepository;
 import tfg.KeySound.repositorys.PistaRepository;
 import tfg.KeySound.repositorys.UsuarioRepository;
@@ -92,4 +92,32 @@ public class CancionService {
                 ))
                 .toList();
     }       // TODO: mejorar este endpoint (añadir mapeo con la clase correspondiente)
+
+    public List<ResponseCancionExistenteDTO> buscarMisCanciones(String token, String q) {
+        if (q == null || q.isBlank()) return List.of();
+
+        String username = jwtService.extractUsername(token);
+        Usuario artista = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return pistaRepository.buscarCancionesDeArtista(artista.getId(), q)
+                .stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        p -> p.getCancion().getId(),
+                        p -> new ResponseCancionExistenteDTO(
+                                p.getCancion().getId(),
+                                p.getCancion().getTitulo(),
+                                p.getAlbum().getTitulo(),
+                                firebaseService.obtenerUrlArchivoImagen(
+                                        p.getAlbum().getArchivoPortada(),
+                                        p.getAlbum().getTitulo()
+                                )
+                        ),
+                        (first, ignored) -> first,
+                        java.util.LinkedHashMap::new
+                ))
+                .values()
+                .stream()
+                .toList();
+    }
 }

@@ -1,0 +1,306 @@
+<section class="artist-upload">
+  <header class="artist-upload__header">
+    <div>
+      <h1>Subir nuevo álbum</h1>
+      <p>Completa los datos básicos y adjunta pistas y colaboradores.</p>
+    </div>
+  </header>
+
+  <div class="artist-upload__steps">
+    <button type="button" [class.is-active]="pasoActivo(1)" (click)="goToStep(1)">1. Datos</button>
+    <button type="button" [class.is-active]="pasoActivo(2)" (click)="goToStep(2)">2. Pistas</button>
+    <button type="button" [class.is-active]="pasoActivo(3)" (click)="goToStep(3)">3. Previsualizar</button>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="artist-upload__status artist-upload__status--error">{{ errorMessage() }}</p>
+  }
+  @if (successMessage()) {
+    <p class="artist-upload__status artist-upload__status--success">{{ successMessage() }}</p>
+  }
+
+  <form [formGroup]="albumForm" (ngSubmit)="submit()" class="artist-upload__form">
+    @if (pasoActivo(1)) {
+      <div class="artist-upload__section">
+        <label>
+          Nombre del álbum
+          <input formControlName="nombreAlbum" type="text" placeholder="Ej: Microdosis" />
+        </label>
+        @if (mostrarErrorCampo(albumForm.get('nombreAlbum'))) {
+          <p class="artist-upload__field-error">El nombre del álbum es obligatorio.</p>
+        }
+        <label>
+          Fecha de lanzamiento
+          <input formControlName="fechaLanzamiento" type="datetime-local" />
+        </label>
+        @if (mostrarErrorCampo(albumForm.get('fechaLanzamiento'))) {
+          <p class="artist-upload__field-error">La fecha de lanzamiento es obligatoria.</p>
+        }
+      </div>
+
+      <div class="artist-upload__section">
+        <label>
+          Portada del álbum
+          <input type="file" accept="image/*" (change)="onPortadaSelected($event)" />
+        </label>
+        @if (faltaPortada()) {
+          <p class="artist-upload__field-error">La portada del álbum es obligatoria.</p>
+        }
+        @if (portadaPreview()) {
+          <div class="artist-upload__preview">
+            <img [src]="portadaPreview()!" alt="Preview portada" />
+            <button type="button" (click)="limpiarPortada()">Quitar portada</button>
+          </div>
+        }
+      </div>
+
+      <div class="artist-upload__nav">
+        <button type="button" class="artist-upload__next" (click)="nextStep()">Continuar</button>
+      </div>
+    }
+
+    @if (pasoActivo(2)) {
+      <div formArrayName="canciones" class="artist-upload__tracks">
+        <h2>Pistas</h2>
+        @for (track of canciones.controls; track $index; let trackIndex = $index) {
+          <div [formGroupName]="trackIndex" class="artist-upload__track">
+            <label>
+              Buscar cancion existente
+              <input
+                type="text"
+                [value]="queryCancionesPara(trackIndex)"
+                (input)="onBuscarCancionExistente(trackIndex, $event)"
+                placeholder="Escribe un titulo de tu catalogo"
+              />
+            </label>
+
+            @if (cargandoCancionesPara(trackIndex)) {
+              <p class="artist-upload__hint">Buscando canciones...</p>
+            }
+
+            @if (resultadosCancionesPara(trackIndex).length) {
+              <div class="artist-upload__results">
+                @for (cancion of resultadosCancionesPara(trackIndex); track cancion.idCancion) {
+                  <button
+                    type="button"
+                    class="artist-upload__result artist-upload__result--song"
+                    (click)="seleccionarCancionExistente(trackIndex, cancion)"
+                  >
+                    @if (cancion.caratula) {
+                      <img [src]="cancion.caratula" [alt]="cancion.titulo" />
+                    } @else {
+                      <div class="artist-upload__avatar-fallback">
+                        {{ cancion.titulo[0]?.toUpperCase() ?? 'C' }}
+                      </div>
+                    }
+                    <div>
+                      <span class="artist-upload__result-title">{{ cancion.titulo }}</span>
+                      <span class="artist-upload__result-subtitle">{{ cancion.album }}</span>
+                    </div>
+                  </button>
+                }
+              </div>
+            } @else if (queryCancionesPara(trackIndex).trim().length >= 2 && !cargandoCancionesPara(trackIndex)) {
+              <p class="artist-upload__hint">Sin resultados.</p>
+            }
+
+            @if (cancionSeleccionadaPara(trackIndex)) {
+              <div class="artist-upload__selected-song">
+                @if (cancionSeleccionadaPara(trackIndex)?.caratula) {
+                  <img
+                    [src]="cancionSeleccionadaPara(trackIndex)?.caratula"
+                    [alt]="cancionSeleccionadaPara(trackIndex)?.titulo"
+                  />
+                } @else {
+                  <div class="artist-upload__avatar-fallback">
+                    {{ (cancionSeleccionadaPara(trackIndex)?.titulo ?? 'C')[0]?.toUpperCase() }}
+                  </div>
+                }
+                <div>
+                  <strong>{{ cancionSeleccionadaPara(trackIndex)?.titulo }}</strong>
+                  <span>{{ cancionSeleccionadaPara(trackIndex)?.album }}</span>
+                </div>
+                <button type="button" (click)="limpiarCancionExistente(trackIndex)">Quitar</button>
+              </div>
+            }
+
+            <label>
+              Titulo
+              <input
+                formControlName="titulo"
+                type="text"
+                placeholder="Titulo de la cancion"
+                [readonly]="tieneCancionExistente(trackIndex)"
+              />
+            </label>
+            @if (!tieneCancionExistente(trackIndex) && mostrarErrorCampo(canciones.at(trackIndex).get('titulo'))) {
+              <p class="artist-upload__field-error">El titulo de la canción es obligatorio.</p>
+            }
+
+            @if (!tieneCancionExistente(trackIndex)) {
+              <label>
+                Buscar colaboradores
+                <input
+                  type="text"
+                  [value]="queryPara(trackIndex)"
+                  (input)="onBuscarColaborador(trackIndex, $event)"
+                  placeholder="Escribe un nombre de artista"
+                />
+              </label>
+
+              @if (cargandoPara(trackIndex)) {
+                <p class="artist-upload__hint">Buscando artistas...</p>
+              }
+
+              @if (resultadosPara(trackIndex).length) {
+                <div class="artist-upload__results">
+                  @for (artista of resultadosPara(trackIndex); track artista.id) {
+                    <button
+                      type="button"
+                      class="artist-upload__result"
+                      (click)="seleccionarColaborador(trackIndex, artista)"
+                    >
+                      @if (artista.urlAvatar) {
+                        <img [src]="artista.urlAvatar" [alt]="artista.username" />
+                      } @else {
+                        <div class="artist-upload__avatar-fallback">
+                          {{ artista.username[0]?.toUpperCase() ?? 'A' }}
+                        </div>
+                      }
+                      <span>{{ artista.username }}</span>
+                    </button>
+                  }
+                </div>
+              } @else if (queryPara(trackIndex).trim().length >= 2 && !cargandoPara(trackIndex)) {
+                <p class="artist-upload__hint">Sin resultados.</p>
+              }
+
+              @if (seleccionadosPara(trackIndex).length) {
+                <div class="artist-upload__selected">
+                  @for (artista of seleccionadosPara(trackIndex); track artista.id) {
+                    <span class="artist-upload__chip">
+                      @if (artista.urlAvatar) {
+                        <img [src]="artista.urlAvatar" [alt]="artista.username" />
+                      } @else {
+                        <span class="artist-upload__chip-fallback">
+                          {{ artista.username[0]?.toUpperCase() ?? 'A' }}
+                        </span>
+                      }
+                      {{ artista.username }}
+                      <button type="button" (click)="quitarColaborador(trackIndex, artista.id)">×</button>
+                    </span>
+                  }
+                </div>
+              }
+
+              <label>
+                Archivo de audio
+                <input type="file" accept="audio/*" (change)="onArchivoSelected(trackIndex, $event)" />
+              </label>
+              @if (mostrarErrorCampo(canciones.at(trackIndex).get('archivo'))) {
+                <p class="artist-upload__field-error">El archivo de audio es obligatorio.</p>
+              }
+            } @else {
+              <p class="artist-upload__hint">Esta pista usa una cancion existente.</p>
+            }
+
+            <button type="button" class="artist-upload__remove" (click)="quitarCancion(trackIndex)">
+              Quitar pista
+            </button>
+          </div>
+        }
+        <button type="button" class="artist-upload__add" (click)="agregarCancion()">
+          + Añadir pista
+        </button>
+      </div>
+
+      <div class="artist-upload__nav">
+        <button type="button" class="artist-upload__back" (click)="prevStep()">Volver</button>
+        <button type="button" class="artist-upload__next" (click)="nextStep()">Continuar</button>
+      </div>
+    }
+
+    @if (pasoActivo(3)) {
+      <div class="artist-upload__section artist-upload__preview-panel">
+        <div class="artist-upload__preview-summary">
+          <div>
+            <h2>{{ albumForm.value.nombreAlbum }}</h2>
+            <p>{{ albumForm.value.fechaLanzamiento }}</p>
+          </div>
+          @if (portadaPreview()) {
+            <img [src]="portadaPreview()!" alt="Portada" />
+          }
+        </div>
+
+        <div class="artist-upload__preview-tracks">
+          <h3>Pistas</h3>
+          @for (track of canciones.controls; track $index; let trackIndex = $index) {
+            <div class="artist-upload__preview-track">
+              <div class="artist-upload__preview-track-header">
+                <div class="artist-upload__preview-track-title">
+                  <strong>{{ tituloCancion(trackIndex) }}</strong>
+                  <span class="artist-upload__preview-separator">•</span>
+                  @if (tieneCancionExistente(trackIndex)) {
+                    <span class="artist-upload__preview-status">Usa canción existente</span>
+                  } @else {
+                    <span class="artist-upload__preview-status">Nueva canción</span>
+                  }
+                </div>
+              </div>
+              @if (tieneCancionExistente(trackIndex) && cancionExistentePreview(trackIndex)) {
+                <div class="artist-upload__preview-existing">
+                  @if (cancionExistentePreview(trackIndex)?.caratula) {
+                    <img
+                      [src]="cancionExistentePreview(trackIndex)?.caratula"
+                      [alt]="cancionExistentePreview(trackIndex)?.titulo"
+                    />
+                  } @else {
+                    <div class="artist-upload__avatar-fallback">
+                      {{ (cancionExistentePreview(trackIndex)?.titulo ?? 'C')[0]?.toUpperCase() }}
+                    </div>
+                  }
+                  <div class="artist-upload__preview-existing-info">
+                    <span>{{ cancionExistentePreview(trackIndex)?.titulo }}</span>
+                    <span class="artist-upload__preview-separator"> • </span>
+                    <small>{{ cancionExistentePreview(trackIndex)?.album }}</small>
+                  </div>
+                </div>
+              }
+              @if (!tieneCancionExistente(trackIndex)) {
+                <div class="artist-upload__preview-collab">
+                  @if (colaboradoresPreview(trackIndex).length) {
+                    <span>Colaboradores:</span>
+                    <div class="artist-upload__preview-collab-list">
+                      @for (artista of colaboradoresPreview(trackIndex); track artista.id) {
+                        <span class="artist-upload__chip">
+                          @if (artista.urlAvatar) {
+                            <img [src]="artista.urlAvatar" [alt]="artista.username" />
+                          } @else {
+                            <span class="artist-upload__chip-fallback">
+                              {{ artista.username[0]?.toUpperCase() ?? 'A' }}
+                            </span>
+                          }
+                          {{ artista.username }}
+                        </span>
+                      }
+                    </div>
+                  } @else {
+                    <span>Sin colaboradores adicionales.</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="artist-upload__nav">
+        <button type="button" class="artist-upload__back" (click)="prevStep()">Volver</button>
+        <button type="submit" [disabled]="isSaving()" class="artist-upload__submit">
+          {{ isSaving() ? 'Subiendo...' : 'Subir álbum' }}
+        </button>
+      </div>
+    }
+  </form>
+</section>
+

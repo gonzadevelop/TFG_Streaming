@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {Observable} from 'rxjs';
 import {IPista} from '../model/pista/IPista';
+import {IExistingSong} from '../model/cancion/IExistingSong';
 
 @Injectable({ providedIn: 'root' })
 export class CancionService {
@@ -33,6 +34,16 @@ export class CancionService {
    */
   buscarCanciones(q: string): Observable<IPista[]> {
     return this.http.get<IPista[]>(`${this.baseURL}/canciones/buscar`, {
+      params: { q }
+    });
+  }
+
+  /**
+   * Busca canciones propias del artista autenticado.
+   * GET /api/canciones/buscar-mis?q=texto
+   */
+  buscarMisCanciones(q: string): Observable<IExistingSong[]> {
+    return this.http.get<IExistingSong[]>(`${this.baseURL}/canciones/buscar-mis`, {
       params: { q }
     });
   }

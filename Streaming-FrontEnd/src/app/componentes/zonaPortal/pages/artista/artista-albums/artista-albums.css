@@ -1,0 +1,105 @@
+.artist-albums {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  color: #f3f3f3;
+}
+
+.artist-albums__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.artist-albums__cta {
+  background: #6c63ff;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.artist-albums__status {
+  margin: 0;
+  color: #d6d6d6;
+}
+
+.artist-albums__status--error {
+  color: #ff8a8a;
+}
+
+.artist-albums__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.artist-albums__card {
+  background: #1a1a28;
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.artist-albums__cover img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.artist-albums__cover-placeholder {
+  background: #2c2c40;
+  color: #c2c2c2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
+  border-radius: 10px;
+}
+
+.artist-albums__info h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.artist-albums__badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  background: #3a3a55;
+}
+
+.artist-albums__badge--published {
+  background: #2e7d32;
+}
+
+.artist-albums__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.artist-albums__actions button {
+  background: #5c6bc0;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.artist-albums__actions button.danger {
+  background: #d32f2f;
+}
+
+.artist-albums__hint {
+  color: #a0a0a0;
+  font-size: 13px;
+}
+

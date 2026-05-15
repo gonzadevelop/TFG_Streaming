@@ -1,0 +1,83 @@
+.artist-home {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  color: #f3f3f3;
+}
+
+.artist-home__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.artist-home__cta {
+  background: #6c63ff;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.artist-home__status {
+  margin: 0;
+  color: #d6d6d6;
+}
+
+.artist-home__status--error {
+  color: #ff8a8a;
+}
+
+.artist-home__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.artist-home__stat {
+  background: #1e1e2f;
+  padding: 16px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.artist-home__stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  display: block;
+}
+
+.artist-home__stat-label {
+  font-size: 13px;
+  color: #c2c2c2;
+}
+
+.artist-home__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.artist-home__card {
+  display: block;
+  background: #1a1a28;
+  border-radius: 12px;
+  padding: 18px;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.artist-home__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.artist-home__card--disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+

@@ -8,9 +8,9 @@ import {
   computed,
   Signal,
 } from '@angular/core';
-import { IPista } from '../../../../model/pista/IPista';
-import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
-import { FavoritosService } from '../../../../services/favoritosService';
+import { IPista } from '../../../../../model/pista/IPista';
+import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
+import { FavoritosService } from '../../../../../services/favoritosService';
 
 @Component({
   selector: 'app-lista-favoritos',

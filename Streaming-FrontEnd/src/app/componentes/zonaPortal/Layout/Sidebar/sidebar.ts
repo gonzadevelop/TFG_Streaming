@@ -36,6 +36,7 @@ export class Sidebar implements OnInit {
   readonly isOpen = input<boolean>(true);
   userName: WritableSignal<string> = signal<string>('');
   avatarUrl: WritableSignal<string | null> = signal<string | null>(null);
+  role: WritableSignal<string | null> = signal<string | null>(null);
 
   protected readonly dropdownOpen = signal<boolean>(false);
   protected readonly estaLogueado = signal<boolean>(false);
@@ -67,10 +68,11 @@ export class Sidebar implements OnInit {
   }
 
   cerrarSesion(): void {
-    this.tokenService.removeToken();
+    this.tokenService.clearSession();
     this.estaLogueado.set(false);
     this.userName.set('');
     this.avatarUrl.set(null);
+    this.role.set(null);
     this.closeDropdown();
     this.router.navigate(['/']);
   }
@@ -78,6 +80,7 @@ export class Sidebar implements OnInit {
   ngOnInit(): void {
     this.estaLogueado.set(this.tokenService.isLogged());
     if (this.estaLogueado()) {
+      this.role.set(this.tokenService.getPrimaryRole());
       this.sidebarService.getUsername().subscribe({
         next: (username) => {
           this.userName.set(username);

@@ -52,8 +52,10 @@ export class Login implements OnInit, OnDestroy {
       next: (response: IAuthResponse): void => {
         this.tokenService.setToken(response.token ?? '');
         this.tokenService.setUsername(response.user?.username ?? '');
+        const role = response.user?.idRole?.nombre ?? this.tokenService.getPrimaryRole(response.token);
+        this.tokenService.setRole(role ?? null);
         this.isLoading.set(false);
-        this.router.navigate(['/home']);
+        this.router.navigate([role === 'ROLE_ARTISTA' ? '/artista/home' : '/']);
       },
       error: (): void => {
         this.isLoading.set(false);

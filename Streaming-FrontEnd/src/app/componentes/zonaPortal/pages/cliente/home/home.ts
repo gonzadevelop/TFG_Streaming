@@ -1,22 +1,14 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  computed,
-  inject,
-  signal, WritableSignal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { TokenService } from '../../../../services/tokenService';
-import { HomeService } from '../../../../services/homeService';
-import { PlaylistService } from '../../../../services/playlistService';
-import { IHome } from '../../../../model/home/IHome';
-import { IPlaylist } from '../../../../model/home/IPlaylist';
-import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
-import { AlbumCard } from '../compartido/album-card/album-card';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, forkJoin, of } from 'rxjs';
+import { TokenService } from '../../../../../services/tokenService';
+import { HomeService } from '../../../../../services/homeService';
+import { PlaylistService } from '../../../../../services/playlistService';
+import { IHome } from '../../../../../model/home/IHome';
+import { IPlaylist } from '../../../../../model/home/IPlaylist';
+import { ListaCanciones } from '../../compartido/lista-canciones/lista-canciones';
+import { AlbumCard } from '../../compartido/album-card/album-card';
 
 @Component({
   selector: 'app-home',
@@ -86,7 +78,7 @@ export class Home implements OnInit {
       home:         this.homeService.getDatosHome().pipe(catchError(() => of(null))),
       misPlaylists: this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))),
     }).subscribe({
-      next: ({ home, misPlaylists }) => {
+      next: ({ home, misPlaylists }: { home: IHome | null; misPlaylists: IPlaylist[] }) => {
         this.homeData.set({
           keySoundPlaylists:      home?.keySoundPlaylists      ?? [],
           artistasSeguidos:       home?.artistasSeguidos       ?? [],
@@ -178,7 +170,7 @@ export class Home implements OnInit {
         this.modalAbierto.set(false);
         // Recargar mis playlists tras crear
         this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))).subscribe({
-          next: (playlists) => this.homeData.update(d => ({ ...d, misPlaylist: playlists ?? [] })),
+          next: (playlists) => this.homeData.update((d: IHome) => ({ ...d, misPlaylist: playlists ?? [] })),
         });
       },
       error: () => {

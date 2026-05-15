@@ -1,0 +1,16 @@
+<div class="artist-layout">
+  <aside class="artist-layout__sidebar" [class.artist-layout__sidebar--hidden]="!sidebarOpen()">
+    <app-sidebar-artista [isOpen]="sidebarOpen()" />
+  </aside>
+
+  <div class="artist-layout__content">
+    <header class="artist-layout__header">
+      <h1>Panel de artista</h1>
+    </header>
+
+    <main class="artist-layout__main">
+      <router-outlet />
+    </main>
+  </div>
+</div>
+

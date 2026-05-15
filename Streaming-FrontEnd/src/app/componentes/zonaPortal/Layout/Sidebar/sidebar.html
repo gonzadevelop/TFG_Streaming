@@ -110,4 +110,33 @@
     }
   </nav>
 
+  @if (role() === 'ROLE_ARTISTA') {
+    <nav class="sidebar-nav" aria-label="Menú artista">
+      <a
+        routerLink="/artista/home"
+        routerLinkActive="active"
+        class="sidebar-link"
+        aria-label="Panel de artista">
+        <span class="material-icons" aria-hidden="true">mic</span>
+        Panel artista
+      </a>
+      <a
+        routerLink="/artista/albumes"
+        routerLinkActive="active"
+        class="sidebar-link"
+        aria-label="Mis lanzamientos">
+        <span class="material-icons" aria-hidden="true">album</span>
+        Mis lanzamientos
+      </a>
+      <a
+        routerLink="/artista/subir"
+        routerLinkActive="active"
+        class="sidebar-link"
+        aria-label="Subir album">
+        <span class="material-icons" aria-hidden="true">cloud_upload</span>
+        Subir album
+      </a>
+    </nav>
+  }
+
 </aside>

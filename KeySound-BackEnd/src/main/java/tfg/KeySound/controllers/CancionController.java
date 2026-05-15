@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tfg.KeySound.model.album.ResponseAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaBusquedaDTO;
-import tfg.KeySound.model.pista.ResponsePistaDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
+import tfg.KeySound.model.cancion.ResponseCancionExistenteDTO;
 import tfg.KeySound.services.CancionService;
 
 import java.util.List;
@@ -64,6 +63,21 @@ public class CancionController {
     @GetMapping("/buscar")
     public ResponseEntity<List<ResponsePistaBusquedaDTO>> buscarCanciones(@RequestParam String q) {
         return ResponseEntity.ok(cancionService.buscarCanciones(q));
+    }
+
+    /**
+     * Endpoint para buscar canciones del artista autenticado.
+     * @param q {@link String} texto de búsqueda
+     * @param token {@link String} token JWT del artista
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseCancionExistenteDTO}&gt;&gt;
+     * @apiNote {@code GET /api/canciones/buscar-mis?q=texto}
+     */
+    @GetMapping("/buscar-mis")
+    @PreAuthorize("hasRole('ARTISTA')")
+    public ResponseEntity<List<ResponseCancionExistenteDTO>> buscarMisCanciones(
+            @RequestParam String q,
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(cancionService.buscarMisCanciones(token.substring(7), q));
     }
 
 }

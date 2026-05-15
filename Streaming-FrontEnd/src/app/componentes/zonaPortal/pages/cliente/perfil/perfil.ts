@@ -1,17 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  inject,
-  signal,
-  computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { UserService } from '../../../../../services/userService';
+import { SidebarService } from '../../../../../services/SidebarService';
+import { IResponseUsuario } from '../../../../../model/IResponseUsuario';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '../../../../services/userService';
-import { SidebarService } from '../../../../services/SidebarService';
-import { IResponseUsuario } from '../../../../model/IResponseUsuario';
 import { RouterLink } from '@angular/router';
+import { signal, computed } from '@angular/core';
 
 @Component({
   selector: 'app-perfil',
@@ -20,7 +13,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './perfil.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Perfil implements OnInit, OnDestroy {
+export class Perfil {
   private readonly userService = inject(UserService);
   private readonly sidebarService = inject(SidebarService);
 
@@ -209,4 +202,3 @@ export class Perfil implements OnInit, OnDestroy {
     });
   }
 }
-
