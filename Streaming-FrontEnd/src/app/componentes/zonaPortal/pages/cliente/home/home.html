@@ -64,12 +64,39 @@
         @if (homeData().misPlaylist.length > 0) {
           <div class="cards-grid" role="list">
             @for (playlist of homeData().misPlaylist; track playlist.id!) {
-              <app-album-card
-                [album]="playlist"
-                [routerLink]="['/playlists', playlist.id.toString()]"
-                [contentType]="'playlist'"
-                role="listitem"
-              />
+              <div class="playlist-card-wrapper" role="listitem">
+                <app-album-card
+                  [album]="playlist"
+                  [routerLink]="['/playlists', playlist.id.toString()]"
+                  [contentType]="'playlist'"
+                />
+                <div class="playlist-card-actions">
+                  <button type="button" class="playlist-action-btn playlist-action-btn--edit"
+                    (click)="abrirEditModal(playlist, $event)"
+                    [attr.aria-label]="'Editar playlist ' + playlist.nombre">
+                    <span class="material-icons" aria-hidden="true">edit</span>
+                  </button>
+                  @if (confirmDeleteId() === playlist.id) {
+                    <div class="playlist-delete-confirm">
+                      <span>¿Eliminar?</span>
+                      <button type="button" class="playlist-action-btn playlist-action-btn--confirm"
+                        (click)="eliminarPlaylist()" [disabled]="eliminando()" aria-label="Confirmar eliminación">
+                        <span class="material-icons" aria-hidden="true">check</span>
+                      </button>
+                      <button type="button" class="playlist-action-btn playlist-action-btn--cancel-del"
+                        (click)="cancelarEliminar()" aria-label="Cancelar eliminación">
+                        <span class="material-icons" aria-hidden="true">close</span>
+                      </button>
+                    </div>
+                  } @else {
+                    <button type="button" class="playlist-action-btn playlist-action-btn--delete"
+                      (click)="pedirConfirmacionEliminar(playlist.id, $event)"
+                      [attr.aria-label]="'Eliminar playlist ' + playlist.nombre">
+                      <span class="material-icons" aria-hidden="true">delete</span>
+                    </button>
+                  }
+                </div>
+              </div>
             }
           </div>
         } @else {
@@ -345,4 +372,96 @@
     </div>
   </div>
 }
+
+
+<!-- ══════════════════════════
+     MODAL EDITAR PLAYLIST
+══════════════════════════ -->
+@if (editModalAbierto()) {
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-modal-titulo"
+    (click)="cerrarEditModal()" (keydown.escape)="cerrarEditModal()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-titulo" id="edit-modal-titulo">
+          <span class="material-icons" aria-hidden="true">edit</span>
+          Editar playlist
+        </h2>
+        <button type="button" class="modal-close" (click)="cerrarEditModal()" aria-label="Cerrar" [disabled]="editando()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="editPlaylistForm" (ngSubmit)="editarPlaylist()" class="modal-body" novalidate>
+
+        <div class="drop-zone"
+          [class.drop-zone--over]="editDraggingOver()"
+          [class.drop-zone--filled]="editPortadaPreview()"
+          (dragover)="onEditDragOver($event)"
+          (dragleave)="onEditDragLeave()"
+          (drop)="onEditDrop($event)"
+          (click)="editFileInput.click()"
+          (keydown.enter)="editFileInput.click()"
+          (keydown.space)="$event.preventDefault(); editFileInput.click()"
+          role="button" tabindex="0"
+          aria-label="Seleccionar portada de la playlist">
+          @if (editPortadaPreview()) {
+            <img [src]="editPortadaPreview()!" alt="Vista previa de la portada" class="drop-zone__preview" />
+            <button type="button" class="drop-zone__remove" (click)="$event.stopPropagation(); quitarPortadaEdit()" aria-label="Quitar portada">
+              <span class="material-icons" aria-hidden="true">delete</span>
+            </button>
+          } @else {
+            <span class="material-icons drop-zone__icon" aria-hidden="true">add_photo_alternate</span>
+            <span class="drop-zone__label">Arrastra una imagen o haz clic</span>
+            <span class="drop-zone__hint">PNG, JPG, WEBP — Opcional</span>
+          }
+        </div>
+        <input #editFileInput type="file" accept="image/*" class="visually-hidden" aria-hidden="true" tabindex="-1" (change)="onEditFileSelected($event)" />
+
+        <div class="form-field">
+          <label class="form-label" for="edit-playlist-nombre">Nombre <span aria-hidden="true" class="required-mark">*</span></label>
+          <input id="edit-playlist-nombre" type="text" class="form-input" formControlName="nombre"
+            placeholder="Mi playlist..." autocomplete="off" aria-required="true"
+            [attr.aria-invalid]="editPlaylistForm.get('nombre')!.invalid && editPlaylistForm.get('nombre')!.touched" />
+          @if (editPlaylistForm.get('nombre')!.invalid && editPlaylistForm.get('nombre')!.touched) {
+            <span class="form-error" role="alert">El nombre es obligatorio.</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="edit-playlist-desc">Descripción</label>
+          <textarea id="edit-playlist-desc" class="form-input form-input--textarea" formControlName="descripcion"
+            placeholder="Describe tu playlist... (opcional)" rows="3"></textarea>
+        </div>
+
+        <div class="form-field form-field--row">
+          <label class="form-label" for="edit-playlist-publica">Playlist pública</label>
+          <label class="toggle" aria-label="Hacer la playlist pública">
+            <input id="edit-playlist-publica" type="checkbox" formControlName="esPublica" class="toggle__input" />
+            <span class="toggle__track" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        @if (errorEditModal()) {
+          <p class="form-error form-error--general" role="alert">{{ errorEditModal() }}</p>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal btn-modal--cancel" (click)="cerrarEditModal()" [disabled]="editando()">Cancelar</button>
+          <button type="submit" class="btn-modal btn-modal--confirm" [disabled]="editPlaylistForm.invalid || editando()">
+            @if (editando()) {
+              <span class="modal-spinner" aria-hidden="true"></span>
+              Guardando…
+            } @else {
+              <span class="material-icons" aria-hidden="true">save</span>
+              Guardar
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+}
+
 

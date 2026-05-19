@@ -54,8 +54,17 @@
               </div>
               <div class="stats-item__info">
                 <p class="stats-item__name">{{ cancion.titulo }}</p>
-                <p class="stats-item__sub">{{ (cancion.artistas ?? []).join(', ') }}</p>
+                @if (cancion.artistasUsername && cancion.artistasUsername.length > 0) {
+                  <p class="stats-item__sub">
+                    @for (username of cancion.artistasUsername; track username; let last = $last; let idx = $index) {
+                      <a [routerLink]="['/artistas', username]" class="stats-item__sub--link">{{ cancion.artistas[idx] }}</a>@if (!last){, }
+                    }
+                  </p>
+                } @else {
+                  <p class="stats-item__sub">{{ cancion.artistas && cancion.artistas.length > 0 ? cancion.artistas.join(', ') : '' }}</p>
+                }
               </div>
+
               <div class="stats-item__meta">
                 <span class="stats-item__plays" aria-label="{{ cancion.reproducciones }} reproducciones">
                   <span class="material-icons" aria-hidden="true">play_circle</span>
@@ -90,27 +99,48 @@
           @for (artista of topArtistas(); track i; let i = $index) {
             <li class="stats-item" role="listitem">
               <span class="stats-item__pos" aria-hidden="true">{{ i + 1 }}</span>
-              <a
-                [routerLink]="['/artistas', artista.username]"
-                class="stats-item__cover stats-item__cover--round"
-                [attr.aria-label]="'Ver perfil de ' + artista.nombre">
-                @if (artista.urlFotoPerfil) {
-                  <img
-                    [src]="artista.urlFotoPerfil"
-                    [alt]="'Foto de ' + artista.nombre"
-                    class="stats-item__img stats-item__img--round"
-                    loading="lazy"
-                  />
-                } @else {
-                  <span class="stats-item__avatar-placeholder" aria-hidden="true">
-                    {{ artista.nombre[0].toUpperCase() }}
-                  </span>
-                }
-              </a>
-              <div class="stats-item__info">
-                <a [routerLink]="['/artistas', artista.username]" class="stats-item__name stats-item__name--link">
-                  {{ artista.nombre }}
+              @if (artista.username) {
+                <a
+                  [routerLink]="['/artistas', artista.username]"
+                  class="stats-item__cover stats-item__cover--round"
+                  [attr.aria-label]="'Ver perfil de ' + artista.nombre">
+                  @if (artista.urlFotoPerfil) {
+                    <img
+                      [src]="artista.urlFotoPerfil"
+                      [alt]="'Foto de ' + artista.nombre"
+                      class="stats-item__img stats-item__img--round"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <span class="stats-item__avatar-placeholder" aria-hidden="true">
+                      {{ artista.nombre[0].toUpperCase() }}
+                    </span>
+                  }
                 </a>
+              } @else {
+                <div class="stats-item__cover stats-item__cover--round">
+                  @if (artista.urlFotoPerfil) {
+                    <img
+                      [src]="artista.urlFotoPerfil"
+                      [alt]="'Foto de ' + artista.nombre"
+                      class="stats-item__img stats-item__img--round"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <span class="stats-item__avatar-placeholder" aria-hidden="true">
+                      {{ artista.nombre[0].toUpperCase() }}
+                    </span>
+                  }
+                </div>
+              }
+              <div class="stats-item__info">
+                @if (artista.username) {
+                  <a [routerLink]="['/artistas', artista.username]" class="stats-item__name stats-item__name--link">
+                    {{ artista.nombre }}
+                  </a>
+                } @else {
+                  <span class="stats-item__name">{{ artista.nombre }}</span>
+                }
                 <p class="stats-item__sub">Artista</p>
               </div>
               <div class="stats-item__meta">
@@ -154,7 +184,7 @@
                 <a [routerLink]="['/album', album.id]" class="stats-item__name stats-item__name--link">
                   {{ album.titulo }}
                 </a>
-                <p class="stats-item__sub">{{ album.artista }}</p>
+                <p class="stats-item__sub">{{ album.artistas && album.artistas.length > 0 ? album.artistas.join(', ') : album.artista }}</p>
               </div>
               <div class="stats-item__meta">
                 <span class="stats-item__plays" aria-label="{{ album.reproducciones }} reproducciones">

@@ -33,17 +33,24 @@ export class ContextMenu implements OnDestroy {
   readonly pista    = input.required<IPista>();
   readonly position = input.required<ContextMenuPosition>();
   readonly visible  = input<boolean>(false);
+  /** ID de la playlist actual (solo cuando el menú se abre desde dentro de una playlist propia) */
+  readonly playlistId      = input<number | null>(null);
+  readonly esPlaylistPropia = input<boolean>(false);
 
   readonly cerrar = output<void>();
+  /** Emite el idPista eliminado para que el componente padre actualice la lista */
+  readonly cancionEliminada = output<number>();
 
   private readonly storage         = inject(StorageGlobal);
   private readonly playlistService = inject(PlaylistService);
   private readonly ctxMenuService  = inject(ContextMenuService);
   private readonly elRef           = inject(ElementRef<HTMLElement>);
 
-  protected readonly misPlaylists   = signal<IPlaylist[]>([]);
-  protected readonly subMenuAbierto = signal<boolean>(false);
-  protected readonly mensaje        = signal<string | null>(null);
+  protected readonly misPlaylists      = signal<IPlaylist[]>([]);
+  protected readonly subMenuAbierto   = signal<boolean>(false);
+  protected readonly mensaje           = signal<string | null>(null);
+  protected readonly cargandoPlaylists = signal<boolean>(false);
+  protected readonly guardando         = signal<boolean>(false);
   private mensajeTimeout: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly estiloMenu = computed(() => ({
@@ -55,9 +62,16 @@ export class ContextMenu implements OnDestroy {
     // Carga las playlists cuando el menú se abre
     effect(() => {
       if (this.visible()) {
+        this.cargandoPlaylists.set(true);
         this.playlistService.getMisPlaylists().subscribe({
-          next: (playlists) => this.misPlaylists.set(playlists),
-          error: () => this.misPlaylists.set([]),
+          next: (playlists) => {
+            this.misPlaylists.set(playlists);
+            this.cargandoPlaylists.set(false);
+          },
+          error: () => {
+            this.misPlaylists.set([]);
+            this.cargandoPlaylists.set(false);
+          },
         });
       }
     });
@@ -79,6 +93,34 @@ export class ContextMenu implements OnDestroy {
     if (this.mensajeTimeout) clearTimeout(this.mensajeTimeout);
   }
 
+  protected eliminarDePlaylist(): void {
+    const p = this.pista();
+    const idPista = p.idPista && p.idPista !== 0 ? p.idPista : (p.id ?? 0);
+    const idPlaylist = this.playlistId();
+
+    if (idPista === 0 || !idPlaylist) {
+      this.mostrarMensaje('✖ No se pudo identificar la canción o la playlist');
+      return;
+    }
+
+    this.guardando.set(true);
+    this.playlistService.eliminarCancionDePlaylist(idPlaylist, idPista).subscribe({
+      next: () => {
+        this.guardando.set(false);
+        this.cancionEliminada.emit(idPista);
+        this.mostrarMensaje('✔ Eliminada de la playlist');
+        setTimeout(() => {
+          this.ctxMenuService.cerrar();
+          this.cerrar.emit();
+        }, 1200);
+      },
+      error: () => {
+        this.guardando.set(false);
+        this.mostrarMensaje('✖ Error al eliminar de la playlist');
+      },
+    });
+  }
+
   protected agregarACola(): void {
     const p = this.pista();
     const pistaCola: IPistaCola = {
@@ -97,15 +139,36 @@ export class ContextMenu implements OnDestroy {
   }
 
   protected agregarAPlaylist(playlist: IPlaylist): void {
+    const p = this.pista();
+    // idPista puede venir como 0 en algunos contextos; usamos `id` como fallback
+    const idPista = p.idPista && p.idPista !== 0 ? p.idPista : (p.id ?? 0);
+
+    if (idPista === 0) {
+      this.mostrarMensaje('✖ No se pudo identificar la canción');
+      return;
+    }
+
+    this.guardando.set(true);
+    this.subMenuAbierto.set(false);
+
     this.playlistService.setAgregarCancionPlaylist({
       playlistId: playlist.id,
-      pistaIds: [this.pista().idPista],
+      pistaIds: [idPista],
     }).subscribe({
-      next: () => this.mostrarMensaje(`✔ Añadida a "${playlist.nombre}"`),
-      error: () => this.mostrarMensaje('✖ Error al añadir a la playlist'),
+      next: () => {
+        this.guardando.set(false);
+        this.mostrarMensaje(`✔ Añadida a "${playlist.nombre}"`);
+        // Cerramos el menú tras breve feedback
+        setTimeout(() => {
+          this.ctxMenuService.cerrar();
+          this.cerrar.emit();
+        }, 1200);
+      },
+      error: () => {
+        this.guardando.set(false);
+        this.mostrarMensaje('✖ Error al añadir a la playlist');
+      },
     });
-    this.subMenuAbierto.set(false);
-    this.cerrar.emit();
   }
 
   protected toggleSubMenu(event: Event): void {

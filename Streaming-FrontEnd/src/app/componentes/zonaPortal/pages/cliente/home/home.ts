@@ -152,6 +152,132 @@ export class Home implements OnInit {
     this.portadaFile.set(null);
   }
 
+  // ── Modal edición playlist ───────────────────────────────
+  protected readonly editModalAbierto     = signal(false);
+  protected readonly editando             = signal(false);
+  protected readonly errorEditModal       = signal<string | null>(null);
+  protected readonly editPortadaPreview   = signal<string | null>(null);
+  protected readonly editPortadaFile      = signal<File | null>(null);
+  protected readonly editDraggingOver     = signal(false);
+  protected readonly editPlaylistId       = signal<number | null>(null);
+  protected readonly confirmDeleteId      = signal<number | null>(null);
+  protected readonly eliminando           = signal(false);
+
+  protected readonly editPlaylistForm: FormGroup = this.fb.group({
+    nombre:      ['', [Validators.required, Validators.maxLength(100)]],
+    descripcion: ['', Validators.maxLength(300)],
+    esPublica:   [true],
+  });
+
+  protected abrirEditModal(playlist: IPlaylist, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.editPlaylistId.set(playlist.id);
+    this.editPlaylistForm.reset({ nombre: playlist.nombre, descripcion: playlist.descripcion, esPublica: true });
+    this.editPortadaPreview.set(playlist.urlPortada ?? null);
+    this.editPortadaFile.set(null);
+    this.errorEditModal.set(null);
+    this.editModalAbierto.set(true);
+  }
+
+  protected cerrarEditModal(): void {
+    if (this.editando()) return;
+    this.editModalAbierto.set(false);
+  }
+
+  protected onEditDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.editDraggingOver.set(true);
+  }
+
+  protected onEditDragLeave(): void {
+    this.editDraggingOver.set(false);
+  }
+
+  protected onEditDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.editDraggingOver.set(false);
+    const file = event.dataTransfer?.files[0];
+    if (file) this.procesarImagenEdit(file);
+  }
+
+  protected onEditFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) this.procesarImagenEdit(file);
+  }
+
+  private procesarImagenEdit(file: File): void {
+    if (!file.type.startsWith('image/')) {
+      this.errorEditModal.set('El archivo debe ser una imagen.');
+      return;
+    }
+    this.editPortadaFile.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => this.editPortadaPreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  protected quitarPortadaEdit(): void {
+    this.editPortadaPreview.set(null);
+    this.editPortadaFile.set(null);
+  }
+
+  protected editarPlaylist(): void {
+    const id = this.editPlaylistId();
+    if (this.editPlaylistForm.invalid || this.editando() || id === null) return;
+    this.editando.set(true);
+    this.errorEditModal.set(null);
+
+    const { nombre, descripcion, esPublica } = this.editPlaylistForm.value as {
+      nombre: string; descripcion: string; esPublica: boolean;
+    };
+
+    this.playlistService.setEditarPlaylist(id, {
+      nombre, descripcion, esPublica,
+      fotoPortada: this.editPortadaFile() ?? undefined,
+    }).subscribe({
+      next: () => {
+        this.editando.set(false);
+        this.editModalAbierto.set(false);
+        this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))).subscribe({
+          next: (playlists) => this.homeData.update((d: IHome) => ({ ...d, misPlaylist: playlists ?? [] })),
+        });
+      },
+      error: () => {
+        this.editando.set(false);
+        this.errorEditModal.set('No se pudo editar la playlist. Inténtalo de nuevo.');
+      },
+    });
+  }
+
+  protected pedirConfirmacionEliminar(id: number, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmDeleteId.set(id);
+  }
+
+  protected cancelarEliminar(): void {
+    this.confirmDeleteId.set(null);
+  }
+
+  protected eliminarPlaylist(): void {
+    const id = this.confirmDeleteId();
+    if (id === null || this.eliminando()) return;
+    this.eliminando.set(true);
+    this.playlistService.eliminarPlaylist(id).subscribe({
+      next: () => {
+        this.eliminando.set(false);
+        this.confirmDeleteId.set(null);
+        this.homeData.update((d: IHome) => ({ ...d, misPlaylist: d.misPlaylist.filter(p => p.id !== id) }));
+      },
+      error: () => {
+        this.eliminando.set(false);
+        this.errorEditModal.set('No se pudo eliminar la playlist.');
+      },
+    });
+  }
+
   protected crearPlaylist(): void {
     if (this.playlistForm.invalid || this.creando()) return;
     this.creando.set(true);

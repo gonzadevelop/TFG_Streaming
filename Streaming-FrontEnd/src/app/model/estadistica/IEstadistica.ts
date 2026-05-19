@@ -2,6 +2,7 @@ export interface ITopCancion {
   idPista: number;
   titulo: string;
   artistas: string[];
+  artistasUsername?: string[];
   urlPortada: string;
   urlCancion: string;
   duracionSegundos: number;
@@ -19,6 +20,7 @@ export interface ITopAlbum {
   id: number;
   titulo: string;
   artista: string;
+  artistas?: string[];
   urlPortada: string;
   reproducciones: number;
 }

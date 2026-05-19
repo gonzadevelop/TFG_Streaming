@@ -66,6 +66,12 @@ export class TokenService {
     return this.getRolesFromToken(token ?? this.getToken())[0] ?? null;
   }
 
+  /** Extrae el username (claim 'sub') directamente del JWT almacenado. Más fiable que getUsername() */
+  getUsernameFromToken(): string | null {
+    const payload = this.getTokenPayload(this.getToken());
+    return (payload?.['sub'] as string) ?? null;
+  }
+
   private getTokenPayload(token?: string | null): Record<string, unknown> | null {
     if (!token) return null;
 

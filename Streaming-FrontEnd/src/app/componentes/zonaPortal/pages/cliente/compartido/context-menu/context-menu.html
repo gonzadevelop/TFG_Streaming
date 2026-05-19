@@ -6,11 +6,24 @@
     [style.top]="estiloMenu().top"
     [style.left]="estiloMenu().left"
   >
+    @if (mensaje()) {
+      <div class="ctx-menu__mensaje" role="status" aria-live="polite">{{ mensaje() }}</div>
+    }
+
     <!-- Añadir a la cola -->
     <button type="button" class="ctx-menu__item" role="menuitem" (click)="agregarACola()">
       <span class="ctx-menu__icon" aria-hidden="true"></span>
       Añadir a la cola
     </button>
+
+    <!-- Eliminar de esta playlist (solo cuando estamos dentro de una playlist propia) -->
+    @if (esPlaylistPropia() && playlistId()) {
+      <button type="button" class="ctx-menu__item ctx-menu__item--danger" role="menuitem"
+        [disabled]="guardando()" (click)="eliminarDePlaylist()">
+        <span class="ctx-menu__icon" aria-hidden="true">🗑</span>
+        Eliminar de la playlist
+      </button>
+    }
 
     <!-- Añadir a playlist -->
     <div class="ctx-menu__item ctx-menu__item--submenu" role="none">
@@ -29,23 +42,27 @@
 
       @if (subMenuAbierto()) {
         <div class="ctx-menu__submenu" role="menu" aria-label="Mis playlists">
-          @if (misPlaylists().length === 0) {
+          @if (cargandoPlaylists()) {
+            <p class="ctx-menu__empty">Cargando…</p>
+          } @else if (misPlaylists().length === 0) {
             <p class="ctx-menu__empty">Sin playlists</p>
-          }
-          @for (playlist of misPlaylists(); track playlist.id) {
-            <button
-              type="button"
-              class="ctx-menu__item"
-              role="menuitem"
-              (click)="agregarAPlaylist(playlist)"
-            >
-              @if (playlist.urlPortada) {
-                <img class="ctx-menu__playlist-img" [src]="playlist.urlPortada" [alt]="playlist.nombre" loading="lazy" />
-              } @else {
-                <span class="ctx-menu__icon" aria-hidden="true">🎶</span>
-              }
-              {{ playlist.nombre }}
-            </button>
+          } @else {
+            @for (playlist of misPlaylists(); track playlist.id) {
+              <button
+                type="button"
+                class="ctx-menu__item"
+                role="menuitem"
+                [disabled]="guardando()"
+                (click)="agregarAPlaylist(playlist)"
+              >
+                @if (playlist.urlPortada) {
+                  <img class="ctx-menu__playlist-img" [src]="playlist.urlPortada" [alt]="playlist.nombre" loading="lazy" />
+                } @else {
+                  <span class="ctx-menu__icon" aria-hidden="true">🎶</span>
+                }
+                {{ playlist.nombre }}
+              </button>
+            }
           }
         </div>
       }

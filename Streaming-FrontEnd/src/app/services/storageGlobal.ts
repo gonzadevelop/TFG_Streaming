@@ -1,4 +1,4 @@
-import {inject, Injectable, PLATFORM_ID, signal, untracked, WritableSignal} from '@angular/core';
+import {effect, inject, Injectable, PLATFORM_ID, signal, untracked, WritableSignal} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import IPistaReproduccion from '../model/pista/IPistaReproduccion';
 import IPistaCola from '../model/pista/IPistaCola';
@@ -22,6 +22,27 @@ export class StorageGlobal {
   readonly cola = signal<IPistaCola[]>([]);
   readonly isShuffled = signal<boolean>(false);
   private readonly _currentColaIndex = signal<number>(-1);
+
+  constructor() {
+    if (isPlatformBrowser(this._platformId)) {
+      // Restaurar cola desde localStorage al iniciar
+      const colaGuardada = JSON.parse(localStorage.getItem('player_cola') || 'null');
+      if (colaGuardada && Array.isArray(colaGuardada) && colaGuardada.length > 0) {
+        this.cola.set(colaGuardada);
+        this.colaOriginal.set(colaGuardada);
+        const idx = colaGuardada.findIndex((p: IPistaCola) => p.reproduciendo);
+        this._currentColaIndex.set(idx !== -1 ? idx : 0);
+      }
+    }
+
+    // Persistir cola en localStorage cada vez que cambie
+    effect(() => {
+      const c = this.cola();
+      if (isPlatformBrowser(this._platformId)) {
+        localStorage.setItem('player_cola', JSON.stringify(c));
+      }
+    });
+  }
 
   SetCola(lista: IPistaCola[]): void {
     this.colaOriginal.set(lista);
@@ -189,7 +210,7 @@ export class StorageGlobal {
 
   GetReproduccion(): WritableSignal<IPistaReproduccion> {
     if (!this._reproduccion().urlCancion) {
-      const datosReproduccion = JSON.parse(sessionStorage.getItem('reproduccion') || 'null');
+      const datosReproduccion = JSON.parse(localStorage.getItem('reproduccion') || 'null');
       if (datosReproduccion) {
         untracked(() => this._reproduccion.set(datosReproduccion));
       }
@@ -214,9 +235,10 @@ export class StorageGlobal {
       }
     });
     if (reproduccion) {
-      sessionStorage.setItem('reproduccion', JSON.stringify(reproduccion));
+      localStorage.setItem('reproduccion', JSON.stringify(reproduccion));
     } else {
-      sessionStorage.removeItem('reproduccion');
+      localStorage.removeItem('reproduccion');
+      localStorage.removeItem('player_tiempo');
     }
   }
 
@@ -237,6 +259,12 @@ export class StorageGlobal {
 
     this._audio.addEventListener('loadedmetadata', () => {
       this.duracion.set(this._audio!.duration);
+      // Restaurar tiempo guardado
+      const tiempoGuardado = parseFloat(localStorage.getItem('player_tiempo') || '0');
+      if (tiempoGuardado > 0 && tiempoGuardado < this._audio!.duration) {
+        this._audio!.currentTime = tiempoGuardado;
+        this.tiempoActual.set(tiempoGuardado);
+      }
     });
 
     this._audio.addEventListener('timeupdate', () => {
@@ -246,6 +274,7 @@ export class StorageGlobal {
     this._audio.addEventListener('ended', () => {
       this.reproduciendo.set(false);
       this.tiempoActual.set(0);
+      localStorage.removeItem('player_tiempo');
       this._actualizarEstadoReproduccion(false);
     });
 
@@ -283,12 +312,17 @@ export class StorageGlobal {
     this._audio.addEventListener('timeupdate', () => {
       if (this._audioGeneration !== generation) return;
       this.tiempoActual.set(this._audio!.currentTime);
+      // Persistir tiempo cada ~2s para no saturar localStorage
+      if (Math.floor(this._audio!.currentTime) % 2 === 0) {
+        localStorage.setItem('player_tiempo', String(this._audio!.currentTime));
+      }
     });
 
     this._audio.addEventListener('ended', () => {
       if (this._audioGeneration !== generation) return;
       this.reproduciendo.set(false);
       this.tiempoActual.set(0);
+      localStorage.removeItem('player_tiempo');
       this._actualizarEstadoReproduccion(false);
       this.ReproducirSiguienteDeCola();
     });
@@ -382,6 +416,9 @@ export class StorageGlobal {
     this.reproduciendo.set(false);
     this.tiempoActual.set(0);
     this.duracion.set(0);
+    if (isPlatformBrowser(this._platformId)) {
+      localStorage.removeItem('player_tiempo');
+    }
   }
 
 }

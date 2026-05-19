@@ -52,21 +52,45 @@ export class Estadistica implements OnInit {
         this.minutosEscuchados.set(minutos);
 
         const rawCanciones = canciones as Record<string, unknown>[];
-        if (rawCanciones.length > 0) console.log('📦 [estadistica] keys canción:', Object.keys(rawCanciones[0]));
         this.topCanciones.set(
-          rawCanciones.map(c => ({
-            idPista:          (c['idPista'] ?? c['id'] ?? 0) as number,
-            titulo:           (c['titulo'] ?? '') as string,
-            artistas:         ((c['artistas'] ?? []) as string[]),
-            urlPortada:       (c['urlPortada'] ?? c['caratula'] ?? '') as string,
-            urlCancion:       (c['urlCancion'] ?? c['url'] ?? '') as string,
-            duracionSegundos: (c['duracionSegundos'] ?? 0) as number,
-            reproducciones:   (c['reproducciones'] ?? 0) as number,
-          }))
+          rawCanciones.map(c => {
+            // artistas puede ser: string[], objeto[], o no existir
+            const raw = c['artistas'];
+            let artistasArray: string[] = [];
+            if (Array.isArray(raw) && raw.length > 0) {
+              artistasArray = raw.map((a: unknown) =>
+                typeof a === 'string' ? a : ((a as Record<string, unknown>)['nombre'] ?? (a as Record<string, unknown>)['name'] ?? '') as string
+              ).filter(Boolean);
+            }
+            if (artistasArray.length === 0 && c['artista']) {
+              artistasArray = [(c['artista'] as string)];
+            }
+            return {
+              idPista:          (c['idPista'] ?? c['id'] ?? 0) as number,
+              titulo:           (c['titulo'] ?? '') as string,
+              artistas:         artistasArray,
+              artistasUsername: (() => {
+                const raw2 = c['artistasUsername'] ?? c['artistaUsername'];
+                if (Array.isArray(raw2) && raw2.length > 0) return raw2 as string[];
+                const rawArt = c['artistas'];
+                if (Array.isArray(rawArt) && rawArt.length > 0 && typeof rawArt[0] === 'object') {
+                  return (rawArt as Record<string, unknown>[])
+                    .map(a => (a['username'] ?? '') as string)
+                    .filter(Boolean);
+                }
+                return undefined;
+              })(),
+              urlPortada:       (c['urlPortada'] ?? c['caratula'] ?? '') as string,
+              urlCancion:       (c['urlCancion'] ?? c['url'] ?? '') as string,
+              duracionSegundos: (c['duracionSegundos'] ?? 0) as number,
+              reproducciones:   (c['reproducciones'] ?? 0) as number,
+            };
+          })
         );
 
+        const rawArtistas = artistas as Record<string, unknown>[];
         this.topArtistas.set(
-          (artistas as Record<string, unknown>[]).map(a => ({
+          rawArtistas.map(a => ({
             username:      (a['username'] ?? '') as string,
             nombre:        (a['nombre'] ?? a['name'] ?? '') as string,
             urlFotoPerfil: (a['urlFotoPerfil'] ?? a['urlAvatar'] ?? undefined) as string | undefined,
@@ -76,9 +100,10 @@ export class Estadistica implements OnInit {
 
         this.topAlbumes.set(
           (albumes as Record<string, unknown>[]).map(a => ({
-            id:             (a['id'] ?? 0) as number,
+            id:             (a['albumId'] ?? a['id'] ?? 0) as number,
             titulo:         (a['titulo'] ?? '') as string,
             artista:        (a['artista'] ?? '') as string,
+            artistas:       ((a['artistas'] as string[])?.length ? a['artistas'] as string[] : (a['artista'] ? [a['artista'] as string] : [])),
             urlPortada:     (a['urlPortada'] ?? a['caratula'] ?? '') as string,
             reproducciones: (a['reproducciones'] ?? 0) as number,
           }))

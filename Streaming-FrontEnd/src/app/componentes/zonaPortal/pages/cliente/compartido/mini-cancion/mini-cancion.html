@@ -17,7 +17,7 @@
   </div>
 
   <div class="track-row__title-group">
-    @if (pista().urlPortada !== undefined) {
+    @if (mostrarPortada() && pista().urlPortada !== undefined) {
       <div class="mini-cancion__cover">
         <img
           class="mini-cancion__img"
@@ -76,5 +76,8 @@
   [pista]="pista()"
   [position]="ctxPosition()"
   [visible]="ctxVisible()"
+  [playlistId]="playlistId()"
+  [esPlaylistPropia]="esPlaylistPropia()"
   (cerrar)="cerrarContextMenu()"
+  (cancionEliminada)="cancionEliminada.emit($event)"
 />

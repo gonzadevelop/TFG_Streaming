@@ -34,7 +34,7 @@
             <p class="playlist-desc mb-0">{{ p.descripcion }}</p>
           }
           <span class="playlist-stats">
-            <span class="playlist-author">{{ p.usernamePropietario }}</span> • {{ p.pistas.length || 0 }} canciones
+            <span class="playlist-author">{{ p.usernamePropietario || 'Keysound' }}</span> • {{ p.pistas.length || 0 }} canciones
           </span>
         </div>
       </div>
@@ -44,11 +44,111 @@
       <button class="btn-play-large" aria-label="Reproducir" (click)="reproducirTodo()">
         ▶
       </button>
+      @if (esPropia()) {
+        <button class="btn-edit-playlist" (click)="abrirEditModal()" aria-label="Editar playlist">
+          <span class="material-icons" aria-hidden="true">edit</span>
+          Editar
+        </button>
+      }
     </div>
 
     <div class="playlist-content">
       <app-lista-canciones
-        [pistas]="p.pistas || []"/>
+        [pistas]="p.pistas || []"
+        [playlistId]="p.id"
+        [esPlaylistPropia]="esPropia()"
+        (cancionEliminada)="onCancionEliminada($event)"/>
     </div>
   </section>
 }
+
+<!-- ══════════════════════════
+     MODAL EDITAR PLAYLIST
+══════════════════════════ -->
+@if (editModalAbierto()) {
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-modal-titulo"
+    (click)="cerrarEditModal()" (keydown.escape)="cerrarEditModal()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-titulo" id="edit-modal-titulo">
+          <span class="material-icons" aria-hidden="true">edit</span>
+          Editar playlist
+        </h2>
+        <button type="button" class="modal-close" (click)="cerrarEditModal()" aria-label="Cerrar" [disabled]="editando()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="guardarEdicion()" class="modal-body" novalidate>
+
+        <div class="drop-zone"
+          [class.drop-zone--over]="draggingOver()"
+          [class.drop-zone--filled]="portadaPreview()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave()"
+          (drop)="onDrop($event)"
+          (click)="editFileInput.click()"
+          (keydown.enter)="editFileInput.click()"
+          (keydown.space)="$event.preventDefault(); editFileInput.click()"
+          role="button" tabindex="0"
+          aria-label="Seleccionar portada de la playlist">
+          @if (portadaPreview()) {
+            <img [src]="portadaPreview()!" alt="Vista previa de la portada" class="drop-zone__preview" />
+            <button type="button" class="drop-zone__remove" (click)="$event.stopPropagation(); quitarPortada()" aria-label="Quitar portada">
+              <span class="material-icons" aria-hidden="true">delete</span>
+            </button>
+          } @else {
+            <span class="material-icons drop-zone__icon" aria-hidden="true">add_photo_alternate</span>
+            <span class="drop-zone__label">Arrastra una imagen o haz clic</span>
+            <span class="drop-zone__hint">PNG, JPG, WEBP — Opcional</span>
+          }
+        </div>
+        <input #editFileInput type="file" accept="image/*" class="visually-hidden" aria-hidden="true" tabindex="-1" (change)="onFileSelected($event)" />
+
+        <div class="form-field">
+          <label class="form-label" for="edit-nombre">Nombre <span aria-hidden="true" class="required-mark">*</span></label>
+          <input id="edit-nombre" type="text" class="form-input" formControlName="nombre"
+            placeholder="Nombre de la playlist..." autocomplete="off" aria-required="true"
+            [attr.aria-invalid]="editForm.get('nombre')!.invalid && editForm.get('nombre')!.touched" />
+          @if (editForm.get('nombre')!.invalid && editForm.get('nombre')!.touched) {
+            <span class="form-error" role="alert">El nombre es obligatorio.</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="edit-desc">Descripción</label>
+          <textarea id="edit-desc" class="form-input form-input--textarea" formControlName="descripcion"
+            placeholder="Describe tu playlist... (opcional)" rows="3"></textarea>
+        </div>
+
+        <div class="form-field form-field--row">
+          <label class="form-label" for="edit-publica">Playlist pública</label>
+          <label class="toggle" aria-label="Hacer la playlist pública">
+            <input id="edit-publica" type="checkbox" formControlName="esPublica" class="toggle__input" />
+            <span class="toggle__track" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        @if (errorEdit()) {
+          <p class="form-error form-error--general" role="alert">{{ errorEdit() }}</p>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal btn-modal--cancel" (click)="cerrarEditModal()" [disabled]="editando()">Cancelar</button>
+          <button type="submit" class="btn-modal btn-modal--confirm" [disabled]="editForm.invalid || editando()">
+            @if (editando()) {
+              <span class="modal-spinner" aria-hidden="true"></span>
+              Guardando…
+            } @else {
+              <span class="material-icons" aria-hidden="true">save</span>
+              Guardar
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+}
+
