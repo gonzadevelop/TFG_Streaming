@@ -13,6 +13,7 @@ import tfg.KeySound.model.playlist.RequestPlaylistDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistCompletaDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import tfg.KeySound.repositorys.*;
+import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.services.external.JwtService;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class PlaylistService {
      * Inyecciones por constructor
      */
     private final JwtService jwtService;
+    private final FirebaseService firebaseService;
     private final RankingService rankingService;
 
     private final PistaRepository pistaRepository;
@@ -84,19 +86,18 @@ public class PlaylistService {
         Set<Long> pistasExistentesIds = playlistPistaRepository.findPistaIdsByPlaylistId(playlist.getId());
 
         // Crear nuevas relaciones PlaylistPista solo para las pistas que no están ya en la playlist
-        List<PlaylistPista> nuevasRelaciones = pistasNuevas.stream()
+        pistasNuevas.stream()
                 .filter(pista -> !pistasExistentesIds.contains(pista.getId()))
-                .map(pista -> {
+                .forEach(pista -> {
                     PlaylistPista relacion = new PlaylistPista();
                     relacion.setId(new PlaylistPistaId(playlist.getId(), pista.getId()));
                     relacion.setPlaylist(playlist);
                     relacion.setPista(pista);
-                    return relacion;
-                })
-                .toList();
+                    playlist.getPlaylistPistas().add(relacion);
+                });
 
-        // Guardar las nuevas relaciones en la base de datos
-        playlistPistaRepository.saveAll(nuevasRelaciones);
+        // Guardar la playlist con las nuevas relaciones
+        playlistRepository.save(playlist);
     }
 
     public List<ResponsePlaylistDTO> getKeysoundPlaylists() {
@@ -114,6 +115,22 @@ public class PlaylistService {
         return playlistMapper.toDtoCompleto(playlist);
     }
 
+    public void eliminarCancionDePlaylist(Long playlistId, Long pistaId, String token) {
+        String username = jwtService.extractUsername(token);
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new PlaylistNotFoundException(playlistId));
+
+        if (!playlist.getPropietario().getId().equals(usuario.getId())) {
+            throw new OwnershipRequiredException();
+        }
+
+        PlaylistPistaId relId = new PlaylistPistaId(playlistId, pistaId);
+        playlistPistaRepository.deleteById(relId);
+    }
+
     public void eliminarPlaylist(Long id, String token) {
         String username = jwtService.extractUsername(token);
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
@@ -126,7 +143,6 @@ public class PlaylistService {
             throw new OwnershipRequiredException();
         }
 
-        playlistPistaRepository.deleteAll(playlist.getPlaylistPistas());
         playlistRepository.delete(playlist);
     }
 
@@ -147,5 +163,34 @@ public class PlaylistService {
         if (q == null || q.isBlank()) return List.of();
 
         return playlistMapper.toDtos(playlistRepository.buscarPorNombre(q));
+    }
+
+    public void editarPlaylist(Long id, RequestPlaylistDTO dto, String token) {
+        String username = jwtService.extractUsername(token);
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new PlaylistNotFoundException(id));
+
+        if (!playlist.getPropietario().getId().equals(usuario.getId())) {
+            throw new OwnershipRequiredException();
+        }
+
+        if (dto.getNombre() != null && !dto.getNombre().isBlank()) {
+            playlist.setNombre(dto.getNombre());
+        }
+
+        if (dto.getDescripcion() != null) {
+            playlist.setDescripcion(dto.getDescripcion());
+        }
+
+        if (dto.getFotoPortada() != null && !dto.getFotoPortada().isEmpty()) {
+            String nuevaFoto = firebaseService.subirArchivo(dto.getFotoPortada(),
+                    "playlist_" + usuario.getId() + "_" + playlist.getNombre() + "_");
+            playlist.setFotoPortada(nuevaFoto);
+        }
+
+        playlistRepository.save(playlist);
     }
 }

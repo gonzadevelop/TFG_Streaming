@@ -87,6 +87,24 @@ public class PlaylistController {
     }
 
     /**
+     * Endpoint para eliminar una canción de una playlist propia.
+     * @param playlistId ID de la playlist
+     * @param pistaId ID de la pista a eliminar
+     * @param token token JWT del usuario autenticado
+     * @return 204 NO_CONTENT si se elimina correctamente
+     * @apiNote {@code DELETE /api/playlists/{playlistId}/cancion/{pistaId}}
+     */
+    @DeleteMapping("/{playlistId}/cancion/{pistaId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> eliminarCancionDePlaylist(
+            @PathVariable Long playlistId,
+            @PathVariable Long pistaId,
+            @RequestHeader("Authorization") String token) {
+        playlistService.eliminarCancionDePlaylist(playlistId, pistaId, token.substring(7));
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * Endpoint para eliminar una playlist propia.
      * @param id {@link Long} ID de la playlist a eliminar
      * @param token {@link String} token JWT del usuario autenticado
@@ -126,5 +144,26 @@ public class PlaylistController {
     @GetMapping("/buscar")
     public ResponseEntity<List<ResponsePlaylistDTO>> buscarPlaylists(@RequestParam String q) {
         return ResponseEntity.ok(playlistService.buscarPlaylists(q));
+    }
+
+    /**
+     * Endpoint para editar una playlist propia.
+     * @param id {@link Long} ID de la playlist a editar
+     * @param dto {@link RequestPlaylistDTO}
+     * @param token {@link String} token JWT del usuario autenticado
+     * @return {@link ResponseEntity}&lt;{@link Void}&gt; Devuelve un status 200 (OK) si se edita correctamente
+     * @throws javax.naming.AuthenticationException 401 (UNAUTHORIZED)
+     * @throws tfg.KeySound.exception.playlist.OwnershipRequiredException 403 (FORBIDDEN)
+     * @throws tfg.KeySound.exception.playlist.PlaylistNotFoundException 404 (NOT_FOUND)
+     * @apiNote {@code PUT /api/playlists/editar}
+     */
+    @PutMapping("/editar/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> editarPlaylist(
+            @PathVariable Long id,
+            @ModelAttribute RequestPlaylistDTO dto,
+            @RequestHeader("Authorization") String token) {
+        playlistService.editarPlaylist(id, dto, token.substring(7));
+        return ResponseEntity.ok().build();
     }
 }

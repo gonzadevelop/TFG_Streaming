@@ -42,15 +42,23 @@ public class EstadisticasService {
         List<TopCancionDTO> topCanciones = historialRepo
                 .findTop5CancionesMes(usuarioId, desde, hasta)
                 .stream()
-                .map(row -> new TopCancionDTO(
-                        toLong(row[0]),
-                        (String) row[1],
-                        toLong(row[3]),
-                        row[2] != null ? ((Number) row[2]).intValue() : null,
-                        firebaseService.obtenerUrlArchivoAudio((String) row[4]),
-                        firebaseService.obtenerUrlArchivoImagen((String) row[5], (String) row[1]),
-                        (String) row[6]
-                ))
+                .map(row -> {
+                    Long cancionId = toLong(row[0]);
+                    String artista = (String) row[6];
+                    List<String> artistas = usuarioRepository.findArtistasDeCancion(cancionId);
+                    if (artistas.isEmpty() && artista != null) artistas = List.of(artista);
+                    return new TopCancionDTO(
+                            cancionId,
+                            (String) row[1],
+                            toLong(row[3]),
+                            row[2] != null ? ((Number) row[2]).intValue() : null,
+                            firebaseService.obtenerUrlArchivoAudio((String) row[4]),
+                            firebaseService.obtenerUrlArchivoImagen((String) row[5], (String) row[1]),
+                            artista,
+                            artista,
+                            artistas
+                    );
+                })
                 .toList();
 
         // Top 5 artistas
@@ -69,12 +77,20 @@ public class EstadisticasService {
         List<TopAlbumDTO> topAlbumes = historialRepo
                 .findTop5AlbumesMes(usuarioId, desde, hasta)
                 .stream()
-                .map(row -> new TopAlbumDTO(
-                        toLong(row[0]),
-                        (String) row[1],
-                        firebaseService.obtenerUrlArchivoImagen((String) row[2], (String) row[1]),
-                        toLong(row[3])
-                ))
+                .map(row -> {
+                    Long albumId = toLong(row[0]);
+                    String artista = (String) row[4];
+                    List<String> artistas = usuarioRepository.findArtistasDeAlbum(albumId);
+                    if (artistas.isEmpty() && artista != null) artistas = List.of(artista);
+                    return new TopAlbumDTO(
+                            albumId,
+                            (String) row[1],
+                            firebaseService.obtenerUrlArchivoImagen((String) row[2], (String) row[1]),
+                            toLong(row[3]),
+                            artista,
+                            artistas
+                    );
+                })
                 .toList();
 
         return new EstadisticasDTO(minutos, topCanciones, topArtistas, topAlbumes);
@@ -120,15 +136,23 @@ public class EstadisticasService {
 
         return historialRepo.findTop5CancionesMes(usuarioId, desde, hasta)
                 .stream()
-                .map(row -> new TopCancionDTO(
-                        toLong(row[0]),
-                        (String) row[1],
-                        toLong(row[3]),
-                        row[2] != null ? ((Number) row[2]).intValue() : null,
-                        firebaseService.obtenerUrlArchivoAudio((String) row[4]),
-                        firebaseService.obtenerUrlArchivoImagen((String) row[5], (String) row[1]),
-                        (String) row[6]
-                ))
+                .map(row -> {
+                    Long cancionId = toLong(row[0]);
+                    String artista = (String) row[6];
+                    List<String> artistas = usuarioRepository.findArtistasDeCancion(cancionId);
+                    if (artistas.isEmpty() && artista != null) artistas = List.of(artista);
+                    return new TopCancionDTO(
+                            cancionId,
+                            (String) row[1],
+                            toLong(row[3]),
+                            row[2] != null ? ((Number) row[2]).intValue() : null,
+                            firebaseService.obtenerUrlArchivoAudio((String) row[4]),
+                            firebaseService.obtenerUrlArchivoImagen((String) row[5], (String) row[1]),
+                            artista,
+                            artista,
+                            artistas
+                    );
+                })
                 .toList();
     }
 
@@ -165,12 +189,20 @@ public class EstadisticasService {
 
         return historialRepo.findTop5AlbumesMes(usuarioId, desde, hasta)
                 .stream()
-                .map(row -> new TopAlbumDTO(
-                        toLong(row[0]),
-                        (String) row[1],
-                        firebaseService.obtenerUrlArchivoImagen((String) row[2], (String) row[1]),
-                        toLong(row[3])
-                ))
+                .map(row -> {
+                    Long albumId = toLong(row[0]);
+                    String artista = (String) row[4];
+                    List<String> artistas = usuarioRepository.findArtistasDeAlbum(albumId);
+                    if (artistas.isEmpty() && artista != null) artistas = List.of(artista);
+                    return new TopAlbumDTO(
+                            albumId,
+                            (String) row[1],
+                            firebaseService.obtenerUrlArchivoImagen((String) row[2], (String) row[1]),
+                            toLong(row[3]),
+                            artista,
+                            artistas
+                    );
+                })
                 .toList();
     }
 

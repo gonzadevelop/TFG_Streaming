@@ -26,11 +26,12 @@ public abstract class ArtistaMapper {
     @Mapping(target = "urlAvatar", ignore = true)
     protected abstract ResponseArtistaDTO toDtoBase(Usuario artista, List<ResponsePistaHomeDTO> canciones, List<ResponseAlbumDTO> albums, int cancionesEnFavoritos);
 
-    public ResponseArtistaDTO toDto(Usuario artista, List<ResponsePistaHomeDTO> canciones, List<ResponseAlbumDTO> albums, int cancionesEnFavoritos) {
+    public ResponseArtistaDTO toDto(Usuario artista, List<ResponsePistaHomeDTO> canciones, List<ResponseAlbumDTO> albums, int cancionesEnFavoritos, boolean sigueAlArtista) {
         ResponseArtistaDTO dto = toDtoBase(artista, canciones, albums, cancionesEnFavoritos);
         // Obtener URL del avatar desde Firebase
         String urlAvatar = firebaseService.obtenerUrlArchivoImagen(artista.getArchivoAvatar(), artista.getUsername());
         dto.setUrlAvatar(urlAvatar);
+        dto.setSigueAlArtista(sigueAlArtista);
         return dto;
     }
 

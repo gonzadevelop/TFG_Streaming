@@ -56,7 +56,10 @@ public abstract class PlaylistMapper {
         dto.setId(playlist.getId());
         dto.setNombre(playlist.getNombre());
         dto.setDescripcion(playlist.getDescripcion());
-        dto.setUsernamePropietario("keysound");
+            String propietario = (playlist.getPropietario() != null && playlist.getPropietario().getUsername() != null)
+                ? playlist.getPropietario().getUsername()
+                : "KeySound";
+        dto.setUsernamePropietario(propietario);
         dto.setUrlPortada(firebaseService.obtenerUrlArchivoImagen(playlist.getFotoPortada(), ""));
         dto.setPistas(mapearPistasDesdePLaylist(playlist));
         dto.setEsPropia(false);

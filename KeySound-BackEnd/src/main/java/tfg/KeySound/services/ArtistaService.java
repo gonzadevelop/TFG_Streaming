@@ -72,7 +72,7 @@ public class ArtistaService {
         // Mapear a DTO
         List<ResponseAlbumDTO> albumsDTO = albumMapper.toDtos(albums);
 
-        return artistaMapper.toDto(artista, cancionesPopulares, albumsDTO, cancionesEnFavoritos);
+        return artistaMapper.toDto(artista, cancionesPopulares, albumsDTO, cancionesEnFavoritos, sigueAlArtista);
     }
 
     public List<ResponseMiAlbumDTO> obtenerMisAlbums(String substring) {

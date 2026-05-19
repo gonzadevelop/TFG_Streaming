@@ -39,6 +39,6 @@ public class Playlist {
     @Column(name = "fecha_creacion")
     private LocalDate fechaCreacion;
 
-    @OneToMany(mappedBy = "playlist")
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PlaylistPista> playlistPistas = new LinkedHashSet<>();
 }

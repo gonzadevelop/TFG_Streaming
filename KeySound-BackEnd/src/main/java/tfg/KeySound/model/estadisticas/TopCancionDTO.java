@@ -1,5 +1,7 @@
 package tfg.KeySound.model.estadisticas;
 
+import java.util.List;
+
 public record TopCancionDTO(
         Long cancionId,
         String titulo,
@@ -7,6 +9,8 @@ public record TopCancionDTO(
         Integer duracionSegundos,
         String urlCancion,
         String urlPortada,
-        String artista
+        String artista,
+        String artistaUsername,
+        List<String> artistas
 ) {}
 

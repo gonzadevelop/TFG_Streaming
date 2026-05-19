@@ -89,4 +89,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             ORDER BY u.username
     """, nativeQuery = true)
     List<String> findArtistasDeCancion(@Param("cancionId") Long cancionId);
+
+    @Query(value = """
+            SELECT DISTINCT u.username
+            FROM usuarios u
+            WHERE u.id = (SELECT al.usuario_id FROM albums al WHERE al.id = :albumId)
+            ORDER BY u.username
+    """, nativeQuery = true)
+    List<String> findArtistasDeAlbum(@Param("albumId") Long albumId);
 }

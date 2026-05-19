@@ -94,18 +94,28 @@ public interface HistorialReproduccionesRepository extends JpaRepository<Histori
                    c.duracion_segundos AS duracionSegundos,
                    COUNT(hr.id) AS reproducciones,
                    c.archivo_cancion AS archivoCancion,
-                   al.archivo_portada AS archivoPortada,
-                   u.username AS artista
+                   (SELECT al2.archivo_portada
+                    FROM pistas p2
+                    JOIN albums al2 ON al2.id = p2.album_id
+                    WHERE p2.cancion_id = c.id
+                    LIMIT 1) AS archivoPortada,
+                   (SELECT u2.username
+                    FROM usuarios u2
+                    WHERE u2.id IN (
+                        SELECT a2.usuario_id FROM pistas p3
+                        JOIN albums a2 ON a2.id = p3.album_id
+                        WHERE p3.cancion_id = c.id
+                        UNION
+                        SELECT ca2.usuario_id FROM cancion_artista ca2
+                        WHERE ca2.cancion_id = c.id
+                    )
+                    LIMIT 1) AS artista
             FROM historial_reproducciones hr
             JOIN canciones c ON c.id = hr.cancion_id
-            LEFT JOIN pistas p ON p.cancion_id = c.id
-            LEFT JOIN albums al ON al.id = p.album_id
-            LEFT JOIN cancion_artista ca ON ca.cancion_id = c.id
-            LEFT JOIN usuarios u ON u.id = ca.usuario_id
             WHERE hr.usuario_id = :usuarioId
               AND hr.fecha_reproduccion >= :desde
               AND hr.fecha_reproduccion < :hasta
-            GROUP BY c.id, c.titulo, c.duracion_segundos, c.archivo_cancion, al.archivo_portada, u.username
+            GROUP BY c.id, c.titulo, c.duracion_segundos, c.archivo_cancion
             ORDER BY reproducciones DESC
             LIMIT 5
     """, nativeQuery = true)
@@ -130,14 +140,18 @@ public interface HistorialReproduccionesRepository extends JpaRepository<Histori
                                         @Param("hasta") LocalDateTime hasta);
 
     @Query(value = """
-            SELECT al.id AS albumId, al.titulo AS titulo, al.archivo_portada AS archivoPortada, COUNT(hr.id) AS reproducciones
+            SELECT al.id AS albumId,
+                   al.titulo AS titulo,
+                   al.archivo_portada AS archivoPortada,
+                   COUNT(hr.id) AS reproducciones,
+                   (SELECT u2.username FROM usuarios u2 WHERE u2.id = al.usuario_id LIMIT 1) AS artista
             FROM historial_reproducciones hr
             JOIN pistas p ON p.cancion_id = hr.cancion_id
             JOIN albums al ON al.id = p.album_id
             WHERE hr.usuario_id = :usuarioId
               AND hr.fecha_reproduccion >= :desde
               AND hr.fecha_reproduccion < :hasta
-            GROUP BY al.id, al.titulo, al.archivo_portada
+            GROUP BY al.id, al.titulo, al.archivo_portada, al.usuario_id
             ORDER BY reproducciones DESC
             LIMIT 5
     """, nativeQuery = true)
