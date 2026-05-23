@@ -1,24 +1,15 @@
-<!-- Fondo animado -->
-<div class="home-bg" aria-hidden="true">
-  <div class="home-blob home-blob--1"></div>
-  <div class="home-blob home-blob--2"></div>
-  <div class="home-blob home-blob--3"></div>
-</div>
+<!-- Loader animado -->
+<app-ks-loader [visible]="cargando()" mensaje="Cargando contenido…" />
 
 <main class="home-content" aria-label="Contenido principal de KeySound">
-  @if (cargando()) {
-    <div class="home-loading" role="status" aria-live="polite">
-      <div class="spinner-border text-primary" aria-hidden="true"></div>
-      <p class="mt-3 mb-0">Cargando contenido…</p>
-    </div>
-  } @else {
+  @if (!cargando()) {
 
     <!-- ══════════════════════════
          1. Keysound Playlists
     ══════════════════════════ -->
     <section class="home-section" aria-labelledby="playlists-heading">
       <div class="container-fluid px-4 px-md-5">
-        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4" scrollReveal [duration]="500">
           <div>
             <h2 class="section-title mb-0" id="playlists-heading">
               Playlists de KeySound
@@ -27,11 +18,11 @@
               Seleccionadas por nuestros editores
             </p>
           </div>
-          <a routerLink="/playlists/keysound" class="section-link" aria-label="Ver todas las playlists">Ver todas →</a>
+          <a routerLink="/playlists/keysound" class="section-link" aria-label="Ver todas las playlists">Ver todas</a>
         </div>
 
         @if (homeData().keySoundPlaylists.length > 0) {
-          <div class="cards-grid" role="list">
+          <div class="cards-grid" scrollReveal [stagger]="70" [delay]="100" role="list">
             @for (playlist of homeData().keySoundPlaylists; track playlist.id!) {
               <app-album-card
                 [album]="playlist"
@@ -50,26 +41,56 @@
     ══════════════════════════ -->
     <section class="home-section" aria-labelledby="mis-playlists-heading">
       <div class="container-fluid px-4 px-md-5">
-        <div class="section-header d-flex align-items-center justify-content-between mb-4">
-          <div>
-            <h2 class="section-title mb-0" id="mis-playlists-heading">Mis playlists</h2>
-            <p class="section-sub mb-0">Colecciones que has creado</p>
+        <div class="section-header d-flex align-items-center justify-content-between mb-4" scrollReveal [duration]="500">
+          <div class="d-flex align-items-center gap-3">
+            <div>
+              <h2 class="section-title mb-0" id="mis-playlists-heading">Mis playlists</h2>
+              <p class="section-sub mb-0">Colecciones que has creado</p>
+            </div>
+            <button type="button" class="btn-crear-playlist" (click)="abrirModal()" aria-label="Crear nueva playlist">
+              <span class="material-icons" aria-hidden="true">add</span>
+              Nueva playlist
+            </button>
           </div>
-          <button type="button" class="btn-crear-playlist" (click)="abrirModal()" aria-label="Crear nueva playlist">
-            <span class="material-icons" aria-hidden="true">add</span>
-            Nueva playlist
-          </button>
+          <a routerLink="/mis-playlists" class="section-link" aria-label="Ver todas mis playlists">Ver todas</a>
         </div>
 
         @if (homeData().misPlaylist.length > 0) {
-          <div class="cards-grid" role="list">
+          <div class="cards-grid" scrollReveal [stagger]="70" [delay]="100" role="list">
             @for (playlist of homeData().misPlaylist; track playlist.id!) {
-              <app-album-card
-                [album]="playlist"
-                [routerLink]="['/playlists', playlist.id.toString()]"
-                [contentType]="'playlist'"
-                role="listitem"
-              />
+              <div class="playlist-card-wrapper" role="listitem">
+                <app-album-card
+                  [album]="playlist"
+                  [routerLink]="['/playlists', playlist.id.toString()]"
+                  [contentType]="'playlist'"
+                />
+                <div class="playlist-card-actions">
+                  <button type="button" class="playlist-action-btn playlist-action-btn--edit"
+                    (click)="abrirEditModal(playlist, $event)"
+                    [attr.aria-label]="'Editar playlist ' + playlist.nombre">
+                    <span class="material-icons" aria-hidden="true">edit</span>
+                  </button>
+                  @if (confirmDeleteId() === playlist.id) {
+                    <div class="playlist-delete-confirm">
+                      <span>¿Eliminar?</span>
+                      <button type="button" class="playlist-action-btn playlist-action-btn--confirm"
+                        (click)="eliminarPlaylist()" [disabled]="eliminando()" aria-label="Confirmar eliminación">
+                        <span class="material-icons" aria-hidden="true">check</span>
+                      </button>
+                      <button type="button" class="playlist-action-btn playlist-action-btn--cancel-del"
+                        (click)="cancelarEliminar()" aria-label="Cancelar eliminación">
+                        <span class="material-icons" aria-hidden="true">close</span>
+                      </button>
+                    </div>
+                  } @else {
+                    <button type="button" class="playlist-action-btn playlist-action-btn--delete"
+                      (click)="pedirConfirmacionEliminar(playlist.id, $event)"
+                      [attr.aria-label]="'Eliminar playlist ' + playlist.nombre">
+                      <span class="material-icons" aria-hidden="true">delete</span>
+                    </button>
+                  }
+                </div>
+              </div>
             }
           </div>
         } @else {
@@ -86,7 +107,7 @@
     ══════════════════════════ -->
     <section class="home-section" aria-labelledby="artistas-heading">
       <div class="container-fluid px-4 px-md-5">
-        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4" scrollReveal [duration]="500">
           <div>
             <h2 class="section-title mb-0" id="artistas-heading">
               Artistas que sigues
@@ -95,11 +116,11 @@
               Tus artistas favoritos
             </p>
           </div>
-          <a routerLink="/artistas" class="section-link" aria-label="Ver todos los artistas">Ver todos →</a>
+          <a routerLink="/mis-artistas" class="section-link" aria-label="Ver todos los artistas">Ver todos</a>
         </div>
 
         @if (homeData().artistasSeguidos.length > 0) {
-          <div class="artistas-grid" role="list">
+          <div class="artistas-grid" scrollReveal [stagger]="60" [delay]="80" role="list">
             @for (artista of homeData().artistasSeguidos; track artista.id) {
               <button
                 type="button"
@@ -108,13 +129,11 @@
                 (click)="navegarArtista(artista.username)"
                 [attr.aria-label]="'Ir a la página del artista ' + artista.username"
               >
-                <div class="artista-card__avatar">
-                    <img
-                      [src]="artista.urlAvatar"
-                      [alt]="artista.username"
-                      class="artista-card__img"
-                    />
-                </div>
+                <img
+                  [src]="artista.urlAvatar"
+                  [alt]="artista.username"
+                  class="artista-card__img"
+                />
                 <p class="artista-card__nombre mb-0">{{ artista.username }}</p>
               </button>
             }
@@ -135,19 +154,20 @@
     ══════════════════════════ -->
     <section class="home-section" aria-labelledby="novedades-heading">
       <div class="container-fluid px-4 px-md-5">
-        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4" scrollReveal [duration]="500">
           <div>
             <h2 class="section-title mb-0" id="novedades-heading">Novedades de la semana</h2>
             <p class="section-sub mb-0">Los lanzamientos más recientes</p>
           </div>
-          <a routerLink="/novedades" class="section-link" aria-label="Ver todas las novedades">Ver todas →</a>
+          <a routerLink="/novedades" class="section-link" aria-label="Ver todas las novedades">Ver todas</a>
         </div>
 
         @if (homeData().novedadesDeLaSemana.length > 0) {
-          <div class="cards-grid cards-grid--novedades" role="list">
+          <div class="cards-grid cards-grid--novedades" scrollReveal [stagger]="60" role="list">
             @for (novedad of homeData().novedadesDeLaSemana; track novedad.id) {
               <app-album-card
                 [album]="novedad"
+                [routerLink]="['/albums', novedad.id.toString()]"
                 [showBadge]="true"
                 role="listitem"
               />
@@ -167,32 +187,31 @@
     ══════════════════════════ -->
     <section class="home-section" aria-labelledby="proximos-heading">
       <div class="container-fluid px-4 px-md-5">
-        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4" scrollReveal [duration]="500">
           <div>
             <h2 class="section-title mb-0" id="proximos-heading">
               Próximos lanzamientos
             </h2>
             <p class="section-sub mb-0">Lo que viene pronto</p>
           </div>
-          <a routerLink="/lanzamientos" class="section-link" aria-label="Ver todos los próximos lanzamientos">Ver todos →</a>
+          <a routerLink="/lanzamientos" class="section-link" aria-label="Ver todos los próximos lanzamientos">Ver todos</a>
         </div>
 
         @if (homeData().proximosLanzmientos.length > 0) {
-          <div class="lanzamientos-list" role="list">
+          <div class="lanzamientos-list" scrollReveal [stagger]="80" role="list">
             @for (lanzamiento of homeData().proximosLanzmientos; track lanzamiento.id) {
-              <article
+              <a
                 class="lanzamiento-item"
                 role="listitem"
-                tabindex="0"
+                [routerLink]="['/albums', lanzamiento.id]"
                 [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.artista"
               >
                 <div class="lanzamiento-item__cover">
-                    <img
-                      [src]="lanzamiento.urlPortada"
-                      [alt]="'Portada de ' + lanzamiento.titulo"
-                      class="lanzamiento-item__img"
-                    />
-
+                  <img
+                    [src]="lanzamiento.urlPortada ?? lanzamiento.portada"
+                    [alt]="'Portada de ' + lanzamiento.titulo"
+                    class="lanzamiento-item__img"
+                  />
                 </div>
                 <div class="lanzamiento-item__info">
                   <p class="lanzamiento-item__titulo mb-0">{{ lanzamiento.titulo }}</p>
@@ -202,10 +221,10 @@
                   <span class="ks-card__badge">{{ lanzamiento.tipo }}</span>
                   <p class="lanzamiento-item__fecha mb-0 mt-1">
                     <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>
-                    {{ lanzamiento.fechaLanzamiento }}
+                    {{ lanzamiento.anioLanzamiento }}
                   </p>
                 </div>
-              </article>
+              </a>
             }
           </div>
         } @else {
@@ -222,13 +241,12 @@
     ══════════════════════════ -->
     <section class="home-section home-section--last" aria-labelledby="canciones-heading">
       <div class="container-fluid px-4 px-md-5">
-        <div class="section-header d-flex align-items-center justify-content-between mb-4">
+        <div class="section-header d-flex align-items-center justify-content-between mb-4" scrollReveal [duration]="500">
           <div>
             <h2 class="section-title mb-0" id="canciones-heading">
               Tus canciones más escuchadas
             </h2>
           </div>
-          <a routerLink="/canciones" class="section-link" aria-label="Ver todas las canciones">Ver todas →</a>
         </div>
 
         @if (homeData().cancionesMasEscuchadas.length > 0) {
@@ -345,4 +363,96 @@
     </div>
   </div>
 }
+
+
+<!-- ══════════════════════════
+     MODAL EDITAR PLAYLIST
+══════════════════════════ -->
+@if (editModalAbierto()) {
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-modal-titulo"
+    (click)="cerrarEditModal()" (keydown.escape)="cerrarEditModal()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-titulo" id="edit-modal-titulo">
+          <span class="material-icons" aria-hidden="true">edit</span>
+          Editar playlist
+        </h2>
+        <button type="button" class="modal-close" (click)="cerrarEditModal()" aria-label="Cerrar" [disabled]="editando()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="editPlaylistForm" (ngSubmit)="editarPlaylist()" class="modal-body" novalidate>
+
+        <div class="drop-zone"
+          [class.drop-zone--over]="editDraggingOver()"
+          [class.drop-zone--filled]="editPortadaPreview()"
+          (dragover)="onEditDragOver($event)"
+          (dragleave)="onEditDragLeave()"
+          (drop)="onEditDrop($event)"
+          (click)="editFileInput.click()"
+          (keydown.enter)="editFileInput.click()"
+          (keydown.space)="$event.preventDefault(); editFileInput.click()"
+          role="button" tabindex="0"
+          aria-label="Seleccionar portada de la playlist">
+          @if (editPortadaPreview()) {
+            <img [src]="editPortadaPreview()!" alt="Vista previa de la portada" class="drop-zone__preview" />
+            <button type="button" class="drop-zone__remove" (click)="$event.stopPropagation(); quitarPortadaEdit()" aria-label="Quitar portada">
+              <span class="material-icons" aria-hidden="true">delete</span>
+            </button>
+          } @else {
+            <span class="material-icons drop-zone__icon" aria-hidden="true">add_photo_alternate</span>
+            <span class="drop-zone__label">Arrastra una imagen o haz clic</span>
+            <span class="drop-zone__hint">PNG, JPG, WEBP — Opcional</span>
+          }
+        </div>
+        <input #editFileInput type="file" accept="image/*" class="visually-hidden" aria-hidden="true" tabindex="-1" (change)="onEditFileSelected($event)" />
+
+        <div class="form-field">
+          <label class="form-label" for="edit-playlist-nombre">Nombre <span aria-hidden="true" class="required-mark">*</span></label>
+          <input id="edit-playlist-nombre" type="text" class="form-input" formControlName="nombre"
+            placeholder="Mi playlist..." autocomplete="off" aria-required="true"
+            [attr.aria-invalid]="editPlaylistForm.get('nombre')!.invalid && editPlaylistForm.get('nombre')!.touched" />
+          @if (editPlaylistForm.get('nombre')!.invalid && editPlaylistForm.get('nombre')!.touched) {
+            <span class="form-error" role="alert">El nombre es obligatorio.</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="edit-playlist-desc">Descripción</label>
+          <textarea id="edit-playlist-desc" class="form-input form-input--textarea" formControlName="descripcion"
+            placeholder="Describe tu playlist... (opcional)" rows="3"></textarea>
+        </div>
+
+        <div class="form-field form-field--row">
+          <label class="form-label" for="edit-playlist-publica">Playlist pública</label>
+          <label class="toggle" aria-label="Hacer la playlist pública">
+            <input id="edit-playlist-publica" type="checkbox" formControlName="esPublica" class="toggle__input" />
+            <span class="toggle__track" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        @if (errorEditModal()) {
+          <p class="form-error form-error--general" role="alert">{{ errorEditModal() }}</p>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal btn-modal--cancel" (click)="cerrarEditModal()" [disabled]="editando()">Cancelar</button>
+          <button type="submit" class="btn-modal btn-modal--confirm" [disabled]="editPlaylistForm.invalid || editando()">
+            @if (editando()) {
+              <span class="modal-spinner" aria-hidden="true"></span>
+              Guardando…
+            } @else {
+              <span class="material-icons" aria-hidden="true">save</span>
+              Guardar
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+}
+
 

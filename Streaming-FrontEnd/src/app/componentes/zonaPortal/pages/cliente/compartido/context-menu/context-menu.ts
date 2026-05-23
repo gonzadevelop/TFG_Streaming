@@ -33,31 +33,72 @@ export class ContextMenu implements OnDestroy {
   readonly pista    = input.required<IPista>();
   readonly position = input.required<ContextMenuPosition>();
   readonly visible  = input<boolean>(false);
+  /** ID de la playlist actual (solo cuando el menú se abre desde dentro de una playlist propia) */
+  readonly playlistId      = input<number | null>(null);
+  readonly esPlaylistPropia = input<boolean>(false);
 
   readonly cerrar = output<void>();
+  /** Emite el idPista eliminado para que el componente padre actualice la lista */
+  readonly cancionEliminada = output<number>();
 
   private readonly storage         = inject(StorageGlobal);
   private readonly playlistService = inject(PlaylistService);
   private readonly ctxMenuService  = inject(ContextMenuService);
   private readonly elRef           = inject(ElementRef<HTMLElement>);
 
-  protected readonly misPlaylists   = signal<IPlaylist[]>([]);
-  protected readonly subMenuAbierto = signal<boolean>(false);
-  protected readonly mensaje        = signal<string | null>(null);
+  protected readonly misPlaylists      = signal<IPlaylist[]>([]);
+  protected readonly subMenuAbierto   = signal<boolean>(false);
+  protected readonly mensaje           = signal<string | null>(null);
+  protected readonly cargandoPlaylists = signal<boolean>(false);
+  protected readonly guardando         = signal<boolean>(false);
   private mensajeTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  protected readonly estiloMenu = computed(() => ({
-    top:  `${this.position().y}px`,
-    left: `${this.position().x}px`,
-  }));
+  protected readonly estiloMenu = computed(() => {
+    const pos = this.position();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Dimensiones aproximadas del menú
+    const menuWidth = 220;
+    const menuHeight = 200;
+
+    let x = pos.x;
+    let y = pos.y;
+
+    // Ajustar horizontalmente si se sale por la derecha
+    if (x + menuWidth > viewportWidth) {
+      x = viewportWidth - menuWidth - 16;
+    }
+
+    // Ajustar verticalmente si se sale por abajo
+    if (y + menuHeight > viewportHeight) {
+      y = viewportHeight - menuHeight - 16;
+    }
+
+    // Asegurarse de que no sea negativo
+    x = Math.max(10, x);
+    y = Math.max(10, y);
+
+    return {
+      top: `${y}px`,
+      left: `${x}px`,
+    };
+  });
 
   constructor() {
     // Carga las playlists cuando el menú se abre
     effect(() => {
       if (this.visible()) {
+        this.cargandoPlaylists.set(true);
         this.playlistService.getMisPlaylists().subscribe({
-          next: (playlists) => this.misPlaylists.set(playlists),
-          error: () => this.misPlaylists.set([]),
+          next: (playlists) => {
+            this.misPlaylists.set(playlists);
+            this.cargandoPlaylists.set(false);
+          },
+          error: () => {
+            this.misPlaylists.set([]);
+            this.cargandoPlaylists.set(false);
+          },
         });
       }
     });
@@ -79,6 +120,34 @@ export class ContextMenu implements OnDestroy {
     if (this.mensajeTimeout) clearTimeout(this.mensajeTimeout);
   }
 
+  protected eliminarDePlaylist(): void {
+    const p = this.pista();
+    const idPista = p.idPista && p.idPista !== 0 ? p.idPista : (p.id ?? 0);
+    const idPlaylist = this.playlistId();
+
+    if (idPista === 0 || !idPlaylist) {
+      this.mostrarMensaje('✖ No se pudo identificar la canción o la playlist');
+      return;
+    }
+
+    this.guardando.set(true);
+    this.playlistService.eliminarCancionDePlaylist(idPlaylist, idPista).subscribe({
+      next: () => {
+        this.guardando.set(false);
+        this.cancionEliminada.emit(idPista);
+        this.mostrarMensaje('✔ Eliminada de la playlist');
+        setTimeout(() => {
+          this.ctxMenuService.cerrar();
+          this.cerrar.emit();
+        }, 1200);
+      },
+      error: () => {
+        this.guardando.set(false);
+        this.mostrarMensaje('✖ Error al eliminar de la playlist');
+      },
+    });
+  }
+
   protected agregarACola(): void {
     const p = this.pista();
     const pistaCola: IPistaCola = {
@@ -97,15 +166,47 @@ export class ContextMenu implements OnDestroy {
   }
 
   protected agregarAPlaylist(playlist: IPlaylist): void {
+    const p = this.pista();
+    // idPista puede venir como 0 en algunos contextos; usamos `id` como fallback
+    const idPista = p.idPista && p.idPista !== 0 ? p.idPista : (p.id ?? 0);
+
+    if (idPista === 0) {
+      this.mostrarMensaje('✖ No se pudo identificar la canción');
+      return;
+    }
+
+    this.guardando.set(true);
+    this.subMenuAbierto.set(false);
+
     this.playlistService.setAgregarCancionPlaylist({
       playlistId: playlist.id,
-      pistaIds: [this.pista().idPista],
+      pistaIds: [idPista],
     }).subscribe({
-      next: () => this.mostrarMensaje(`✔ Añadida a "${playlist.nombre}"`),
-      error: () => this.mostrarMensaje('✖ Error al añadir a la playlist'),
+      next: () => {
+        this.guardando.set(false);
+        this.mostrarMensaje(`✔ Añadida a "${playlist.nombre}"`);
+        // Cerramos el menú tras breve feedback
+        setTimeout(() => {
+          this.ctxMenuService.cerrar();
+          this.cerrar.emit();
+        }, 1200);
+      },
+      error: () => {
+        this.guardando.set(false);
+        this.mostrarMensaje('✖ Error al añadir a la playlist');
+      },
     });
-    this.subMenuAbierto.set(false);
-    this.cerrar.emit();
+  }
+
+  protected abrirSubMenu(): void {
+    this.subMenuAbierto.set(true);
+  }
+
+  protected cerrarSubMenu(): void {
+    // Delay para permitir hover en el submenu
+    setTimeout(() => {
+      this.subMenuAbierto.set(false);
+    }, 200);
   }
 
   protected toggleSubMenu(event: Event): void {

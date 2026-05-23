@@ -2,15 +2,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #e0e4e8 0%, #cee0f2 40%, #b8d4ec 70%, #d5dbe1 100%);
-  background-size: 400% 400%;
-  animation: layout-bg-shift 10s ease infinite;
-}
-
-@keyframes layout-bg-shift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Shell: sidebar + contenido principal ── */
@@ -33,9 +26,7 @@
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
-  .layout-shell {
-    padding-inline: 1rem;
-  }
+  .layout-shell { padding-inline: 1rem; }
 }
 
 @media (max-width: 600px) {

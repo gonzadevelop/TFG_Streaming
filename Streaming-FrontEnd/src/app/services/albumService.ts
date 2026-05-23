@@ -15,6 +15,14 @@ export class AlbumService {
     return this.http.get<IAlbumCompleto>(`${this.baseURL}/albums/${albumId}`);
   }
 
+  getNovedades(): Observable<IAlbum[]> {
+    return this.http.get<IAlbum[]>(`${this.baseURL}/albums/novedades`);
+  }
+
+  getProximosLanzamientos(): Observable<IAlbum[]> {
+    return this.http.get<IAlbum[]>(`${this.baseURL}/albums/proximos`);
+  }
+
   buscarAlbums(q: string): Observable<IAlbum[]> {
     return this.http.get<IAlbum[]>(`${this.baseURL}/albums/buscar`, { params: { q } });
   }

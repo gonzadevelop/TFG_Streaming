@@ -1,15 +1,12 @@
 /* Album Page Styles */
 
-.album-page {
-  position: relative;
+:host {
+  display: block;
   min-height: 100vh;
-  padding: 1rem;
+  color: #e8f4ff;
 }
 
-.album-gradient-bg {
-  display: none;
-}
-
+/* ── Header ───────────────────────── */
 .album-header {
   position: relative;
   z-index: 1;
@@ -18,11 +15,12 @@
   gap: 24px;
   padding: 24px;
   margin-bottom: 1.25rem;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(4, 20, 40, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 1rem;
-  box-shadow: 0 2px 14px rgba(11, 117, 192, 0.08);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3);
 }
 
 .album-cover-container {
@@ -31,8 +29,8 @@
   min-width: 200px;
   border-radius: 1.1rem;
   overflow: hidden;
-  background: linear-gradient(135deg, #c8ced6, #a4d4e4);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(74, 158, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .album-cover {
@@ -44,7 +42,6 @@
 .album-cover-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #c8ced6, #a4d4e4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,14 +49,14 @@
 
 .album-cover-icon {
   font-size: 64px;
-  color: #6c757d;
+  color: #4a9eff;
+  opacity: 0.4;
 }
 
 .album-info {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  color: #1a2a38;
 }
 
 .album-type {
@@ -67,23 +64,22 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #0b75c0;
+  color: #7aaed4;
   margin-bottom: 8px;
 }
 
 .album-title {
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 900;
   letter-spacing: -0.02em;
   margin: 0 0 16px 0;
   line-height: 1;
-  color: #1a2a38;
+  color: #e8f4ff;
 }
 
 .album-meta {
   font-size: 0.95rem;
-  font-weight: 400;
-  color: #425466;
+  color: #7aaed4;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -93,13 +89,13 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #6c757d;
+  color: #4a7a9b;
 }
 
 .album-artist-link {
   background: none;
   border: none;
-  color: #0b75c0;
+  color: #4a9eff;
   cursor: pointer;
   padding: 0;
   font: inherit;
@@ -108,25 +104,18 @@
 }
 
 .album-artist-link:hover {
-  color: #0a5fa0;
+  color: #7ec4ff;
   text-decoration: underline;
 }
 
 .album-artist-link:focus-visible {
-  outline: 2px solid #0b75c0;
+  outline: 2px solid #4a9eff;
   outline-offset: 2px;
   border-radius: 2px;
 }
 
-.album-duration {
-  font-size: 0.85rem;
-  color: #6c757d;
-  font-weight: 500;
-}
-
+/* ── Controles ───────────────────────── */
 .album-actions {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -134,10 +123,10 @@
 }
 
 .btn-play-large {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0b75c0, #1a9fd4);
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
   color: #fff;
   border: none;
   cursor: pointer;
@@ -146,40 +135,41 @@
   justify-content: center;
   font-size: 1.25rem;
   transition: transform 200ms ease, box-shadow 200ms ease;
-  box-shadow: 0 4px 20px rgba(11, 117, 192, 0.4);
+  box-shadow: 0 4px 20px rgba(74, 158, 255, 0.4);
 }
 
 .btn-play-large:hover {
   transform: scale(1.08);
-  box-shadow: 0 6px 28px rgba(11, 117, 192, 0.6);
+  box-shadow: 0 6px 28px rgba(74, 158, 255, 0.6);
 }
 
 .btn-play-large:focus-visible {
-  outline: 2px solid #0b75c0;
+  outline: 2px solid #4a9eff;
   outline-offset: 3px;
 }
 
+/* ── Contenido ───────────────────────── */
 .album-content {
   position: relative;
   z-index: 1;
   padding: 0 1rem;
 }
 
-/* Error and Loading states */
+/* ── Estados ───────────────────────── */
 .muted {
-  color: #6c757d;
+  color: #4a7a9b;
   text-align: center;
   padding: 2rem 1rem;
 }
 
 .error {
-  color: #dc3545;
+  color: #ff6b6b;
   text-align: center;
   padding: 2rem 1rem;
   font-weight: 500;
 }
 
-/* Responsive Design */
+/* ── Responsive ───────────────────────── */
 @media (max-width: 768px) {
   .album-header {
     flex-direction: column;
@@ -190,6 +180,7 @@
   .album-cover-container {
     width: 160px;
     height: 160px;
+    min-width: 160px;
   }
 
   .album-title {
@@ -200,14 +191,23 @@
     align-items: center;
   }
 
-  .album-stats {
-    justify-content: center;
-  }
-
   .album-actions {
     justify-content: center;
   }
 }
 
+/* ── Duración total ──────────────────────── */
+.album-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+  color: #7aaed4;
+  margin-top: 0.15rem;
+}
 
+.album-duration__icon {
+  font-size: 0.9rem;
+  color: #4a9eff;
+}
 

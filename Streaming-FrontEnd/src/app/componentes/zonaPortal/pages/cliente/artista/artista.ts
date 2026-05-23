@@ -6,11 +6,12 @@ import { IArtista } from '../../../../../model/artista/IArtista';
 import { ArtistaService } from '../../../../../services/artistaService';
 import { UserService } from '../../../../../services/userService';
 import { signal, WritableSignal } from '@angular/core';
+import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
 
 @Component({
   selector: 'app-artista',
   standalone: true,
-  imports: [ListaCanciones, AlbumCard],
+  imports: [ListaCanciones, AlbumCard, KsLoaderComponent],
   templateUrl: './artista.html',
   styleUrl: './artista.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

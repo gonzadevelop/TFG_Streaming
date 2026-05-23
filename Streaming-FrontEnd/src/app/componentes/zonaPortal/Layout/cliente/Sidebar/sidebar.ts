@@ -35,7 +35,7 @@ export class Sidebar implements OnInit {
 
   readonly isOpen = input<boolean>(true);
   userName: WritableSignal<string> = signal<string>('');
-  avatarUrl: WritableSignal<string | null> = signal<string | null>(null);
+  readonly avatarUrl = this.sidebarService.avatarUrl;
   role: WritableSignal<string | null> = signal<string | null>(null);
 
   protected readonly dropdownOpen = signal<boolean>(false);
@@ -56,7 +56,6 @@ export class Sidebar implements OnInit {
     {label: 'Inicio', icon: 'home', route: '/'},
     {label: 'Lista de favoritos', icon: 'favorite', route: '/favs'},
     {label: 'Estadísticas', icon: 'insights', route: '/stadistics'},
-    {label: 'Explorar', icon: 'search', route: '/explore'},
   ];
 
   toggleDropdown(): void {
@@ -71,7 +70,7 @@ export class Sidebar implements OnInit {
     this.tokenService.clearSession();
     this.estaLogueado.set(false);
     this.userName.set('');
-    this.avatarUrl.set(null);
+    this.sidebarService.avatarUrl.set(null);
     this.role.set(null);
     this.closeDropdown();
     this.router.navigate(['/']);
@@ -87,7 +86,7 @@ export class Sidebar implements OnInit {
           this.userService.getPerfilUsuario(username).subscribe({
             next: (perfil) => {
               if (perfil.urlAvatar && !perfil.urlAvatar.includes('ui-avatars')) {
-                this.avatarUrl.set(perfil.urlAvatar);
+                this.sidebarService.avatarUrl.set(perfil.urlAvatar);
               }
             },
             error: () => { /* avatar por defecto, sin acción */ }

@@ -102,6 +102,7 @@
       <a
         [routerLink]="item.route"
         routerLinkActive="active"
+        [routerLinkActiveOptions]="item.route === '/' ? {exact: true} : {exact: false}"
         class="sidebar-link"
         [attr.aria-label]="item.label">
         <span class="material-icons" aria-hidden="true">{{ item.icon }}</span>

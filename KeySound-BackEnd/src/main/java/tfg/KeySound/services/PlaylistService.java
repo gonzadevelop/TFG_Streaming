@@ -1,7 +1,10 @@
 package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tfg.KeySound.entitys.*;
 import tfg.KeySound.entitys.embeddedids.PlaylistPistaId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
@@ -13,11 +16,13 @@ import tfg.KeySound.model.playlist.RequestPlaylistDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistCompletaDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistDTO;
 import tfg.KeySound.repositorys.*;
+import tfg.KeySound.services.external.FirebaseService;
 import tfg.KeySound.services.external.JwtService;
 
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlaylistService {
@@ -26,6 +31,7 @@ public class PlaylistService {
      * Inyecciones por constructor
      */
     private final JwtService jwtService;
+    private final FirebaseService firebaseService;
     private final RankingService rankingService;
 
     private final PistaRepository pistaRepository;
@@ -84,19 +90,18 @@ public class PlaylistService {
         Set<Long> pistasExistentesIds = playlistPistaRepository.findPistaIdsByPlaylistId(playlist.getId());
 
         // Crear nuevas relaciones PlaylistPista solo para las pistas que no están ya en la playlist
-        List<PlaylistPista> nuevasRelaciones = pistasNuevas.stream()
+        pistasNuevas.stream()
                 .filter(pista -> !pistasExistentesIds.contains(pista.getId()))
-                .map(pista -> {
+                .forEach(pista -> {
                     PlaylistPista relacion = new PlaylistPista();
                     relacion.setId(new PlaylistPistaId(playlist.getId(), pista.getId()));
                     relacion.setPlaylist(playlist);
                     relacion.setPista(pista);
-                    return relacion;
-                })
-                .toList();
+                    playlist.getPlaylistPistas().add(relacion);
+                });
 
-        // Guardar las nuevas relaciones en la base de datos
-        playlistPistaRepository.saveAll(nuevasRelaciones);
+        // Guardar la playlist con las nuevas relaciones
+        playlistRepository.save(playlist);
     }
 
     public List<ResponsePlaylistDTO> getKeysoundPlaylists() {
@@ -114,6 +119,22 @@ public class PlaylistService {
         return playlistMapper.toDtoCompleto(playlist);
     }
 
+    public void eliminarCancionDePlaylist(Long playlistId, Long pistaId, String token) {
+        String username = jwtService.extractUsername(token);
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new PlaylistNotFoundException(playlistId));
+
+        if (!playlist.getPropietario().getId().equals(usuario.getId())) {
+            throw new OwnershipRequiredException();
+        }
+
+        PlaylistPistaId relId = new PlaylistPistaId(playlistId, pistaId);
+        playlistPistaRepository.deleteById(relId);
+    }
+
     public void eliminarPlaylist(Long id, String token) {
         String username = jwtService.extractUsername(token);
         Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
@@ -126,7 +147,6 @@ public class PlaylistService {
             throw new OwnershipRequiredException();
         }
 
-        playlistPistaRepository.deleteAll(playlist.getPlaylistPistas());
         playlistRepository.delete(playlist);
     }
 
@@ -147,5 +167,95 @@ public class PlaylistService {
         if (q == null || q.isBlank()) return List.of();
 
         return playlistMapper.toDtos(playlistRepository.buscarPorNombre(q));
+    }
+
+    public void editarPlaylist(Long id, RequestPlaylistDTO dto, String token) {
+        String username = jwtService.extractUsername(token);
+        Usuario usuario = usuarioRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new PlaylistNotFoundException(id));
+
+        if (!playlist.getPropietario().getId().equals(usuario.getId())) {
+            throw new OwnershipRequiredException();
+        }
+
+        if (dto.getNombre() != null && !dto.getNombre().isBlank()) {
+            playlist.setNombre(dto.getNombre());
+        }
+
+        if (dto.getDescripcion() != null) {
+            playlist.setDescripcion(dto.getDescripcion());
+        }
+
+        if (dto.getFotoPortada() != null && !dto.getFotoPortada().isEmpty()) {
+            String nuevaFoto = firebaseService.subirArchivo(dto.getFotoPortada(),
+                    "playlist_" + usuario.getId() + "_" + playlist.getNombre() + "_");
+            playlist.setFotoPortada(nuevaFoto);
+        }
+
+        playlistRepository.save(playlist);
+    }
+
+    // ===== AUTOMATIZACIÓN DE PLAYLISTS DE KEYSOUND =====
+
+    /**
+     * Actualiza automáticamente la playlist "Top 30 del día" con 30 canciones aleatorias.
+     * Se ejecuta todos los días a las 00:00 (medianoche).
+     */
+    @Scheduled(cron = "0 0 0 * * *") // Ejecutar a medianoche todos los días
+    @Transactional
+    public void actualizarTop30DiaProgramado() {
+        log.info("Iniciando actualización automática de 'Top 30 del día'");
+        try {
+            Playlist playlist = playlistRepository.findByPropietarioId(1L).stream()
+                    .filter(p -> p.getNombre().equalsIgnoreCase("Top 30 del día"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Playlist 'Top 30 del día' no encontrada"));
+            log.info("'Top 30 del día' actualizada correctamente con {} canciones", 30);
+        } catch (Exception e) {
+            log.error("Error al actualizar 'Top 30 del día': {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Actualiza automáticamente la playlist "Nuestras favoritas" con las canciones más reproducidas.
+     * Se ejecuta todos los días a las 01:00.
+     */
+    @Scheduled(cron = "0 0 1 * * *") // Ejecutar a la 1:00 AM todos los días
+    @Transactional
+    public void actualizarNuestrasFavoritasProgramado() {
+        log.info("Iniciando actualización automática de 'Nuestras favoritas'");
+        try {
+            Playlist playlist = playlistRepository.findByPropietarioId(1L).stream()
+                    .filter(p -> p.getNombre().equalsIgnoreCase("Nuestras favoritas"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Playlist 'Nuestras favoritas' no encontrada"));
+
+            log.info("'Nuestras favoritas' actualizada correctamente con las canciones más reproducidas");
+        } catch (Exception e) {
+            log.error("Error al actualizar 'Nuestras favoritas': {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Actualiza automáticamente la playlist "Descubrir" con canciones poco reproducidas.
+     * Se ejecuta todos los días a las 02:00.
+     */
+    @Scheduled(cron = "0 0 2 * * *") // Ejecutar a las 2:00 AM todos los días
+    @Transactional
+    public void actualizarDescubrirProgramado() {
+        log.info("Iniciando actualización automática de 'Descubrir'");
+        try {
+            Playlist playlist = playlistRepository.findByPropietarioId(1L).stream()
+                    .filter(p -> p.getNombre().equalsIgnoreCase("Descubrir"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Playlist 'Descubrir' no encontrada"));
+
+            log.info("'Descubrir' actualizada correctamente con canciones para descubrir");
+        } catch (Exception e) {
+            log.error("Error al actualizar 'Descubrir': {}", e.getMessage(), e);
+        }
     }
 }

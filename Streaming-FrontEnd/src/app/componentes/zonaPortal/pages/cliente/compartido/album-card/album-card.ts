@@ -41,9 +41,9 @@ export class AlbumCard {
     if (!type) return null;
 
     const labels: Record<ContentType, string> = {
-      playlist: '🎵 Playlist',
-      album: '💿 Álbum',
-      sencillo: '🎧 Sencillo',
+      playlist: 'Playlist',
+      album: 'Álbum',
+      sencillo: 'Sencillo',
     };
 
     return labels[type];

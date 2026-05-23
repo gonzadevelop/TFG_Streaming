@@ -2,13 +2,14 @@
   display: block;
 }
 
+/* ── Card ───────────────────────── */
 .ks-card {
   border: none;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(4, 20, 40, 0.70);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 2px 14px rgba(11, 117, 192, 0.08);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   cursor: pointer;
   transition: transform 200ms ease, box-shadow 200ms ease;
@@ -18,27 +19,31 @@
 
 .ks-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 28px rgba(11, 117, 192, 0.18);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
 }
 
 .ks-card:focus-visible {
-  outline: 2px solid #0b75c0;
+  outline: 2px solid #4a9eff;
   outline-offset: 3px;
 }
 
-/* ══════════════════════════════════════════
-   Portada de la card
-   ══════════════════════════════════════════ */
+/* ── Link ───────────────────────── */
+.ks-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 
+/* ── Portada ───────────────────────── */
 .ks-card__cover {
   position: relative;
   width: 100%;
   padding-top: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(74, 158, 255, 0.08);
   flex-shrink: 0;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecf0 100%);
+  overflow: hidden;
 }
 
 .ks-card__img {
@@ -48,29 +53,29 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-/* Botón play superpuesto */
+/* ── Botón play superpuesto ───────────────────────── */
 .ks-card__play-btn {
   position: absolute;
-  bottom: 0.75rem;
-  right: 0.75rem;
-  width: 38px;
-  height: 38px;
+  bottom: 0.85rem;
+  right: 0.85rem;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #0b75c0;
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
   color: #fff;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.25rem;
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 200ms ease, transform 200ms ease;
-  box-shadow: 0 3px 12px rgba(11, 117, 192, 0.4);
+  box-shadow: 0 3px 12px rgba(74, 158, 255, 0.4);
   cursor: pointer;
-  z-index: 10;
 }
 
 .ks-card:hover .ks-card__play-btn,
@@ -84,51 +89,26 @@
   outline-offset: 2px;
 }
 
-.ks-card__play-btn:active {
-  transform: scale(0.95) translateY(0);
-}
-
-/* ══════════════════════════════════════════
-   Link y enlace
-   ══════════════════════════════════════════ */
-
-.ks-card__link {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  transition: all 200ms ease;
-}
-
-.ks-card__link:focus {
-  outline: none;
-}
-
-/* ══════════════════════════════════════════
-   Cuerpo de la card
-   ══════════════════════════════════════════ */
-
+/* ── Cuerpo de la card ───────────────────────── */
 .ks-card__body {
-  padding: 0.9rem 1rem 1rem;
+  padding: 1.1rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
 .ks-card__title {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #1a2a38;
+  color: #e8f4ff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  line-height: 1.3;
 }
 
 .ks-card__desc {
-  font-size: 0.78rem;
-  color: #6c757d;
+  font-size: 0.88rem;
+  color: #7aaed4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -136,49 +116,15 @@
   line-height: 1.4;
 }
 
-/* ══════════════════════════════════════════
-   Badge
-   ══════════════════════════════════════════ */
-
+/* ── Badge ───────────────────────── */
 .ks-card__badge {
   display: inline-block;
   padding: 0.2rem 0.6rem;
-  background: rgba(11, 117, 192, 0.1);
-  color: #0b75c0;
+  background: rgba(74, 158, 255, 0.12);
+  color: #4a9eff;
   font-size: 0.7rem;
   font-weight: 600;
   border-radius: 99px;
   letter-spacing: 0.02em;
-  width: fit-content;
+  align-self: flex-start;
 }
-
-/* ══════════════════════════════════════════
-   Responsive
-   ══════════════════════════════════════════ */
-
-@media (max-width: 768px) {
-  .ks-card {
-    border-radius: 0.8rem;
-  }
-
-  .ks-card__play-btn {
-    width: 34px;
-    height: 34px;
-    font-size: 0.9rem;
-    bottom: 0.5rem;
-    right: 0.5rem;
-  }
-
-  .ks-card__body {
-    padding: 0.75rem 0.9rem;
-  }
-
-  .ks-card__title {
-    font-size: 0.85rem;
-  }
-
-  .ks-card__desc {
-    font-size: 0.75rem;
-  }
-}
-

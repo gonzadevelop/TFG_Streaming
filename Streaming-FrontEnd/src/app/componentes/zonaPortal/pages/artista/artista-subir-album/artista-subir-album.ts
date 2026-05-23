@@ -18,11 +18,13 @@ import { ArtistaService } from '../../../../../services/artistaService';
 import { CancionService } from '../../../../../services/cancionService';
 import { IAlbumUpload, IAlbumUploadTrack } from '../../../../../model/album/IAlbumUpload';
 import { IArtistaHome } from '../../../../../model/home/IArtistaHome';
+import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-reveal.directive';
+import { KsLoaderComponent } from '../../cliente/compartido/ks-loader/ks-loader';
 import { IExistingSong } from '../../../../../model/cancion/IExistingSong';
 
 @Component({
   selector: 'app-artista-subir-album',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ScrollRevealDirective, KsLoaderComponent],
   templateUrl: './artista-subir-album.html',
   styleUrl: './artista-subir-album.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

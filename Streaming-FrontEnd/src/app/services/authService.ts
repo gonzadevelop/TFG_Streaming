@@ -32,10 +32,4 @@ export class AuthService {
       { email });
   }
 
-  resendVerificationEmail(email: string): Observable<void> {
-    return this.http.post<void>(
-      `${this.baseURL}/auth/resend-verification-email`,
-      { email }
-    );
-  }
 }

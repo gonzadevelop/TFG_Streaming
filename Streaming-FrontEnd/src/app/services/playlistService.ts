@@ -104,6 +104,35 @@ export class PlaylistService {
   }
 
   /**
+   * Edita una playlist existente del usuario.
+   * PUT /api/playlists/editar/{id}
+   */
+  setEditarPlaylist(id: number, dto: IPlaylistRequest): Observable<void> {
+    const formData = new FormData();
+    formData.append('nombre', dto.nombre);
+    formData.append('esPublica', String(dto.esPublica));
+    if (dto.descripcion) formData.append('descripcion', dto.descripcion);
+    if (dto.fotoPortada) formData.append('fotoPortada', dto.fotoPortada);
+    return this.http.put<void>(`${this.baseURL}/playlists/editar/${id}`, formData);
+  }
+
+  /**
+   * Elimina una canción de una playlist del usuario.
+   * DELETE /api/playlists/{playlistId}/cancion/{pistaId}
+   */
+  eliminarCancionDePlaylist(playlistId: number, pistaId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseURL}/playlists/${playlistId}/cancion/${pistaId}`);
+  }
+
+  /**
+   * Elimina una playlist del usuario.
+   * DELETE /api/playlists/{id}
+   */
+  eliminarPlaylist(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseURL}/playlists/${id}`);
+  }
+
+  /**
    * Busca playlists por nombre.
    * GET /api/playlists/buscar?q=término
    */

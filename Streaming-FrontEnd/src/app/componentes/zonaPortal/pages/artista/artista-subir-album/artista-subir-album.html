@@ -1,12 +1,14 @@
+<app-ks-loader [visible]="isSaving()" mensaje="Subiendo álbum…" />
+
 <section class="artist-upload">
-  <header class="artist-upload__header">
+  <header class="artist-upload__header" scrollReveal [duration]="500">
     <div>
       <h1>Subir nuevo álbum</h1>
       <p>Completa los datos básicos y adjunta pistas y colaboradores.</p>
     </div>
   </header>
 
-  <div class="artist-upload__steps">
+  <div class="artist-upload__steps" scrollReveal [delay]="80" [duration]="450">
     <button type="button" [class.is-active]="pasoActivo(1)" (click)="goToStep(1)">1. Datos</button>
     <button type="button" [class.is-active]="pasoActivo(2)" (click)="goToStep(2)">2. Pistas</button>
     <button type="button" [class.is-active]="pasoActivo(3)" (click)="goToStep(3)">3. Previsualizar</button>
@@ -21,7 +23,7 @@
 
   <form [formGroup]="albumForm" (ngSubmit)="submit()" class="artist-upload__form">
     @if (pasoActivo(1)) {
-      <div class="artist-upload__section">
+      <div class="artist-upload__section" scrollReveal [delay]="100" [duration]="500">
         <label>
           Nombre del álbum
           <input formControlName="nombreAlbum" type="text" placeholder="Ej: Microdosis" />
@@ -38,7 +40,7 @@
         }
       </div>
 
-      <div class="artist-upload__section">
+      <div class="artist-upload__section" scrollReveal [delay]="160" [duration]="500">
         <label>
           Portada del álbum
           <input type="file" accept="image/*" (change)="onPortadaSelected($event)" />
@@ -60,7 +62,7 @@
     }
 
     @if (pasoActivo(2)) {
-      <div formArrayName="canciones" class="artist-upload__tracks">
+      <div formArrayName="canciones" class="artist-upload__tracks" scrollReveal [stagger]="80" [staggerSelector]="'.artist-upload__track'" [duration]="500">
         <h2>Pistas</h2>
         @for (track of canciones.controls; track $index; let trackIndex = $index) {
           <div [formGroupName]="trackIndex" class="artist-upload__track">
@@ -221,7 +223,7 @@
     }
 
     @if (pasoActivo(3)) {
-      <div class="artist-upload__section artist-upload__preview-panel">
+      <div class="artist-upload__section artist-upload__preview-panel" scrollReveal [delay]="80" [duration]="500">
         <div class="artist-upload__preview-summary">
           <div>
             <h2>{{ albumForm.value.nombreAlbum }}</h2>

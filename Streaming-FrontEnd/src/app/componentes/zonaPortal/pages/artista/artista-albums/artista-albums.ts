@@ -2,10 +2,12 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { RouterLink } from '@angular/router';
 import { ArtistaService } from '../../../../../services/artistaService';
 import { IMiAlbum } from '../../../../../model/album/IMiAlbum';
+import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-reveal.directive';
+import { KsLoaderComponent } from '../../cliente/compartido/ks-loader/ks-loader';
 
 @Component({
   selector: 'app-artista-albums',
-  imports: [RouterLink],
+  imports: [RouterLink, ScrollRevealDirective, KsLoaderComponent],
   templateUrl: './artista-albums.html',
   styleUrl: './artista-albums.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

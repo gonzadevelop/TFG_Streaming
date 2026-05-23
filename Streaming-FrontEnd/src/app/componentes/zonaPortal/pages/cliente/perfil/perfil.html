@@ -23,14 +23,14 @@
   }
 
   @if (isLoading()) {
-    <div class="perfil-loading" role="status" aria-live="polite">
-      <span class="material-icons perfil-loading__icon" aria-hidden="true">hourglass_top</span>
-      <p>Cargando perfil...</p>
-    </div>
+    <app-ks-loader [visible]="true" mensaje="Cargando perfil..." />
   } @else if (perfil()) {
 
-    <!-- ── CABECERA ────────────────────────────────────── -->
-    <section class="perfil-header" aria-label="Cabecera del perfil">
+    <!-- ── HERO ────────────────────────────────────── -->
+    <section class="perfil-hero" aria-label="Cabecera del perfil" scrollReveal [duration]="700">
+
+      <!-- Glow decorativo -->
+      <div class="perfil-hero__glow" aria-hidden="true"></div>
 
       <!-- Avatar con drag & drop -->
       <div
@@ -70,13 +70,18 @@
           />
         </label>
 
-        <p class="perfil-avatar__hint">Arrastra o haz clic para cambiar</p>
       </div>
 
       <!-- Info básica -->
-      <div class="perfil-header__info">
-        <span class="perfil-badge">
-          {{ perfil()!.username }}
+      <div class="perfil-hero__info">
+        <span class="perfil-badge" [class.perfil-badge--artista]="rol() === 'artista'">
+          @if (rol() === 'artista') {
+            <span class="material-icons" aria-hidden="true" style="font-size:0.75rem">mic</span>
+            Artista
+          } @else {
+            <span class="material-icons" aria-hidden="true" style="font-size:0.75rem">person</span>
+            Oyente
+          }
         </span>
         <h1 class="perfil-nombre">{{ perfil()!.username }}</h1>
         @if (perfil()!.biografia) {
@@ -101,14 +106,21 @@
 
     <!-- ── FORMULARIO DE EDICIÓN ──────────────────────── -->
     @if (modoEdicion()) {
-      <section class="perfil-form-section" aria-labelledby="edicion-heading">
-        <h2 id="edicion-heading" class="perfil-section-title">Editar información</h2>
+      <section class="perfil-card perfil-form-section" aria-labelledby="edicion-heading" scrollReveal [duration]="600" [delay]="80">
+
+        <div class="perfil-card__header">
+          <span class="material-icons perfil-card__icon" aria-hidden="true">manage_accounts</span>
+          <h2 id="edicion-heading" class="perfil-section-title">Editar información</h2>
+        </div>
 
         <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()" class="perfil-form" novalidate>
 
           <!-- Email -->
           <div class="form-group">
-            <label for="emailInput" class="form-label">Correo electrónico</label>
+            <label for="emailInput" class="form-label">
+              <span class="material-icons" aria-hidden="true">email</span>
+              Correo electrónico
+            </label>
             <input
               id="emailInput"
               type="email"
@@ -125,7 +137,10 @@
 
           <!-- Biografía -->
           <div class="form-group">
-            <label for="biografiaInput" class="form-label">Biografía</label>
+            <label for="biografiaInput" class="form-label">
+              <span class="material-icons" aria-hidden="true">notes</span>
+              Biografía
+            </label>
             <textarea
               id="biografiaInput"
               class="form-control form-control--textarea"
@@ -171,11 +186,18 @@
     }
 
     <!-- ── MIS PLAYLISTS ──────────────────────────────── -->
-    <section class="perfil-section" aria-labelledby="playlists-heading">
-      <h2 id="playlists-heading" class="perfil-section-title">Mis playlists</h2>
+    <section class="perfil-card" aria-labelledby="playlists-heading" scrollReveal [duration]="650" [delay]="100">
+
+      <div class="perfil-card__header">
+        <span class="material-icons perfil-card__icon" aria-hidden="true">queue_music</span>
+        <h2 id="playlists-heading" class="perfil-section-title">Mis playlists</h2>
+        <span class="perfil-card__count" aria-label="{{ perfil()!.playlists.length }} playlists">
+          {{ perfil()!.playlists.length }}
+        </span>
+      </div>
 
       @if (perfil()!.playlists.length > 0) {
-        <div class="perfil-playlists" role="list">
+        <div class="perfil-playlists" role="list" scrollReveal [stagger]="80" staggerSelector=".perfil-playlist-card" [duration]="500">
           @for (playlist of perfil()!.playlists; track playlist.id) {
             <a
               [routerLink]="playlist.id === 0 ? ['/favs'] : ['/playlists', playlist.id]"
@@ -187,26 +209,33 @@
                 @if (playlist.urlPortada) {
                   <img [src]="playlist.urlPortada" [alt]="'Portada de ' + playlist.nombre" class="perfil-playlist-card__img" />
                 } @else {
-                  <span class="material-icons perfil-playlist-card__icon" aria-hidden="true">queue_music</span>
+                  <div class="perfil-playlist-card__placeholder" aria-hidden="true">
+                    <span class="material-icons">queue_music</span>
+                  </div>
+                }
+                <div class="perfil-playlist-card__overlay" aria-hidden="true">
+                  <span class="material-icons">play_arrow</span>
+                </div>
+              </div>
+              <div class="perfil-playlist-card__body">
+                <p class="perfil-playlist-card__nombre">{{ playlist.nombre }}</p>
+                @if (playlist.descripcion) {
+                  <p class="perfil-playlist-card__desc">{{ playlist.descripcion }}</p>
                 }
               </div>
-              <p class="perfil-playlist-card__nombre">{{ playlist.nombre }}</p>
-              @if (playlist.descripcion) {
-                <p class="perfil-playlist-card__desc">{{ playlist.descripcion }}</p>
-              }
             </a>
           }
         </div>
       } @else {
         <div class="empty-state" role="status">
-          <span class="material-icons empty-state__icon" aria-hidden="true">queue_music</span>
+          <span class="material-icons empty-state__icon" aria-hidden="true">library_music</span>
           <p class="empty-state__text">Aún no tienes playlists creadas.</p>
         </div>
       }
     </section>
 
   } @else {
-    <div class="perfil-error" role="alert">
+    <div class="perfil-error" role="alert" scrollReveal>
       <span class="material-icons" aria-hidden="true">error_outline</span>
       <p>No se pudo cargar el perfil. Inténtalo más tarde.</p>
     </div>

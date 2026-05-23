@@ -1,29 +1,20 @@
 :host {
-  --header-bg: rgba(224, 228, 232, 0.92);
-  --nav-bar-bg: rgba(206, 224, 242, 0.85);
-  --surface-color: rgba(255, 255, 255, 0.45);
-  --surface-elevated: rgba(255, 255, 255, 0.6);
-  --accent-color: #0b75c0;
-  --accent-hover: #1f9ed7;
-  --text-main: #1a2a38;
-  --text-muted: #3a5a78;
-  --text-soft: #6c8aaa;
-  --line-color: rgba(11, 117, 192, 0.15);
-  --bg-hover: rgba(11, 117, 192, 0.1);
-  --focus-ring: rgba(11, 117, 192, 0.35);
+  --header-bg: rgba(4, 20, 40, 0.88);
+  --nav-bar-bg: rgba(6, 30, 58, 0.75);
+  --surface-color: rgba(6, 30, 58, 0.6);
+  --surface-elevated: rgba(6, 30, 58, 0.8);
+  --accent-color: #4a9eff;
+  --accent-hover: #7ec4ff;
+  --text-main: #e8f4ff;
+  --text-muted: #a0c8e8;
+  --text-soft: #7aaed4;
+  --line-color: rgba(74, 158, 255, 0.15);
+  --bg-hover: rgba(74, 158, 255, 0.1);
+  --focus-ring: rgba(74, 158, 255, 0.3);
   --radius-pill: 999px;
   --radius-card: 14px;
 
   display: block;
-  background: linear-gradient(135deg, #e0e4e8 0%, #cee0f2 40%, #b8d4ec 70%, #d5dbe1 100%);
-  background-size: 400% 400%;
-  animation: header-bg-shift 10s ease infinite;
-}
-
-@keyframes header-bg-shift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 /* ══════════════════════════════════════════
@@ -36,9 +27,9 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 2px 20px rgba(11, 117, 192, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
 }
 
 /* ── Fila principal: logo + buscador + usuario ── */
@@ -172,6 +163,7 @@
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 3px var(--focus-ring);
+  background: rgba(6, 30, 58, 0.9);
 }
 
 .clear-button {
@@ -188,7 +180,18 @@
 }
 
 .clear-button:hover {
-  color: var(--text-main);
+  color: var(--accent-hover);
+}
+
+.clear-icon {
+  color: var(--accent-color);
+  font-size: 1.15rem;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.clear-button:hover .clear-icon {
+  color: var(--accent-hover);
+  transform: scale(1.15);
 }
 
 /* ── Resultados de búsqueda ──────────── */
@@ -200,14 +203,14 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 560px;
-  background: rgba(224, 232, 242, 0.98);
+  background: rgba(4, 20, 40, 0.97);
   border: 1px solid var(--line-color);
   border-radius: var(--radius-card);
   padding: 0.5rem;
   max-height: 420px;
   overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(11, 117, 192, 0.18);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px);
   z-index: 1100;
 }
 
@@ -218,14 +221,14 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 560px;
-  background: rgba(224, 232, 242, 0.98);
+  background: rgba(4, 20, 40, 0.97);
   border: 1px solid var(--line-color);
   border-radius: var(--radius-card);
   padding: 0.75rem 1rem;
   font-size: 0.88rem;
   color: var(--text-muted);
-  box-shadow: 0 8px 32px rgba(11, 117, 192, 0.15);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
   z-index: 1100;
 }
 
@@ -254,10 +257,6 @@
 .search-result-item:focus-visible {
   background: var(--bg-hover);
   outline: none;
-}
-
-.search-result-item--link {
-  cursor: pointer;
 }
 
 .result-portada {
@@ -394,13 +393,13 @@
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  background: rgba(224, 232, 242, 0.98);
+  background: rgba(4, 20, 40, 0.97);
   border: 1px solid var(--line-color);
   border-radius: var(--radius-card);
   padding: 0.45rem;
   min-width: 175px;
-  box-shadow: 0 8px 32px rgba(11, 117, 192, 0.15);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px);
   z-index: 20;
 }
 
@@ -468,7 +467,7 @@
 
 .nav-link.active {
   color: var(--text-main);
-  background: rgba(11, 117, 192, 0.15);
+  background: rgba(74, 158, 255, 0.15);
 }
 
 .nav-link.active .nav-icon {
@@ -497,8 +496,7 @@
 .nav-link:focus-visible,
 .header-logo a:focus-visible,
 .user-btn:focus-visible,
-.dropdown-item:focus-visible,
-.sidebar-link:focus-visible {
+.dropdown-item:focus-visible {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
@@ -520,15 +518,6 @@
 @media (max-width: 900px) {
   .user-btn__name {
     display: none;
-  }
-
-  .layout-shell,
-  .layout-shell.sidebar-collapsed {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .side-menu {
-    position: static;
   }
 }
 

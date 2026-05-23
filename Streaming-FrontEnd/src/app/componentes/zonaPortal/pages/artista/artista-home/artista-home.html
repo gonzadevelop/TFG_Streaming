@@ -1,5 +1,8 @@
+<app-ks-loader [visible]="isLoading()" mensaje="Cargando panel de artista…" />
+
+@if (!isLoading()) {
 <section class="artist-home">
-  <header class="artist-home__header">
+  <header class="artist-home__header" scrollReveal [duration]="500">
     <div>
       <h1>Panel de artista</h1>
       <p>Gestiona tus lanzamientos, tu perfil y las publicaciones.</p>
@@ -7,13 +10,11 @@
     <a routerLink="/artista/subir" class="artist-home__cta">Subir nuevo álbum</a>
   </header>
 
-  @if (isLoading()) {
-    <p class="artist-home__status">Cargando datos...</p>
-  } @else if (errorMessage()) {
+  @if (errorMessage()) {
     <p class="artist-home__status artist-home__status--error">{{ errorMessage() }}</p>
   }
 
-  <div class="artist-home__stats">
+  <div class="artist-home__stats" scrollReveal [stagger]="80" [duration]="480" [delay]="80">
     <div class="artist-home__stat">
       <span class="artist-home__stat-number">{{ totalAlbums() }}</span>
       <span class="artist-home__stat-label">Lanzamientos</span>
@@ -28,7 +29,7 @@
     </div>
   </div>
 
-  <div class="artist-home__grid">
+  <div class="artist-home__grid" scrollReveal [stagger]="90" [duration]="500" [delay]="120">
     <a routerLink="/artista/albumes" class="artist-home__card">
       <h2>Gestionar lanzamientos</h2>
       <p>Publica y elimina álbumes, revisa tus borradores.</p>
@@ -47,4 +48,4 @@
     </div>
   </div>
 </section>
-
+}

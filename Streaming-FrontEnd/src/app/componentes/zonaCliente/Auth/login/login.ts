@@ -32,6 +32,19 @@ export class Login implements OnInit, OnDestroy {
   protected errorMessage: WritableSignal<string> = signal<string>('');
   protected isLoading: WritableSignal<boolean> = signal<boolean>(false);
 
+  private errorTimer: ReturnType<typeof setTimeout> | null = null;
+
+  protected cerrarError(): void {
+    if (this.errorTimer) clearTimeout(this.errorTimer);
+    this.errorMessage.set('');
+  }
+
+  private showError(msg: string): void {
+    if (this.errorTimer) clearTimeout(this.errorTimer);
+    this.errorMessage.set(msg);
+    this.errorTimer = setTimeout(() => this.errorMessage.set(''), 5000);
+  }
+
   protected loginForm: FormGroup = new FormGroup({
     user: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(2)]),
@@ -59,8 +72,7 @@ export class Login implements OnInit, OnDestroy {
       },
       error: (): void => {
         this.isLoading.set(false);
-        this.errorMessage.set('Usuario o contraseña incorrectos. Inténtalo de nuevo.');
-        setTimeout(() => this.errorMessage.set(''), 5000);
+        this.showError('Usuario o contraseña incorrectos. Inténtalo de nuevo.');
       }
     });
   }
@@ -77,5 +89,6 @@ export class Login implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.suscripcionLogin?.unsubscribe();
+    if (this.errorTimer) clearTimeout(this.errorTimer);
   }
 }

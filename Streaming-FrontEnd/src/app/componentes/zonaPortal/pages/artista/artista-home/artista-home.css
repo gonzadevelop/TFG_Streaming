@@ -1,9 +1,10 @@
+/* Artista Home */
 .artist-home {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 24px;
-  color: #f3f3f3;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  color: #e8f4ff;
 }
 
 .artist-home__header {
@@ -11,73 +12,128 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(74, 158, 255, 0.15);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.artist-home__header h1 {
+  margin: 0 0 4px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #e8f4ff;
+}
+
+.artist-home__header p {
+  margin: 0;
+  color: #7aaed4;
+  font-size: 0.9rem;
 }
 
 .artist-home__cta {
-  background: #6c63ff;
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
   color: #fff;
   text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 0.6rem 1.4rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 14px rgba(74, 158, 255, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.artist-home__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 158, 255, 0.55);
 }
 
 .artist-home__status {
   margin: 0;
-  color: #d6d6d6;
+  color: #7aaed4;
 }
 
 .artist-home__status--error {
-  color: #ff8a8a;
+  color: #ff6b6b;
 }
 
 .artist-home__stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
+  gap: 1rem;
 }
 
 .artist-home__stat {
-  background: #1e1e2f;
-  padding: 16px;
-  border-radius: 10px;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  border-radius: 1rem;
+  padding: 1.25rem;
   text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.artist-home__stat:hover {
+  border-color: rgba(74, 158, 255, 0.3);
 }
 
 .artist-home__stat-number {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 900;
   display: block;
+  color: #4a9eff;
 }
 
 .artist-home__stat-label {
-  font-size: 13px;
-  color: #c2c2c2;
+  font-size: 0.8rem;
+  color: #7aaed4;
+  margin-top: 4px;
 }
 
 .artist-home__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
+  gap: 1rem;
 }
 
 .artist-home__card {
   display: block;
-  background: #1a1a28;
-  border-radius: 12px;
-  padding: 18px;
-  color: inherit;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  border-radius: 1rem;
+  padding: 1.4rem;
+  color: #e8f4ff;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .artist-home__card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transform: translateY(-3px);
+  border-color: rgba(74, 158, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.artist-home__card h2 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #e8f4ff;
+}
+
+.artist-home__card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7aaed4;
 }
 
 .artist-home__card--disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
 }
-

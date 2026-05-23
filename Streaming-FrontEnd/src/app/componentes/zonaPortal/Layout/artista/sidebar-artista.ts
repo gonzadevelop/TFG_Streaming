@@ -34,23 +34,40 @@ export class SidebarArtista implements OnInit {
 
   readonly isOpen = input<boolean>(true);
   userName: WritableSignal<string> = signal<string>('');
-  avatarUrl: WritableSignal<string | null> = signal<string | null>(null);
+  readonly avatarUrl = this.sidebarService.avatarUrl;
+  protected readonly dropdownOpen = signal<boolean>(false);
 
   protected readonly inicialAvatar = computed<string>(() =>
     this.userName()[0]?.toUpperCase() ?? 'A'
   );
 
+  protected readonly saludo = computed<string>(() => {
+    if (typeof window === 'undefined') return '¡Hola';
+    const hora = new Date().getHours();
+    if (hora < 12) return '¡Buenos días';
+    if (hora < 19) return '¡Buenas tardes';
+    return '¡Buenas noches';
+  });
+
   readonly sidebarItems: SidebarItem[] = [
     { label: 'Panel artista', icon: 'dashboard', route: '/artista/home' },
     { label: 'Mis lanzamientos', icon: 'album', route: '/artista/albumes' },
-    { label: 'Subir album', icon: 'upload', route: '/artista/subir' },
-    { label: 'Perfil', icon: 'person', route: '/artista/perfil' },
+    { label: 'Subir álbum', icon: 'cloud_upload', route: '/artista/subir' },
   ];
 
+  toggleDropdown(): void {
+    this.dropdownOpen.update(v => !v);
+  }
+
+  closeDropdown(): void {
+    this.dropdownOpen.set(false);
+  }
+
   cerrarSesion(): void {
+    this.dropdownOpen.set(false);
     this.tokenService.clearSession();
     this.userName.set('');
-    this.avatarUrl.set(null);
+    this.sidebarService.avatarUrl.set(null);
     this.router.navigate(['/login']);
   }
 
@@ -63,13 +80,13 @@ export class SidebarArtista implements OnInit {
         this.userService.getPerfilUsuario(username).subscribe({
           next: (perfil: { urlAvatar?: string | null }) => {
             if (perfil.urlAvatar && !perfil.urlAvatar.includes('ui-avatars')) {
-              this.avatarUrl.set(perfil.urlAvatar);
+              this.sidebarService.avatarUrl.set(perfil.urlAvatar);
             }
           },
-          error: () => { /* avatar por defecto, sin accion */ },
+          error: () => { /* avatar por defecto */ },
         });
       },
-      error: () => { /* nombre por defecto, sin accion */ },
+      error: () => { /* nombre por defecto */ },
     });
   }
 }

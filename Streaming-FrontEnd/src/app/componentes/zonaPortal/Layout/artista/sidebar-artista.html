@@ -1,29 +1,82 @@
-<nav class="artist-sidebar" [class.artist-sidebar--collapsed]="!isOpen()">
-  <div class="artist-sidebar__profile">
-    @if (avatarUrl()) {
-      <img [src]="avatarUrl()!" alt="Avatar" />
-    } @else {
-      <div class="artist-sidebar__avatar-fallback">{{ inicialAvatar() }}</div>
-    }
-    <div class="artist-sidebar__profile-info">
-      <span class="artist-sidebar__name">{{ userName() }}</span>
-      <span class="artist-sidebar__role">Artista</span>
+<aside
+  class="side-menu"
+  [attr.aria-hidden]="!isOpen()">
+
+  <!-- Bienvenida con dropdown -->
+  <section class="home-welcome sidebar-welcome" aria-label="Bienvenida">
+    <div
+      class="welcome-inner d-flex align-items-center gap-3 welcome-trigger"
+      (click)="toggleDropdown()"
+      (keydown.enter)="toggleDropdown()"
+      (keydown.space)="toggleDropdown()"
+      tabindex="0"
+      role="button"
+      [attr.aria-expanded]="dropdownOpen()"
+      aria-haspopup="menu"
+      aria-label="Menú de artista"
+    >
+      <div class="welcome-avatar" aria-hidden="true">
+        @if (avatarUrl()) {
+          <img [src]="avatarUrl()!" [alt]="'Avatar de ' + userName()" class="welcome-avatar-img" />
+        } @else {
+          <span class="welcome-avatar-letter">{{ inicialAvatar() }}</span>
+        }
+      </div>
+      <div class="flex-grow-1">
+        <p class="welcome-saludo mb-0">{{ saludo() }},</p>
+        <h2 class="welcome-nombre mb-0">{{ userName() }}</h2>
+        <p class="welcome-sub mb-0">Panel de artista</p>
+      </div>
+      <span class="welcome-chevron material-icons" aria-hidden="true">
+        {{ dropdownOpen() ? 'expand_less' : 'expand_more' }}
+      </span>
     </div>
-  </div>
 
-  <ul class="artist-sidebar__menu">
-    @for (item of sidebarItems; track item.route) {
-      <li>
-        <a [routerLink]="item.route" routerLinkActive="is-active">
-          <span class="material-icons">{{ item.icon }}</span>
-          <span>{{ item.label }}</span>
+    <!-- Dropdown -->
+    @if (dropdownOpen()) {
+      <div
+        class="sidebar-dropdown"
+        role="menu"
+        aria-label="Opciones de artista"
+        (click)="$event.stopPropagation()"
+      >
+        <a
+          routerLink="/artista/perfil"
+          class="sidebar-dropdown__item"
+          role="menuitem"
+          (click)="closeDropdown()"
+        >
+          <span class="material-icons" aria-hidden="true">person</span>
+          Mi perfil
         </a>
-      </li>
+        <hr class="sidebar-dropdown__divider" aria-hidden="true">
+        <button
+          type="button"
+          class="sidebar-dropdown__item sidebar-dropdown__item--danger"
+          role="menuitem"
+          (click)="cerrarSesion()"
+        >
+          <span class="material-icons" aria-hidden="true">logout</span>
+          Cerrar sesión
+        </button>
+      </div>
     }
-  </ul>
+  </section>
 
-  <button type="button" class="artist-sidebar__logout" (click)="cerrarSesion()">
-    Cerrar sesion
-  </button>
-</nav>
+  <!-- Navegación artista -->
+  <nav class="sidebar-nav" aria-label="Menú artista">
+    @for (item of sidebarItems; track item.label) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: item.route === '/artista/home'}"
+        class="sidebar-link"
+        [attr.aria-label]="item.label"
+        (click)="closeDropdown()">
+        <span class="material-icons" aria-hidden="true">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    }
+  </nav>
 
+</aside>

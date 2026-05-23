@@ -1,12 +1,11 @@
-@if (cargando()) {
-  <section class="album-page">
-    <p class="muted">Cargando album…</p>
-  </section>
-} @else if (error()) {
+<app-ks-loader [visible]="cargando()" mensaje="Cargando álbum…" />
+
+@if (!cargando() && error()) {
   <section class="album-page">
     <p class="error">{{ error() }}</p>
   </section>
-} @else if (album(); as a) {
+} @else if (!cargando() && album()) {
+  @let a = album()!;
   <section class="album-page">
     <div class="album-gradient-bg"></div>
 
@@ -40,9 +39,10 @@
             </button>
             • {{ a.anioLanzamiento }} • {{ a.numCanciones }} canciones
           </span>
-          @if (a.duracionTotalSegundos > 0) {
+          @if (duracionTotalSegundos() > 0) {
             <span class="album-duration">
-              {{ formatearDuracion(a.duracionTotalSegundos) }}
+              <span class="material-icons album-duration__icon" aria-hidden="true">schedule</span>
+              {{ formatearDuracion(duracionTotalSegundos()) }}
             </span>
           }
         </div>
@@ -58,7 +58,8 @@
     <div class="album-content">
       <app-lista-canciones
         [pistas]="a.canciones || []"
-        [portadaFallback]="a.portada"/>
+        [portadaFallback]="a.portada"
+        [mostrarPortada]="false"/>
     </div>
   </section>
 }

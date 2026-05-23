@@ -1,14 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { UserService } from '../../../../../services/userService';
 import { SidebarService } from '../../../../../services/SidebarService';
+import { TokenService } from '../../../../../services/tokenService';
 import { IResponseUsuario } from '../../../../../model/IResponseUsuario';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { signal, computed } from '@angular/core';
+import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-reveal.directive';
+import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
 
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ScrollRevealDirective, KsLoaderComponent],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,6 +19,11 @@ import { signal, computed } from '@angular/core';
 export class Perfil {
   private readonly userService = inject(UserService);
   private readonly sidebarService = inject(SidebarService);
+  private readonly tokenService = inject(TokenService);
+
+  protected readonly rol = computed<'artista' | 'oyente'>(() =>
+    this.tokenService.getPrimaryRole() === 'ROLE_ARTISTA' ? 'artista' : 'oyente'
+  );
 
   protected readonly perfil = signal<IResponseUsuario | null>(null);
   protected readonly isLoading = signal<boolean>(true);
@@ -191,6 +199,7 @@ export class Perfil {
       next: (urlAvatar) => {
         const p = this.perfil();
         if (p) this.perfil.set({ ...p, urlAvatar });
+        this.sidebarService.avatarUrl.set(urlAvatar);
         this.isUploadingAvatar.set(false);
         this.showSuccess('¡Foto de perfil actualizada!');
       },

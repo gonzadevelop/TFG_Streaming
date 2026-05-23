@@ -5,10 +5,11 @@ import { StorageGlobal } from '../../../../../../services/storageGlobal';
 import { FavoritosService } from '../../../../../../services/favoritosService';
 import { ContextMenuService } from '../../../../../../services/contextMenuService';
 import { ContextMenu, ContextMenuPosition } from '../context-menu/context-menu';
+import { ScrollRevealDirective } from '../../../../../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-mini-cancion',
-  imports: [ContextMenu],
+  imports: [ContextMenu, ScrollRevealDirective],
   templateUrl: './mini-cancion.html',
   styleUrl: './mini-cancion.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,8 +17,13 @@ import { ContextMenu, ContextMenuPosition } from '../context-menu/context-menu';
 export class MiniCancion {
   readonly pista    = input.required<IPista>();
   readonly posicion = input<number | null>(null);
+  /** ID de la playlist actual para permitir la opción de eliminar */
+  readonly playlistId       = input<number | null>(null);
+  readonly esPlaylistPropia = input<boolean>(false);
+  readonly mostrarPortada   = input<boolean>(true);
 
-  readonly reproducirEvento = output<IPista>();
+  readonly reproducirEvento  = output<IPista>();
+  readonly cancionEliminada  = output<number>();
 
   private readonly storage           = inject(StorageGlobal);
   private readonly router            = inject(Router);

@@ -1,9 +1,9 @@
 .artist-albums {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px;
-  color: #f3f3f3;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  color: #e8f4ff;
 }
 
 .artist-albums__header {
@@ -11,72 +11,122 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(74, 158, 255, 0.15);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.artist-albums__header h1 {
+  margin: 0 0 2px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #e8f4ff;
 }
 
 .artist-albums__cta {
-  background: #6c63ff;
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
   color: #fff;
   text-decoration: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 0.55rem 1.25rem;
+  border-radius: 2rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 14px rgba(74, 158, 255, 0.35);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.artist-albums__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(74, 158, 255, 0.5);
 }
 
 .artist-albums__status {
   margin: 0;
-  color: #d6d6d6;
+  color: #7aaed4;
 }
 
 .artist-albums__status--error {
-  color: #ff8a8a;
+  color: #ff6b6b;
 }
 
 .artist-albums__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
 }
 
 .artist-albums__card {
-  background: #1a1a28;
-  border-radius: 12px;
-  padding: 16px;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  border-radius: 1rem;
+  padding: 1.1rem;
   display: grid;
-  gap: 12px;
+  gap: 10px;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.artist-albums__card:hover {
+  border-color: rgba(74, 158, 255, 0.28);
+  transform: translateY(-2px);
 }
 
 .artist-albums__cover img {
   width: 100%;
   height: 160px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 0.75rem;
 }
 
 .artist-albums__cover-placeholder {
-  background: #2c2c40;
-  color: #c2c2c2;
+  background: rgba(74, 158, 255, 0.08);
+  color: #4a7a9b;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 160px;
-  border-radius: 10px;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
 }
 
 .artist-albums__info h2 {
   margin: 0 0 4px;
-  font-size: 18px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e8f4ff;
+}
+
+.artist-albums__info p {
+  margin: 0 0 2px;
+  font-size: 0.82rem;
+  color: #7aaed4;
 }
 
 .artist-albums__badge {
-  margin-left: 8px;
+  display: inline-block;
+  margin-left: 6px;
   padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  background: #3a3a55;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(74, 158, 255, 0.18);
+  color: #4a9eff;
+  border: 1px solid rgba(74, 158, 255, 0.3);
 }
 
 .artist-albums__badge--published {
-  background: #2e7d32;
+  background: rgba(67, 160, 71, 0.18);
+  color: #66bb6a;
+  border-color: rgba(67, 160, 71, 0.3);
 }
 
 .artist-albums__actions {
@@ -86,20 +136,38 @@
 }
 
 .artist-albums__actions button {
-  background: #5c6bc0;
-  border: none;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
+  background: rgba(74, 158, 255, 0.15);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  color: #7aaed4;
+  padding: 5px 12px;
+  border-radius: 999px;
   cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.artist-albums__actions button:hover {
+  background: rgba(74, 158, 255, 0.25);
+  border-color: #4a9eff;
+  color: #e8f4ff;
 }
 
 .artist-albums__actions button.danger {
-  background: #d32f2f;
+  background: rgba(229, 57, 53, 0.12);
+  border-color: rgba(229, 57, 53, 0.3);
+  color: #ef9a9a;
+}
+
+.artist-albums__actions button.danger:hover {
+  background: rgba(229, 57, 53, 0.25);
+  color: #ffcdd2;
 }
 
 .artist-albums__hint {
-  color: #a0a0a0;
-  font-size: 13px;
+  color: #4a7a9b;
+  font-size: 0.82rem;
 }
-

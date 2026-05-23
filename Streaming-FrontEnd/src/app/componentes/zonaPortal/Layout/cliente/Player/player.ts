@@ -82,7 +82,7 @@ export class Player implements OnDestroy {
   // ─── Estado local de UI ───────────────────────────────────────────────────
 
   protected readonly isShuffled  = this.storage.isShuffled;
-  protected readonly repeatMode  = signal<'none' | 'all' | 'one'>('none');
+  protected readonly repeatMode  = this.storage.repeatMode;
   protected readonly isVisible   = signal(true);
   protected readonly isExpanded  = signal(false);
   protected readonly colaVisible = signal(false);
@@ -114,7 +114,7 @@ export class Player implements OnDestroy {
   toggleShuffle(): void   { this.storage.ToggleShuffle(); }
 
   toggleRepeat(): void {
-    this.repeatMode.update(m => {
+    this.storage.repeatMode.update(m => {
       if (m === 'none') return 'all';
       if (m === 'all')  return 'one';
       return 'none';

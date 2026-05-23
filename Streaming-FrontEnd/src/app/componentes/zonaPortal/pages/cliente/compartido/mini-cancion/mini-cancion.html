@@ -1,5 +1,8 @@
 <article class="mini-cancion track-row" tabindex="0" [attr.aria-label]="pista().titulo"
-  (contextmenu)="abrirContextMenu($event)">
+  (contextmenu)="abrirContextMenu($event)"
+  scrollReveal
+  [delay]="(posicion() ?? 0) * 50"
+  [duration]="450">
 
   <div class="track-row__index">
     @if (posicion() !== null && !isReproduciendoEsta()) {
@@ -17,7 +20,7 @@
   </div>
 
   <div class="track-row__title-group">
-    @if (pista().urlPortada !== undefined) {
+    @if (mostrarPortada() && pista().urlPortada !== undefined) {
       <div class="mini-cancion__cover">
         <img
           class="mini-cancion__img"
@@ -30,15 +33,30 @@
     <div class="mini-cancion__info">
       <div class="mini-cancion__titulo-row">
         <p class="mini-cancion__titulo mb-0">{{ pista().titulo }}</p>
-        <button
-          type="button"
-          class="mini-cancion__favorito"
-          [class.mini-cancion__favorito--activo]="esFavorito()"
-          (click)="toggleFavorito($event)"
+        <label
+          class="mini-cancion__favorito-label"
           [attr.aria-label]="esFavorito() ? 'Quitar de favoritos ' + pista().titulo : 'Añadir a favoritos ' + pista().titulo"
-          [attr.aria-pressed]="esFavorito()">
-          {{ esFavorito() ? '♥' : '♡' }}
-        </button>
+          (click)="toggleFavorito($event)">
+          <input
+            type="checkbox"
+            class="mini-cancion__favorito-input"
+            [checked]="esFavorito()"
+            [attr.aria-checked]="esFavorito()"
+            (click)="$event.stopPropagation()"
+            tabindex="-1"
+          />
+          <div class="mini-cancion__favorito-checkmark" [class.mini-cancion__favorito-checkmark--activo]="esFavorito()">
+            <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false">
+              <rect fill="none" height="256" width="256"></rect>
+              <path
+                d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z"
+                stroke-width="20px"
+                stroke="#FFF"
+                fill="none">
+              </path>
+            </svg>
+          </div>
+        </label>
       </div>
       <p class="mini-cancion__artistas mb-0">
         @for (artista of pista().artistas; track artista; let last = $last) {
@@ -76,5 +94,8 @@
   [pista]="pista()"
   [position]="ctxPosition()"
   [visible]="ctxVisible()"
+  [playlistId]="playlistId()"
+  [esPlaylistPropia]="esPlaylistPropia()"
   (cerrar)="cerrarContextMenu()"
+  (cancionEliminada)="cancionEliminada.emit($event)"
 />

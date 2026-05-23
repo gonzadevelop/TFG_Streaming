@@ -1,5 +1,8 @@
+<app-ks-loader [visible]="isLoading()" mensaje="Cargando lanzamientos…" />
+
+@if (!isLoading()) {
 <section class="artist-albums">
-  <header class="artist-albums__header">
+  <header class="artist-albums__header" scrollReveal [duration]="500">
     <div>
       <h1>Mis lanzamientos</h1>
       <p>Publica y elimina álbumes cuando estén listos.</p>
@@ -7,15 +10,13 @@
     <a routerLink="/artista/subir" class="artist-albums__cta">Subir nuevo</a>
   </header>
 
-  @if (isLoading()) {
-    <p class="artist-albums__status">Cargando álbumes...</p>
-  } @else if (errorMessage()) {
+  @if (errorMessage()) {
     <p class="artist-albums__status artist-albums__status--error">{{ errorMessage() }}</p>
   } @else if (albums().length === 0) {
     <p class="artist-albums__status">Aún no tienes álbumes subidos.</p>
   }
 
-  <div class="artist-albums__grid">
+  <div class="artist-albums__grid" scrollReveal [stagger]="90" [duration]="500" [delay]="100">
     @for (album of albums(); track album.id) {
       <article class="artist-albums__card">
         <div class="artist-albums__cover">
@@ -62,4 +63,5 @@
     }
   </div>
 </section>
+}
 

@@ -1,12 +1,17 @@
-<div class="login-bg">
-  <div class="login-blob login-blob--1"></div>
-  <div class="login-blob login-blob--2"></div>
-  <div class="login-blob login-blob--3"></div>
-</div>
-
-<!-- Contenido centrado -->
 <div class="d-flex justify-content-center align-items-center vh-100 login-content">
   <div class="card shadow-lg login-card p-4 p-md-5">
+
+    <!-- Mensaje de error -->
+    @if (errorMessage()) {
+      <div class="alert alert--error" role="alert" aria-live="assertive">
+        <span class="material-icons alert__icon" aria-hidden="true">error</span>
+        <span class="alert__text">{{ errorMessage() }}</span>
+        <button type="button" class="alert__close" (click)="cerrarError()" aria-label="Cerrar mensaje de error">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+        <div class="alert__progress" aria-hidden="true"></div>
+      </div>
+    }
 
     <!-- Cabecera -->
     <div class="text-center mb-4">
@@ -24,7 +29,6 @@
           <input
             type="email"
             class="form-control"
-            [class.is-invalid]="loginForm.get('user')?.invalid && loginForm.get('user')?.touched"
             id="user"
             formControlName="user"
             placeholder=""
@@ -32,17 +36,6 @@
             required
           >
         </div>
-        @if (loginForm.get('user')?.touched) {
-          @if (loginForm.get('user')?.hasError('required')) {
-            <div class="invalid-feedback d-block small mt-1">
-              El correo electrónico es obligatorio.
-            </div>
-          } @else if (loginForm.get('user')?.hasError('email')) {
-            <div class="invalid-feedback d-block small mt-1">
-              Introduce un correo electrónico válido.
-            </div>
-          }
-        }
       </div>
 
       <!-- Campo contraseña -->
@@ -52,7 +45,6 @@
           <input
             [type]="mostrarPassword() ? 'text' : 'password'"
             class="form-control"
-            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
             id="password"
             formControlName="password"
             placeholder=""
@@ -72,17 +64,6 @@
             }
           </button>
         </div>
-        @if (loginForm.get('password')?.touched) {
-          @if (loginForm.get('password')?.hasError('required')) {
-            <div class="invalid-feedback d-block small mt-1">
-              La contraseña es obligatoria.
-            </div>
-          } @else if (loginForm.get('password')?.hasError('minlength')) {
-            <div class="invalid-feedback d-block small mt-1">
-              La contraseña debe tener al menos 8 caracteres.
-            </div>
-          }
-        }
       </div>
 
       <!-- Enlace olvidé contraseña -->
@@ -94,9 +75,14 @@
       <button
         type="submit"
         class="btn btn-submit w-100 py-2 mb-3"
-        [disabled]="loginForm.invalid"
+        [disabled]="loginForm.invalid || isLoading()"
       >
-        Iniciar sesión
+        @if (isLoading()) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Iniciando sesión...
+        } @else {
+          Iniciar sesión
+        }
       </button>
 
       <!-- Divisor -->
