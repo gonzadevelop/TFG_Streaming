@@ -2,13 +2,13 @@
   display: grid;
   grid-template-columns: 260px 1fr;
   min-height: 100vh;
-  background: #0f0f1a;
-  color: #f3f3f3;
+  position: relative;
+  z-index: 1;
+  color: #e8f4ff;
 }
 
 .artist-layout__sidebar {
-  border-right: 1px solid #1f1f32;
-  background: #12121c;
+  overflow-y: auto;
 }
 
 .artist-layout__sidebar--hidden {
@@ -27,13 +27,16 @@
   justify-content: space-between;
   gap: 16px;
   padding: 18px 24px;
-  border-bottom: 1px solid #1f1f32;
-  background: #151522;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.1);
+  background: rgba(4, 20, 40, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .artist-layout__header h1 {
   margin: 0;
   font-size: 20px;
+  color: #e8f4ff;
 }
 
 .artist-layout__main {

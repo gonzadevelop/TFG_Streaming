@@ -1,12 +1,11 @@
-@if (cargando()) {
-  <section class="playlist-page">
-    <p class="muted">Cargando playlist…</p>
-  </section>
-} @else if (error()) {
+<app-ks-loader [visible]="cargando()" mensaje="Cargando playlist…" />
+
+@if (!cargando() && error()) {
   <section class="playlist-page">
     <p class="error">{{ error() }}</p>
   </section>
-} @else if (playlist(); as p) {
+} @else if (!cargando() && playlist()) {
+  @let p = playlist()!;
   <section class="playlist-page">
     <div class="playlist-gradient-bg"></div>
 
@@ -33,16 +32,32 @@
           @if (p.descripcion) {
             <p class="playlist-desc mb-0">{{ p.descripcion }}</p>
           }
-          <span class="playlist-stats">
-            <span class="playlist-author">{{ p.usernamePropietario || 'Keysound' }}</span> • {{ p.pistas.length || 0 }} canciones
-          </span>
+          <span class="playlist-stats">{{ p.pistas.length || 0 }} canciones</span>
+          @if (duracionTotalSegundos() > 0) {
+            <span class="playlist-duration">
+              <span class="material-icons playlist-duration__icon" aria-hidden="true">schedule</span>
+              {{ formatearDuracion(duracionTotalSegundos()) }}
+            </span>
+          }
+        </div>
+        <!-- Propietario con avatar -->
+        <div class="playlist-owner-row">
+          <div class="owner-avatar" aria-hidden="true">
+            @if (ownerAvatarUrl()) {
+              <img [src]="ownerAvatarUrl()!" [alt]="'Avatar de ' + (p.usernamePropietario || 'Keysound')" class="owner-avatar-img" />
+            } @else {
+              <span class="owner-avatar-letter">{{ ownerInitial() }}</span>
+            }
+          </div>
+          <span class="owner-name">{{ p.usernamePropietario || 'Keysound' }}</span>
         </div>
       </div>
     </header>
 
     <div class="playlist-actions">
-      <button class="btn-play-large" aria-label="Reproducir" (click)="reproducirTodo()">
-        ▶
+      <button class="btn-play-large" aria-label="Reproducir playlist" (click)="reproducirTodo()">
+        <span class="material-icons" aria-hidden="true">play_arrow</span>
+        Reproducir
       </button>
       @if (esPropia()) {
         <button class="btn-edit-playlist" (click)="abrirEditModal()" aria-label="Editar playlist">

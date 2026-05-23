@@ -1,9 +1,8 @@
 import {
-  Component, inject,
-  input,
-  InputSignal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
   OnDestroy,
-  OnInit,
   signal,
   WritableSignal
 } from '@angular/core';
@@ -18,13 +17,12 @@ import {IUserRegister} from '../../../../model/auth/IUserRegister';
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Registro implements OnInit, OnDestroy {
+export class Registro implements OnDestroy {
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
   private suscripcionRegistro?: Subscription;
-
-  public email: InputSignal<string> = input<string>('');
 
   protected mostrarPassword: WritableSignal<boolean> = signal<boolean>(false);
   protected errorMessage: WritableSignal<string> = signal<string>('');
@@ -43,34 +41,24 @@ export class Registro implements OnInit, OnDestroy {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    const userData: IUserRegister = {
-      ...this.registroForm.value
-    };
-      this.suscripcionRegistro = this.authService.register(userData).subscribe({
-        next: (): void => {
-          console.log('Registro exitoso. Redirigiendo a verificación de email...');
-          this.router.navigate(['/verificar-email'], {
-            queryParams: { email: userData.email }
-          });
-        },
-        error: (err): void => {
-          console.error('Error en registro:', err);
-          this.errorMessage.set('Error al crear la cuenta. Inténtalo de nuevo.');
-          this.isLoading.set(false);
-        }
-      });
-    }
+    const userData: IUserRegister = { ...this.registroForm.value };
+
+    this.suscripcionRegistro = this.authService.register(userData).subscribe({
+      next: (): void => {
+        this.router.navigate(['/login']);
+      },
+      error: (): void => {
+        this.errorMessage.set('Error al crear la cuenta. Inténtalo de nuevo.');
+        this.isLoading.set(false);
+      }
+    });
+  }
 
   togglePasswordVisibility(): void {
-    this.mostrarPassword.set(!this.mostrarPassword());
+    this.mostrarPassword.update(v => !v);
   }
 
-  ngOnInit(): void {
-    console.log('componente de registro cargado...');
-    console.log('valor del email recibido como input:', this.email());
-  }
-
-  ngOnDestroy():void {
+  ngOnDestroy(): void {
     this.suscripcionRegistro?.unsubscribe();
   }
 }

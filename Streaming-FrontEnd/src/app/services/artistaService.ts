@@ -27,6 +27,10 @@ export class ArtistaService {
     return this.http.delete<void>(`${this.baseURL}/artistas/eliminar/${albumId}`);
   }
 
+  getArtistasQueSigo(): Observable<IArtistaHome[]> {
+    return this.http.get<IArtistaHome[]>(`${this.baseURL}/artistas/artistas-que-sigo`);
+  }
+
   buscarArtistas(q: string): Observable<IArtistaHome[]> {
     return this.http.get<IArtistaHome[]>(`${this.baseURL}/artistas/buscar`, { params: { q } });
   }

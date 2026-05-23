@@ -1,12 +1,11 @@
-@if (cargando()) {
-  <section class="artista-page">
-    <p class="muted">Cargando artista…</p>
-  </section>
-} @else if (error()) {
+<app-ks-loader [visible]="cargando()" mensaje="Cargando artista…" />
+
+@if (!cargando() && error()) {
   <section class="artista-page">
     <p class="error">{{ error() }}</p>
   </section>
-} @else if (artista(); as a) {
+} @else if (!cargando() && artista()) {
+  @let a = artista()!;
   <section class="artista-page">
     <div class="artista-gradient-bg"></div>
 
@@ -27,9 +26,11 @@
       </div>
 
       <div class="artista-info">
+        <span class="artista-badge">Artista</span>
         <h1 class="artista-name">{{ a.username }}</h1>
         <div class="artista-meta">
           <span class="artista-stats">
+            <span class="material-icons" style="font-size:1rem" aria-hidden="true">people</span>
             {{ a.seguidores }} seguidores
           </span>
         </div>
@@ -38,7 +39,7 @@
 
     <div class="artista-actions">
       <button class="btn-play-large" aria-label="Reproducir">
-        ▶
+        <span class="material-icons" aria-hidden="true">play_arrow</span>
       </button>
       <button
         class="btn-follow"
@@ -58,9 +59,6 @@
         } @else {
           Seguir
         }
-      </button>
-      <button class="btn-more" aria-label="Más opciones">
-        ⋯
       </button>
     </div>
 

@@ -9,10 +9,11 @@ import {
 import { RouterLink } from '@angular/router';
 import { PlaylistService } from '../../../../../services/playlistService';
 import { IPlaylist } from '../../../../../model/home/IPlaylist';
+import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
 
 @Component({
   selector: 'app-keysound-playlists',
-  imports: [RouterLink],
+  imports: [RouterLink, KsLoaderComponent],
   templateUrl: './keysound-playlists.html',
   styleUrl: './keysound-playlists.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

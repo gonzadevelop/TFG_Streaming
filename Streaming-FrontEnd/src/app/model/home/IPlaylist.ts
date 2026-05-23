@@ -3,4 +3,6 @@ export interface IPlaylist {
   nombre: string;
   descripcion: string;
   urlPortada: string;
+  /** Indica si la playlist es pública (puede ser undefined en respuestas antiguas del servidor) */
+  esPublica?: boolean;
 }

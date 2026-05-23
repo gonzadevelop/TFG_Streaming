@@ -1,0 +1,50 @@
+<app-ks-loader [visible]="cargando()" mensaje="Cargando artistas..." />
+
+<main class="mis-artistas-content" aria-label="Artistas que sigues">
+  @if (!cargando()) {
+    <section class="ma-section" aria-labelledby="mis-artistas-heading">
+      <div class="container-fluid px-4 px-md-5">
+
+        <div class="ma-header" scrollReveal [duration]="500">
+          <div class="ma-header__left">
+            <a routerLink="/" class="ma-back" aria-label="Volver al inicio">
+              <span class="material-icons" aria-hidden="true"a>arrow_back</span>
+            </a>
+            <div>
+              <h1 class="ma-title" id="mis-artistas-heading">Artistas que sigues</h1>
+              <p class="ma-sub">Tus artistas favoritos</p>
+            </div>
+          </div>
+        </div>
+
+        @if (artistas().length > 0) {
+          <div class="artistas-grid" scrollReveal [stagger]="60" [delay]="80" role="list">
+            @for (artista of artistas(); track artista.id) {
+              <button
+                type="button"
+                class="artista-card"
+                role="listitem"
+                (click)="navegarArtista(artista.username)"
+                [attr.aria-label]="'Ir al perfil de ' + artista.username"
+              >
+                <img
+                  [src]="artista.urlAvatar"
+                  [alt]="artista.username"
+                  class="artista-card__img"
+                />
+                <p class="artista-card__nombre mb-0">{{ artista.username }}</p>
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="empty-state" role="status">
+            <i class="bi bi-person-music empty-state__icon" aria-hidden="true"></i>
+            <p class="empty-state__text">Aún no sigues a ningún artista.</p>
+          </div>
+        }
+
+      </div>
+    </section>
+  }
+</main>
+

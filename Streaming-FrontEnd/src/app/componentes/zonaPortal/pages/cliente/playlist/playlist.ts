@@ -15,10 +15,12 @@ import { PlaylistService } from '../../../../../services/playlistService';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
 import IPistaCola from '../../../../../model/pista/IPistaCola';
 import { TokenService } from '../../../../../services/tokenService';
+import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
+import { UserService } from '../../../../../services/userService';
 
 @Component({
   selector: 'app-playlist',
-  imports: [ListaCanciones, ReactiveFormsModule],
+  imports: [ListaCanciones, ReactiveFormsModule, KsLoaderComponent],
   templateUrl: './playlist.html',
   styleUrl: './playlist.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,22 +31,38 @@ export class Playlist implements OnInit {
   private readonly storage = inject(StorageGlobal);
   private readonly fb = inject(FormBuilder);
   private readonly tokenService = inject(TokenService);
+  private readonly userService = inject(UserService);
 
   readonly playlist: WritableSignal<IPlaylistCompleta | null> = signal<IPlaylistCompleta | null>(null);
 
   protected readonly cargando: WritableSignal<boolean> = signal(true);
   protected readonly error: WritableSignal<string | null> = signal<string | null>(null);
+  protected readonly ownerAvatarUrl = signal<string | null>(null);
+  protected readonly ownerInitial = computed<string>(() => {
+    const p = this.playlist();
+    return (p?.usernamePropietario?.[0]?.toUpperCase()) ?? 'K';
+  });
 
   /** Verdadero si la playlist pertenece al usuario autenticado */
   protected readonly esPropia = computed(() => {
     const p = this.playlist();
     if (!p) return false;
     if (p.esPropia) return true;
-    // Extraer el username directamente del JWT (más fiable que getUsername, que puede estar vacío)
     const username = this.tokenService.getUsernameFromToken() ?? this.tokenService.getUsername();
     if (!username || username === 'Invitado') return false;
     return p.usernamePropietario?.toLowerCase() === username.toLowerCase();
   });
+
+  protected readonly duracionTotalSegundos = computed(() =>
+    (this.playlist()?.pistas ?? []).reduce((acc, p) => acc + (p.duracionSegundos ?? 0), 0)
+  );
+
+  protected formatearDuracion(segundos: number): string {
+    const horas = Math.floor(segundos / 3600);
+    const minutos = Math.floor((segundos % 3600) / 60);
+    if (horas > 0) return `${horas} h ${minutos} min`;
+    return `${minutos} min`;
+  }
 
   // ── Modal edición ────────────────────────────────────────
   protected readonly editModalAbierto = signal(false);
@@ -71,8 +89,18 @@ export class Playlist implements OnInit {
       next: (data: IPlaylistCompleta) => {
         this.playlist.set(data);
         this.cargando.set(false);
-        console.log('Playlist cargada:', data);
-        console.log('usernamePropietario recibido:', data.usernamePropietario);
+        // Cargar avatar del propietario
+        const owner = data.usernamePropietario;
+        if (owner) {
+          this.userService.getPerfilUsuario(owner).subscribe({
+            next: (perfil) => {
+              if (perfil.urlAvatar && !perfil.urlAvatar.includes('ui-avatars')) {
+                this.ownerAvatarUrl.set(perfil.urlAvatar);
+              }
+            },
+            error: () => { /* sin avatar */ }
+          });
+        }
       },
       error: (err: unknown) => {
         console.error('Error cargando playlist:', err);
@@ -84,12 +112,12 @@ export class Playlist implements OnInit {
 
   protected reproducirTodo(): void {
     const playlistData = this.playlist();
-    if (!playlistData || !playlistData.pistas || playlistData.pistas.length === 0) return;
+    if (!playlistData?.pistas?.length) return;
 
     const cola: IPistaCola[] = playlistData.pistas.map((p, index) => ({
       ...p,
-      orden: index, // Add orden here properly matching definition
-      reproduciendo: index === 0
+      orden: index,
+      reproduciendo: index === 0,
     }));
     this.storage.SetCola(cola);
   }

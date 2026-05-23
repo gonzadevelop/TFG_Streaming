@@ -13,8 +13,8 @@ export class EstadisticaService {
    * Devuelve los minutos escuchados por el usuario en el mes actual.
    * GET /api/estadisticas/minutos-mes
    */
-  getMinutosMes(): Observable<number> {
-    return this.http.get<number>(`${this.baseURL}/estadisticas/minutos-mes`);
+  getMinutosMes(): Observable<unknown> {
+    return this.http.get<unknown>(`${this.baseURL}/estadisticas/minutos-mes`);
   }
 
   /**

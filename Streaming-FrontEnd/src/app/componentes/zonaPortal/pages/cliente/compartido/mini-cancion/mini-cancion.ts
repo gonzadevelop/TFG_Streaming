@@ -5,10 +5,11 @@ import { StorageGlobal } from '../../../../../../services/storageGlobal';
 import { FavoritosService } from '../../../../../../services/favoritosService';
 import { ContextMenuService } from '../../../../../../services/contextMenuService';
 import { ContextMenu, ContextMenuPosition } from '../context-menu/context-menu';
+import { ScrollRevealDirective } from '../../../../../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-mini-cancion',
-  imports: [ContextMenu],
+  imports: [ContextMenu, ScrollRevealDirective],
   templateUrl: './mini-cancion.html',
   styleUrl: './mini-cancion.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

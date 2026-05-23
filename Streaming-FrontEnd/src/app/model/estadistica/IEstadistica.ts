@@ -26,7 +26,7 @@ export interface ITopAlbum {
 }
 
 export interface IEstadistica {
-  minutosEscuchadosMes: number;
+  segundosEscuchadosMes: number;
   topCanciones: ITopCancion[];
   topArtistas: ITopArtista[];
   topAlbumes: ITopAlbum[];

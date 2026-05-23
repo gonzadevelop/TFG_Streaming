@@ -1,19 +1,14 @@
-@if (cargando()) {
-  <section class="stats-page">
-    <div class="stats-loading" role="status" aria-live="polite">
-      <span class="material-icons stats-loading__icon" aria-hidden="true">insights</span>
-      <p>Cargando estadísticas…</p>
-    </div>
-  </section>
-} @else if (error()) {
+<app-ks-loader [visible]="cargando()" mensaje="Cargando estadísticas…" />
+
+@if (!cargando() && error()) {
   <section class="stats-page">
     <p class="stats-error" role="alert">{{ error() }}</p>
   </section>
-} @else {
+} @else if (!cargando()) {
   <main class="stats-page" aria-label="Mis estadísticas">
 
     <!-- Hero: minutos escuchados -->
-    <section class="stats-hero" aria-label="Tiempo escuchado este mes">
+    <section class="stats-hero" scrollReveal [duration]="600" aria-label="Tiempo escuchado este mes">
       <div class="stats-hero__bg" aria-hidden="true"></div>
       <div class="stats-hero__content">
         <span class="material-icons stats-hero__icon" aria-hidden="true">headphones</span>
@@ -25,148 +20,148 @@
             }
             <span>{{ minutosRestantes() }}<em>min</em></span>
           </p>
-          <p class="stats-hero__sub">{{ minutosEscuchados() }} minutos en total</p>
+          <p class="stats-hero__sub">{{ totalMinutos() }} minutos en total</p>
         </div>
       </div>
     </section>
 
-    <!-- Top 5 canciones -->
-    <section class="stats-section" aria-labelledby="top-canciones-title">
-      <h2 class="stats-section__title" id="top-canciones-title">
-        <span class="material-icons" aria-hidden="true">music_note</span>
-        Top 5 canciones del mes
-      </h2>
-
-      @if (topCanciones().length === 0) {
-        <p class="stats-empty">Aún no tienes canciones registradas este mes.</p>
-      } @else {
-        <ol class="stats-list" role="list">
-          @for (cancion of topCanciones(); track i; let i = $index) {
-            <li class="stats-item" role="listitem">
-              <span class="stats-item__pos" aria-hidden="true">{{ i + 1 }}</span>
-              <div class="stats-item__cover">
-                <img
-                  [src]="cancion.urlPortada"
-                  [alt]="'Portada de ' + cancion.titulo"
-                  class="stats-item__img"
-                  loading="lazy"
-                />
-              </div>
-              <div class="stats-item__info">
-                <p class="stats-item__name">{{ cancion.titulo }}</p>
-                @if (cancion.artistasUsername && cancion.artistasUsername.length > 0) {
-                  <p class="stats-item__sub">
-                    @for (username of cancion.artistasUsername; track username; let last = $last; let idx = $index) {
-                      <a [routerLink]="['/artistas', username]" class="stats-item__sub--link">{{ cancion.artistas[idx] }}</a>@if (!last){, }
-                    }
-                  </p>
-                } @else {
-                  <p class="stats-item__sub">{{ cancion.artistas && cancion.artistas.length > 0 ? cancion.artistas.join(', ') : '' }}</p>
-                }
-              </div>
-
-              <div class="stats-item__meta">
-                <span class="stats-item__plays" aria-label="{{ cancion.reproducciones }} reproducciones">
-                  <span class="material-icons" aria-hidden="true">play_circle</span>
-                  {{ cancion.reproducciones }}
-                </span>
-                <span class="stats-item__duration">{{ formatearDuracion(cancion.duracionSegundos) }}</span>
-              </div>
-              <button
-                type="button"
-                class="stats-item__play-btn"
-                [attr.aria-label]="'Reproducir ' + cancion.titulo"
-                (click)="reproducirCancion(cancion)">
-                <span class="material-icons" aria-hidden="true">play_arrow</span>
-              </button>
-            </li>
-          }
-        </ol>
-      }
-    </section>
-
-    <!-- Top 5 artistas -->
-    <section class="stats-section" aria-labelledby="top-artistas-title">
-      <h2 class="stats-section__title" id="top-artistas-title">
-        <span class="material-icons" aria-hidden="true">person</span>
-        Top 5 artistas del mes
-      </h2>
-
-      @if (topArtistas().length === 0) {
-        <p class="stats-empty">Aún no tienes artistas registrados este mes.</p>
-      } @else {
-        <ol class="stats-list stats-list--artistas" role="list">
-          @for (artista of topArtistas(); track i; let i = $index) {
-            <li class="stats-item" role="listitem">
-              <span class="stats-item__pos" aria-hidden="true">{{ i + 1 }}</span>
-              @if (artista.username) {
-                <a
-                  [routerLink]="['/artistas', artista.username]"
-                  class="stats-item__cover stats-item__cover--round"
-                  [attr.aria-label]="'Ver perfil de ' + artista.nombre">
-                  @if (artista.urlFotoPerfil) {
-                    <img
-                      [src]="artista.urlFotoPerfil"
-                      [alt]="'Foto de ' + artista.nombre"
-                      class="stats-item__img stats-item__img--round"
-                      loading="lazy"
-                    />
+    <!-- Top 5 canciones y Top 5 artistas -->
+    <div class="stats-tops-grid">
+      <!-- Top 5 canciones -->
+      <section class="stats-section" scrollReveal [duration]="500" aria-labelledby="top-canciones-title">
+        <h2 class="stats-section__title" id="top-canciones-title">
+          <span class="material-icons" aria-hidden="true"></span>
+          Top 5 canciones del mes
+        </h2>
+        <ol class="stats-list" scrollReveal [stagger]="70" [delay]="100" aria-label="Top 5 canciones más escuchadas">
+          @if (topCanciones().length === 0) {
+            <p class="stats-empty">Aún no tienes canciones registradas este mes.</p>
+          } @else {
+            @for (cancion of topCanciones(); track i; let i = $index) {
+              <li class="stats-item" role="listitem">
+                <span class="stats-item__pos" aria-hidden="true">{{ i + 1 }}</span>
+                <div class="stats-item__cover">
+                  <img
+                    [src]="cancion.urlPortada"
+                    [alt]="'Portada de ' + cancion.titulo"
+                    class="stats-item__img"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="stats-item__info">
+                  <p class="stats-item__name">{{ cancion.titulo }}</p>
+                  @if (cancion.artistasUsername && cancion.artistasUsername.length > 0) {
+                    <p class="stats-item__sub">
+                      @for (username of cancion.artistasUsername; track username; let last = $last; let idx = $index) {
+                        <a [routerLink]="['/artistas', username]" class="stats-item__sub--link">{{ cancion.artistas[idx] }}</a>@if (!last){, }
+                      }
+                    </p>
                   } @else {
-                    <span class="stats-item__avatar-placeholder" aria-hidden="true">
-                      {{ artista.nombre[0].toUpperCase() }}
-                    </span>
-                  }
-                </a>
-              } @else {
-                <div class="stats-item__cover stats-item__cover--round">
-                  @if (artista.urlFotoPerfil) {
-                    <img
-                      [src]="artista.urlFotoPerfil"
-                      [alt]="'Foto de ' + artista.nombre"
-                      class="stats-item__img stats-item__img--round"
-                      loading="lazy"
-                    />
-                  } @else {
-                    <span class="stats-item__avatar-placeholder" aria-hidden="true">
-                      {{ artista.nombre[0].toUpperCase() }}
-                    </span>
+                    <p class="stats-item__sub">{{ cancion.artistas && cancion.artistas.length > 0 ? cancion.artistas.join(', ') : '' }}</p>
                   }
                 </div>
-              }
-              <div class="stats-item__info">
-                @if (artista.username) {
-                  <a [routerLink]="['/artistas', artista.username]" class="stats-item__name stats-item__name--link">
-                    {{ artista.nombre }}
-                  </a>
-                } @else {
-                  <span class="stats-item__name">{{ artista.nombre }}</span>
-                }
-                <p class="stats-item__sub">Artista</p>
-              </div>
-              <div class="stats-item__meta">
-                <span class="stats-item__plays" aria-label="{{ artista.reproducciones }} reproducciones">
-                  <span class="material-icons" aria-hidden="true">play_circle</span>
-                  {{ artista.reproducciones }}
-                </span>
-              </div>
-            </li>
+
+                <div class="stats-item__meta">
+                  <span class="stats-item__plays" aria-label="{{ cancion.reproducciones }} reproducciones">
+                    <span class="material-icons" aria-hidden="true">play_circle</span>
+                    {{ cancion.reproducciones }}
+                  </span>
+                  <span class="stats-item__duration">{{ formatearDuracion(cancion.duracionSegundos) }}</span>
+                </div>
+                <button
+                  type="button"
+                  class="stats-item__play-btn"
+                  [attr.aria-label]="'Reproducir ' + cancion.titulo"
+                  (click)="reproducirCancion(cancion)">
+                  <span class="material-icons" aria-hidden="true">play_arrow</span>
+                </button>
+              </li>
+            }
           }
         </ol>
-      }
-    </section>
+      </section>
+
+      <!-- Top 5 artistas -->
+      <section class="stats-section" scrollReveal [duration]="500" [delay]="80" aria-labelledby="top-artistas-title">
+        <h2 class="stats-section__title" id="top-artistas-title">
+          <span class="material-icons" aria-hidden="true"></span>
+          Top 5 artistas del mes
+        </h2>
+        <ol class="stats-list" scrollReveal [stagger]="70" [delay]="100" aria-label="Top 5 artistas más escuchados">
+          @if (topArtistas().length === 0) {
+            <p class="stats-empty">Aún no tienes artistas registrados este mes.</p>
+          } @else {
+            @for (artista of topArtistas(); track i; let i = $index) {
+              <li class="stats-item" role="listitem">
+                <span class="stats-item__pos" aria-hidden="true">{{ i + 1 }}</span>
+                @if (artista.username) {
+                  <a
+                    [routerLink]="['/artistas', artista.username]"
+                    class="stats-item__cover stats-item__cover--round"
+                    [attr.aria-label]="'Ver perfil de ' + artista.nombre">
+                    @if (artista.urlFotoPerfil) {
+                      <img
+                        [src]="artista.urlFotoPerfil"
+                        [alt]="'Foto de ' + artista.nombre"
+                        class="stats-item__img stats-item__img--round"
+                        loading="lazy"
+                      />
+                    } @else {
+                      <span class="stats-item__avatar-placeholder" aria-hidden="true">
+                        {{ artista.nombre[0].toUpperCase() }}
+                      </span>
+                    }
+                  </a>
+                } @else {
+                  <div class="stats-item__cover stats-item__cover--round">
+                    @if (artista.urlFotoPerfil) {
+                      <img
+                        [src]="artista.urlFotoPerfil"
+                        [alt]="'Foto de ' + artista.nombre"
+                        class="stats-item__img stats-item__img--round"
+                        loading="lazy"
+                      />
+                    } @else {
+                      <span class="stats-item__avatar-placeholder" aria-hidden="true">
+                        {{ artista.nombre[0].toUpperCase() }}
+                      </span>
+                    }
+                  </div>
+                }
+                <div class="stats-item__info">
+                  @if (artista.username) {
+                    <a [routerLink]="['/artistas', artista.username]" class="stats-item__name stats-item__name--link">
+                      {{ artista.nombre }}
+                    </a>
+                  } @else {
+                    <span class="stats-item__name">{{ artista.nombre }}</span>
+                  }
+                  <p class="stats-item__sub">Artista</p>
+                </div>
+                <div class="stats-item__meta">
+                  <span class="stats-item__plays" aria-label="{{ artista.reproducciones }} reproducciones">
+                    <span class="material-icons" aria-hidden="true">play_circle</span>
+                    {{ artista.reproducciones }}
+                  </span>
+                </div>
+              </li>
+            }
+          }
+        </ol>
+      </section>
+    </div>
 
     <!-- Top 5 álbumes -->
-    <section class="stats-section" aria-labelledby="top-albumes-title">
+    <section class="stats-section stats-section--albumes" scrollReveal [duration]="500" [delay]="60" aria-labelledby="top-albumes-title">
       <h2 class="stats-section__title" id="top-albumes-title">
-        <span class="material-icons" aria-hidden="true">album</span>
+        <span class="material-icons" aria-hidden="true"></span>
         Top 5 álbumes del mes
       </h2>
-
-      @if (topAlbumes().length === 0) {
-        <p class="stats-empty">Aún no tienes álbumes registrados este mes.</p>
-      } @else {
-        <ol class="stats-list stats-list--albumes" role="list">
-          @for (album of topAlbumes(); track i; let i = $index) {
+      <ol class="stats-list stats-list--albumes" scrollReveal [stagger]="70" [delay]="100" aria-label="Top 5 álbumes más escuchados">
+        @if (topAlbumes().length === 0) {
+          <p class="stats-empty">Aún no tienes álbumes registrados este mes.</p>
+        } @else {
+          @for (album of topAlbumes(); track album.id; let i = $index) {
             <li class="stats-item" role="listitem">
               <span class="stats-item__pos" aria-hidden="true">{{ i + 1 }}</span>
               <a
@@ -194,10 +189,9 @@
               </div>
             </li>
           }
-        </ol>
-      }
+        }
+      </ol>
     </section>
 
   </main>
 }
-

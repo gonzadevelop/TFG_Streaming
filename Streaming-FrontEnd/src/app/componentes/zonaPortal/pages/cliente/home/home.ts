@@ -5,14 +5,18 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { TokenService } from '../../../../../services/tokenService';
 import { HomeService } from '../../../../../services/homeService';
 import { PlaylistService } from '../../../../../services/playlistService';
+import { AlbumService } from '../../../../../services/albumService';
 import { IHome } from '../../../../../model/home/IHome';
 import { IPlaylist } from '../../../../../model/home/IPlaylist';
+import { IAlbum } from '../../../../../model/album/IAlbum';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { AlbumCard } from '../compartido/album-card/album-card';
+import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
+import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ListaCanciones, ReactiveFormsModule, AlbumCard],
+  imports: [RouterLink, ListaCanciones, ReactiveFormsModule, AlbumCard, KsLoaderComponent, ScrollRevealDirective],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +26,7 @@ export class Home implements OnInit {
   private readonly tokenService = inject(TokenService);
   private readonly homeService  = inject(HomeService);
   private readonly playlistService = inject(PlaylistService);
+  private readonly albumService = inject(AlbumService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
@@ -75,16 +80,25 @@ export class Home implements OnInit {
 
   private cargarDatos(): void {
     forkJoin({
-      home:         this.homeService.getDatosHome().pipe(catchError(() => of(null))),
-      misPlaylists: this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))),
+      home:                this.homeService.getDatosHome().pipe(catchError(() => of(null))),
+      keysoundPlaylists:   this.playlistService.getPlaylistsKeysound().pipe(catchError(() => of([] as IPlaylist[]))),
+      misPlaylists:        this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))),
+      novedades:           this.albumService.getNovedades().pipe(catchError(() => of([] as IAlbum[]))),
+      proximosLanzamientos: this.albumService.getProximosLanzamientos().pipe(catchError(() => of([] as IAlbum[]))),
     }).subscribe({
-      next: ({ home, misPlaylists }: { home: IHome | null; misPlaylists: IPlaylist[] }) => {
+      next: ({ home, keysoundPlaylists, misPlaylists, novedades, proximosLanzamientos }: {
+        home: IHome | null;
+        keysoundPlaylists: IPlaylist[];
+        misPlaylists: IPlaylist[];
+        novedades: IAlbum[];
+        proximosLanzamientos: IAlbum[];
+      }) => {
         this.homeData.set({
-          keySoundPlaylists:      home?.keySoundPlaylists      ?? [],
+          keySoundPlaylists:      keysoundPlaylists            ?? [],
           artistasSeguidos:       home?.artistasSeguidos       ?? [],
           misPlaylist:            misPlaylists                 ?? [],
-          novedadesDeLaSemana:    home?.novedadesDeLaSemana    ?? [],
-          proximosLanzmientos:    home?.proximosLanzmientos    ?? [],
+          novedadesDeLaSemana:    novedades                   ?? [],
+          proximosLanzmientos:    proximosLanzamientos        ?? [],
           cancionesMasEscuchadas: home?.cancionesMasEscuchadas ?? [],
         });
         this.cargando.set(false);

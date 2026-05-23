@@ -4,6 +4,7 @@ import {
   OnInit,
   inject,
   signal,
+  computed,
   WritableSignal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,10 +14,11 @@ import { AlbumService } from '../../../../../services/albumService';
 import { StorageGlobal } from '../../../../../services/storageGlobal';
 import { FavoritosService } from '../../../../../services/favoritosService';
 import IPistaCola from '../../../../../model/pista/IPistaCola';
+import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
 
 @Component({
   selector: 'app-album',
-  imports: [ListaCanciones],
+  imports: [ListaCanciones, KsLoaderComponent],
   templateUrl: './album.html',
   styleUrl: './album.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +34,10 @@ export class Album implements OnInit {
    * Album obtenido del backend
    */
   readonly album: WritableSignal<IAlbumCompleto | null> = signal<IAlbumCompleto | null>(null);
+
+  protected readonly duracionTotalSegundos = computed(() =>
+    (this.album()?.canciones ?? []).reduce((acc, p) => acc + (p.duracionSegundos ?? 0), 0)
+  );
 
   protected readonly cargando: WritableSignal<boolean> = signal(true);
   protected readonly error: WritableSignal<string | null> = signal<string | null>(null);

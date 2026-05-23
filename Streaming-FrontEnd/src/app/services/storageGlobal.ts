@@ -1,11 +1,15 @@
 import {effect, inject, Injectable, PLATFORM_ID, signal, untracked, WritableSignal} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
+import {Router} from '@angular/router';
 import IPistaReproduccion from '../model/pista/IPistaReproduccion';
 import IPistaCola from '../model/pista/IPistaCola';
+import {TokenService} from './tokenService';
 
 @Injectable ({ providedIn: 'root' })
 export class StorageGlobal {
   private readonly _platformId = inject(PLATFORM_ID);
+  private readonly _router = inject(Router);
+  private readonly _tokenService = inject(TokenService);
 
   private _audio: HTMLAudioElement | null = null;
   private _audioGeneration = 0;
@@ -21,6 +25,7 @@ export class StorageGlobal {
   readonly colaOriginal = signal<IPistaCola[]>([]);
   readonly cola = signal<IPistaCola[]>([]);
   readonly isShuffled = signal<boolean>(false);
+  readonly repeatMode = signal<'none' | 'all' | 'one'>('none');
   private readonly _currentColaIndex = signal<number>(-1);
 
   constructor() {
@@ -161,12 +166,24 @@ export class StorageGlobal {
     this.cola.set([]);
   }
 
-  /** Reproduce la siguiente pista de la cola (si hay) */
+  /** Reproduce la siguiente pista de la cola (si hay), respetando el modo de repetición */
   ReproducirSiguienteDeCola(): void {
+    const mode = this.repeatMode();
     const idx = this._currentColaIndex();
+    const total = this.cola().length;
+
+    if (mode === 'one') {
+      // Repetir la canción actual
+      this._reproducirEnIndice(idx);
+      return;
+    }
+
     const siguiente = idx + 1;
-    if (siguiente < this.cola().length) {
+    if (siguiente < total) {
       this._reproducirEnIndice(siguiente);
+    } else if (mode === 'all' && total > 0) {
+      // Volver al principio de la cola
+      this._reproducirEnIndice(0);
     }
   }
 
@@ -294,6 +311,12 @@ export class StorageGlobal {
    * Carga la pista indicada y comienza la reproducción. */
   Reproducir(pista: IPistaReproduccion): void {
     if (!isPlatformBrowser(this._platformId)) return;
+
+    // Bloquear reproducción si no hay sesión iniciada
+    if (!this._tokenService.isLogged()) {
+      this._router.navigate(['/login']);
+      return;
+    }
 
     this._destruirAudio();
     const generation = ++this._audioGeneration;

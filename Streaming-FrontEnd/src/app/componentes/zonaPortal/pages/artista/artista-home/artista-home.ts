@@ -9,10 +9,12 @@ import {
 import { RouterLink } from '@angular/router';
 import { ArtistaService } from '../../../../../services/artistaService';
 import { IMiAlbum } from '../../../../../model/album/IMiAlbum';
+import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-reveal.directive';
+import { KsLoaderComponent } from '../../cliente/compartido/ks-loader/ks-loader';
 
 @Component({
   selector: 'app-artista-home',
-  imports: [RouterLink],
+  imports: [RouterLink, ScrollRevealDirective, KsLoaderComponent],
   templateUrl: './artista-home.html',
   styleUrl: './artista-home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

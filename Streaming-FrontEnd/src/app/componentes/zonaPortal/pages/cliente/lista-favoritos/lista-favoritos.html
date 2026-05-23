@@ -1,12 +1,10 @@
-@if (cargando()) {
-  <section class="favoritos-page">
-    <p class="muted">Cargando favoritos…</p>
-  </section>
-} @else if (error()) {
+<app-ks-loader [visible]="cargando()" mensaje="Cargando favoritos…" />
+
+@if (!cargando() && error()) {
   <section class="favoritos-page">
     <p class="error">{{ error() }}</p>
   </section>
-} @else {
+} @else if (!cargando()) {
   <section class="favoritos-page">
     <div class="favoritos-gradient-bg"></div>
 
@@ -24,6 +22,12 @@
           <span class="favoritos-stats">
             {{ totalCanciones() }} {{ totalCanciones() === 1 ? 'canción' : 'canciones' }}
           </span>
+          @if (duracionTotalSegundos() > 0) {
+            <span class="favoritos-duration">
+              <span class="material-icons favoritos-duration__icon" aria-hidden="true">schedule</span>
+              {{ formatearDuracion(duracionTotalSegundos()) }}
+            </span>
+          }
         </div>
       </div>
     </header>

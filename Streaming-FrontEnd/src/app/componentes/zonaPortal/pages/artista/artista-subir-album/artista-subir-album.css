@@ -1,56 +1,133 @@
 .artist-upload {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 24px;
-  color: #f3f3f3;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  color: #e8f4ff;
+}
+
+/* ── Header ── */
+.artist-upload__header {
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(74, 158, 255, 0.15);
+  border-radius: 1rem;
+  padding: 1.5rem;
 }
 
 .artist-upload__header h1 {
-  margin-bottom: 6px;
+  margin: 0 0 4px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #e8f4ff;
 }
 
+.artist-upload__header p {
+  margin: 0;
+  color: #7aaed4;
+  font-size: 0.9rem;
+}
+
+/* ── Mensajes estado ── */
 .artist-upload__status {
   margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .artist-upload__status--error {
-  color: #ff8a8a;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.25);
+  color: #ff6b6b;
 }
 
 .artist-upload__status--success {
-  color: #9be59b;
+  background: rgba(102, 187, 106, 0.1);
+  border: 1px solid rgba(102, 187, 106, 0.25);
+  color: #66bb6a;
 }
 
+/* ── Steps ── */
+.artist-upload__steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.artist-upload__steps button {
+  background: transparent;
+  border: 1.5px solid rgba(74, 158, 255, 0.25);
+  color: #7aaed4;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.artist-upload__steps button:hover {
+  background: rgba(74, 158, 255, 0.08);
+  border-color: #4a9eff;
+  color: #e8f4ff;
+}
+
+.artist-upload__steps button.is-active {
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.35);
+}
+
+/* ── Formulario ── */
 .artist-upload__form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
+/* ── Secciones ── */
 .artist-upload__section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-  background: #1a1a28;
-  padding: 16px;
-  border-radius: 12px;
+  gap: 1rem;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  padding: 1.25rem;
+  border-radius: 1rem;
 }
 
 .artist-upload__section label {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7aaed4;
 }
 
 .artist-upload__section input {
-  background: #12121c;
-  border: 1px solid #30304a;
-  color: #fff;
-  padding: 8px 10px;
-  border-radius: 8px;
+  background: rgba(6, 30, 58, 0.8);
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  color: #e8f4ff;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.6rem;
+  font-size: 0.88rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.artist-upload__section input:focus {
+  outline: none;
+  border-color: #4a9eff;
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+}
+
+/* ── Preview portada ── */
 .artist-upload__preview {
   display: flex;
   align-items: center;
@@ -61,63 +138,118 @@
   width: 120px;
   height: 120px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(74, 158, 255, 0.2);
 }
 
+.artist-upload__preview button {
+  background: rgba(255, 107, 107, 0.12);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.artist-upload__preview button:hover {
+  background: rgba(255, 107, 107, 0.22);
+}
+
+/* ── Pistas ── */
 .artist-upload__tracks {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1rem;
+}
+
+.artist-upload__tracks h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #e8f4ff;
 }
 
 .artist-upload__track {
   display: grid;
-  gap: 10px;
-  background: #1a1a28;
-  padding: 14px;
-  border-radius: 10px;
+  gap: 0.75rem;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  padding: 1.1rem;
+  border-radius: 1rem;
+  transition: border-color 0.2s;
+}
+
+.artist-upload__track:hover {
+  border-color: rgba(74, 158, 255, 0.25);
 }
 
 .artist-upload__track label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #7aaed4;
 }
 
 .artist-upload__track input {
-  background: #12121c;
-  border: 1px solid #30304a;
-  color: #fff;
-  padding: 8px 10px;
-  border-radius: 8px;
+  background: rgba(6, 30, 58, 0.8);
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  color: #e8f4ff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.6rem;
+  font-size: 0.88rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.artist-upload__track input:focus {
+  outline: none;
+  border-color: #4a9eff;
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+}
+
+/* ── Hints / errores campo ── */
 .artist-upload__hint {
   margin: 0;
-  color: #b8b8c5;
-  font-size: 13px;
+  color: #7aaed4;
+  font-size: 0.8rem;
 }
 
+.artist-upload__field-error {
+  margin: 0;
+  color: #ff6b6b;
+  font-size: 0.78rem;
+}
+
+/* ── Resultados búsqueda ── */
 .artist-upload__results {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .artist-upload__result {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #12121c;
-  border: 1px solid #2c2c40;
-  color: #fff;
-  padding: 8px 10px;
-  border-radius: 10px;
+  background: rgba(6, 30, 58, 0.7);
+  border: 1px solid rgba(74, 158, 255, 0.15);
+  color: #e8f4ff;
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.75rem;
   cursor: pointer;
   text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
 }
 
-.artist-upload__result--song {
-  gap: 12px;
+.artist-upload__result:hover {
+  background: rgba(74, 158, 255, 0.1);
+  border-color: #4a9eff;
 }
 
 .artist-upload__result--song div {
@@ -128,13 +260,15 @@
 
 .artist-upload__result-title {
   font-weight: 600;
+  font-size: 0.88rem;
 }
 
 .artist-upload__result-subtitle {
-  color: #b8b8c5;
-  font-size: 12px;
+  color: #7aaed4;
+  font-size: 0.75rem;
 }
 
+/* ── Chips colaboradores ── */
 .artist-upload__selected {
   display: flex;
   flex-wrap: wrap;
@@ -144,12 +278,13 @@
 .artist-upload__chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #2a2a3f;
-  color: #fff;
-  padding: 6px 10px;
+  gap: 7px;
+  background: rgba(74, 158, 255, 0.12);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  color: #e8f4ff;
+  padding: 5px 10px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: 0.82rem;
 }
 
 .artist-upload__chip img,
@@ -158,155 +293,201 @@
   height: 22px;
   border-radius: 50%;
   object-fit: cover;
-  background: #3a3a55;
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 .artist-upload__chip button {
   background: transparent;
   border: none;
-  color: #fff;
+  color: #7aaed4;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1;
+  transition: color 0.15s;
 }
 
-.artist-upload__remove {
-  align-self: flex-start;
-  background: #d32f2f;
-  border: none;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
+.artist-upload__chip button:hover {
+  color: #ff6b6b;
 }
 
-.artist-upload__add {
-  align-self: flex-start;
-  background: #5c6bc0;
-  border: none;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.artist-upload__submit {
-  align-self: flex-start;
-  background: #6c63ff;
-  border: none;
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
+/* ── Canción seleccionada ── */
 .artist-upload__selected-song {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #12121c;
-  border: 1px solid #2c2c40;
-  padding: 10px 12px;
-  border-radius: 10px;
+  background: rgba(74, 158, 255, 0.07);
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
 }
 
 .artist-upload__selected-song img,
 .artist-upload__selected-song .artist-upload__avatar-fallback {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 0.5rem;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .artist-upload__selected-song div {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.artist-upload__selected-song strong {
+  font-size: 0.9rem;
+  color: #e8f4ff;
 }
 
 .artist-upload__selected-song span {
-  color: #b8b8c5;
-  font-size: 12px;
+  color: #7aaed4;
+  font-size: 0.78rem;
 }
 
 .artist-upload__selected-song button {
   margin-left: auto;
   background: transparent;
-  border: 1px solid #4b4b6a;
-  color: #fff;
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  color: #7aaed4;
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: 999px;
   cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: border-color 0.15s, color 0.15s;
 }
 
+.artist-upload__selected-song button:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+/* ── Avatares fallback resultados ── */
 .artist-upload__result img,
 .artist-upload__avatar-fallback {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
-  background: #2c2c40;
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
-}
-
-.artist-upload__field-error {
-  margin: 0;
-  color: #ff8a8a;
-  font-size: 12px;
-}
-
-.artist-upload__steps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.artist-upload__steps button {
-  background: #12121c;
-  border: 1px solid #2c2c40;
+  font-size: 0.7rem;
+  font-weight: 700;
   color: #fff;
-  padding: 6px 12px;
+  flex-shrink: 0;
+}
+
+/* ── Botones de acción de pista ── */
+.artist-upload__remove {
+  align-self: flex-start;
+  background: rgba(229, 57, 53, 0.12);
+  border: 1px solid rgba(229, 57, 53, 0.3);
+  color: #ef9a9a;
+  padding: 5px 14px;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
 }
 
-.artist-upload__steps button.is-active {
-  background: #6c63ff;
-  border-color: #6c63ff;
+.artist-upload__remove:hover {
+  background: rgba(229, 57, 53, 0.25);
+  color: #ffcdd2;
 }
 
+.artist-upload__add {
+  align-self: flex-start;
+  background: rgba(74, 158, 255, 0.12);
+  border: 1.5px dashed rgba(74, 158, 255, 0.35);
+  color: #4a9eff;
+  padding: 0.55rem 1.25rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.artist-upload__add:hover {
+  background: rgba(74, 158, 255, 0.2);
+  border-color: #4a9eff;
+}
+
+/* ── Navegación pasos ── */
 .artist-upload__nav {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
+  align-items: center;
 }
 
-.artist-upload__back,
-.artist-upload__next {
-  background: #2c2c40;
-  border: 1px solid #3a3a55;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 8px;
+.artist-upload__back {
+  background: transparent;
+  border: 1.5px solid rgba(74, 158, 255, 0.25);
+  color: #7aaed4;
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
   cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.artist-upload__next {
-  background: #6c63ff;
-  border-color: #6c63ff;
+.artist-upload__back:hover {
+  background: rgba(74, 158, 255, 0.08);
+  border-color: #4a9eff;
+  color: #e8f4ff;
 }
 
+.artist-upload__next,
+.artist-upload__submit {
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
+  border: none;
+  color: #fff;
+  padding: 0.6rem 1.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(74, 158, 255, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+
+.artist-upload__next:hover,
+.artist-upload__submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 158, 255, 0.5);
+}
+
+.artist-upload__submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Panel previsualización ── */
 .artist-upload__preview-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
+  background: rgba(4, 20, 40, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  border-radius: 1rem;
+  padding: 1.25rem;
 }
 
 .artist-upload__preview-summary {
@@ -316,27 +497,51 @@
   gap: 16px;
 }
 
+.artist-upload__preview-summary h2 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #e8f4ff;
+}
+
+.artist-upload__preview-summary p {
+  margin: 0;
+  color: #7aaed4;
+  font-size: 0.85rem;
+}
+
 .artist-upload__preview-summary img {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(74, 158, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .artist-upload__preview-tracks {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
+}
+
+.artist-upload__preview-tracks h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7aaed4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .artist-upload__preview-track {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: #12121c;
-  border: 1px solid #2c2c40;
-  padding: 12px;
-  border-radius: 10px;
+  gap: 0.6rem;
+  background: rgba(6, 30, 58, 0.6);
+  border: 1px solid rgba(74, 158, 255, 0.1);
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
 }
 
 .artist-upload__preview-track-header {
@@ -350,15 +555,19 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
+  color: #e8f4ff;
 }
 
 .artist-upload__preview-separator {
-  color: #6f6f88;
+  color: #4a7a9b;
 }
 
 .artist-upload__preview-status {
-  color: #b8b8c5;
-  font-size: 12px;
+  color: #7aaed4;
+  font-size: 0.78rem;
+  background: rgba(74, 158, 255, 0.1);
+  border-radius: 999px;
+  padding: 2px 8px;
 }
 
 .artist-upload__preview-existing {
@@ -372,29 +581,33 @@
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  color: #e8f4ff;
+  font-size: 0.88rem;
 }
 
 .artist-upload__preview-existing img,
 .artist-upload__preview-existing .artist-upload__avatar-fallback {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 0.4rem;
   object-fit: cover;
 }
 
 .artist-upload__preview-existing small {
-  color: #b8b8c5;
-  font-size: 12px;
+  color: #7aaed4;
+  font-size: 0.78rem;
 }
 
 .artist-upload__preview-collab {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  font-size: 0.82rem;
+  color: #7aaed4;
 }
 
 .artist-upload__preview-collab-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }

@@ -1,15 +1,6 @@
 <header class="app-header">
   <div class="header-main">
     <div class="header-left">
-      <button
-        type="button"
-        class="sidebar-toggle"
-        (click)="toggleSidebar()"
-        [attr.aria-expanded]="isSidebarOpen()"
-        aria-controls="artist-sidebar"
-        aria-label="Alternar barra lateral">
-        <span class="material-icons" aria-hidden="true">menu</span>
-      </button>
       <div class="header-logo">
         <a routerLink="/" aria-label="Inicio KeySound">
           <img
@@ -32,26 +23,23 @@
           id="search-input"
           type="search"
           class="search-input"
-          placeholder="Buscar canciones, álbumes, artistas..."
+          placeholder="¿Qué te apetece escuchar hoy? :)"
           [value]="searchTerm()"
           (input)="onInput($any($event.target).value)"
           (keyup.enter)="onSearch()"
           (focus)="mostrarResultados.set(hayResultados())"
           aria-label="Campo de búsqueda"
           [attr.aria-expanded]="mostrarResultados()"
-          aria-haspopup="listbox"
-          aria-controls="search-results"
-          autocomplete="off" />
+          autocomplete="on" />
         @if (buscando()) {
           <span class="material-icons search-spinner" aria-hidden="true">sync</span>
-        }
-        @if (searchTerm()) {
+        } @else if (searchTerm()) {
           <button
             type="button"
             class="clear-button"
             (click)="clearSearch()"
             aria-label="Limpiar búsqueda">
-            <span class="material-icons" aria-hidden="true">close</span>
+            <span class="material-icons clear-icon" aria-hidden="true">cancel</span>
           </button>
         }
       </div>
@@ -128,7 +116,7 @@
             @for (playlist of resultados().playlists; track playlist.id) {
               <a
                 class="search-result-item search-result-item--link"
-                [routerLink]="['/playlist', playlist.id]"
+                [routerLink]="['/playlists', playlist.id]"
                 (click)="cerrarResultados()"
                 [attr.aria-label]="'Ver playlist ' + playlist.nombre"
                 role="option">

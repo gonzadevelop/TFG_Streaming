@@ -3,7 +3,7 @@
   z-index: 9999;
   background: #ffffff;
   border-radius: 0.75rem;
-  box-shadow: 0 8px 32px rgba(11, 117, 192, 0.18), 0 2px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 8px 32px rgba(74, 158, 255, 0.18), 0 2px 8px rgba(0,0,0,0.10);
   padding: 0.4rem 0;
   min-width: 200px;
   font-size: 0.92rem;
@@ -24,7 +24,7 @@
   padding: 0.55rem 1.1rem;
   background: none;
   border: none;
-  color: #1a2a38;
+  color: #e8f4ff;
   cursor: pointer;
   text-align: left;
   font: inherit;
@@ -35,13 +35,13 @@
 
 .ctx-menu__item:hover,
 .ctx-menu__item-btn:hover {
-  background: rgba(11, 117, 192, 0.08);
-  color: #0b75c0;
+  background: rgba(74, 158, 255, 0.08);
+  color: #4a9eff;
 }
 
 .ctx-menu__item:focus-visible,
 .ctx-menu__item-btn:focus-visible {
-  outline: 2px solid #0b75c0;
+  outline: 2px solid #4a9eff;
   outline-offset: -2px;
 }
 
@@ -74,7 +74,7 @@
   top: 0;
   background: #ffffff;
   border-radius: 0.75rem;
-  box-shadow: 0 8px 32px rgba(11, 117, 192, 0.18), 0 2px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 8px 32px rgba(74, 158, 255, 0.18), 0 2px 8px rgba(0,0,0,0.10);
   min-width: 200px;
   max-height: 260px;
   overflow-y: auto;

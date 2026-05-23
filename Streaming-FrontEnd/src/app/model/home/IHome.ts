@@ -1,7 +1,6 @@
 import { IPlaylist } from './IPlaylist';
 import { IArtistaHome } from './IArtistaHome';
 import { IAlbum } from '../album/IAlbum';
-import { IProximoAlbum } from './IProximoAlbum';
 import {IPista} from '../pista/IPista';
 
 export interface IHome {
@@ -9,6 +8,6 @@ export interface IHome {
   artistasSeguidos: IArtistaHome[];
   misPlaylist: IPlaylist[];
   novedadesDeLaSemana: IAlbum[];
-  proximosLanzmientos: IProximoAlbum[];
+  proximosLanzmientos: IAlbum[];
   cancionesMasEscuchadas: IPista[];
 }

@@ -16,11 +16,11 @@
   gap: 24px;
   padding: 24px;
   margin-bottom: 1.25rem;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(4, 20, 40, 0.70);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 2px 14px rgba(11, 117, 192, 0.08);
+  box-shadow: 0 2px 14px rgba(74, 158, 255, 0.08);
 }
 
 .favoritos-cover-container {
@@ -57,7 +57,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  color: #1a2a38;
+  color: #e8f4ff;
 }
 
 .favoritos-type {
@@ -75,30 +75,30 @@
   letter-spacing: -0.02em;
   margin: 0 0 16px 0;
   line-height: 1;
-  color: #1a2a38;
+  color: #e8f4ff;
 }
 
 .favoritos-meta {
   font-size: 0.95rem;
   font-weight: 400;
-  color: #425466;
+  color: #a0c8e8;
 }
 
 .favoritos-desc {
   margin-bottom: 8px;
-  color: #425466;
+  color: #a0c8e8;
 }
 
 .favoritos-stats {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #6c757d;
+  color: #7aaed4;
 }
 
 .favoritos-author {
   font-weight: 700;
-  color: #1a2a38;
+  color: #e8f4ff;
 }
 
 .favoritos-actions {
@@ -150,7 +150,7 @@
   justify-content: center;
   gap: 8px;
   padding: 64px 16px;
-  color: #6c757d;
+  color: #7aaed4;
   text-align: center;
 }
 
@@ -158,6 +158,21 @@
   font-size: 4rem;
   color: #c0405a;
   opacity: 0.4;
+}
+
+/* ── Duración total ──────────────────────── */
+.favoritos-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+  color: #7aaed4;
+  margin-top: 0.15rem;
+}
+
+.favoritos-duration__icon {
+  font-size: 0.9rem;
+  color: #4a9eff;
 }
 
 
