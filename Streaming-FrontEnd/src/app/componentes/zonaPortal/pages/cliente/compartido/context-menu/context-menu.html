@@ -3,16 +3,19 @@
     class="ctx-menu"
     role="menu"
     aria-label="Opciones de canción"
-    [style.top]="estiloMenu().top"
-    [style.left]="estiloMenu().left"
   >
     @if (mensaje()) {
-      <div class="ctx-menu__mensaje" role="status" aria-live="polite">{{ mensaje() }}</div>
+      <div class="ctx-menu__mensaje" role="status" aria-live="polite">
+        <span class="material-icons ctx-menu__mensaje-icon" aria-hidden="true">
+          @if (mensaje()!.startsWith('✔')) { check_circle } @else { error }
+        </span>
+        {{ mensaje() }}
+      </div>
     }
 
     <!-- Añadir a la cola -->
     <button type="button" class="ctx-menu__item" role="menuitem" (click)="agregarACola()">
-      <span class="ctx-menu__icon" aria-hidden="true"></span>
+      <span class="material-icons ctx-menu__icon" aria-hidden="true">queue_music</span>
       Añadir a la cola
     </button>
 
@@ -20,37 +23,47 @@
     @if (esPlaylistPropia() && playlistId()) {
       <button type="button" class="ctx-menu__item ctx-menu__item--danger" role="menuitem"
         [disabled]="guardando()" (click)="eliminarDePlaylist()">
-        <span class="ctx-menu__icon" aria-hidden="true">🗑</span>
+        <span class="material-icons ctx-menu__icon" aria-hidden="true">delete</span>
         Eliminar de la playlist
       </button>
     }
 
     <!-- Añadir a playlist -->
-    <div class="ctx-menu__item ctx-menu__item--submenu" role="none">
+    <div
+      class="ctx-menu__item ctx-menu__item--submenu"
+      role="none"
+      (mouseenter)="abrirSubMenu()"
+      (mouseleave)="cerrarSubMenu()"
+    >
       <button
         type="button"
         class="ctx-menu__item-btn"
         role="menuitem"
         aria-haspopup="true"
         [attr.aria-expanded]="subMenuAbierto()"
-        (click)="toggleSubMenu($event)"
       >
-        <span class="ctx-menu__icon" aria-hidden="true"></span>
+        <span class="material-icons ctx-menu__icon" aria-hidden="true">playlist_add</span>
         Añadir a playlist
-        <span class="ctx-menu__arrow" aria-hidden="true">›</span>
+        <span class="material-icons ctx-menu__arrow" aria-hidden="true">chevron_right</span>
       </button>
 
       @if (subMenuAbierto()) {
         <div class="ctx-menu__submenu" role="menu" aria-label="Mis playlists">
           @if (cargandoPlaylists()) {
-            <p class="ctx-menu__empty">Cargando…</p>
+            <div class="ctx-menu__empty">
+              <span class="ctx-menu__spinner" aria-hidden="true"></span>
+              Cargando…
+            </div>
           } @else if (misPlaylists().length === 0) {
-            <p class="ctx-menu__empty">Sin playlists</p>
+            <div class="ctx-menu__empty">
+              <span class="material-icons" aria-hidden="true">info</span>
+              Sin playlists
+            </div>
           } @else {
             @for (playlist of misPlaylists(); track playlist.id) {
               <button
                 type="button"
-                class="ctx-menu__item"
+                class="ctx-menu__item ctx-menu__submenu-item"
                 role="menuitem"
                 [disabled]="guardando()"
                 (click)="agregarAPlaylist(playlist)"
@@ -58,9 +71,11 @@
                 @if (playlist.urlPortada) {
                   <img class="ctx-menu__playlist-img" [src]="playlist.urlPortada" [alt]="playlist.nombre" loading="lazy" />
                 } @else {
-                  <span class="ctx-menu__icon" aria-hidden="true">🎶</span>
+                  <div class="ctx-menu__playlist-fallback">
+                    <span class="material-icons" aria-hidden="true">music_note</span>
+                  </div>
                 }
-                {{ playlist.nombre }}
+                <span class="ctx-menu__playlist-name">{{ playlist.nombre }}</span>
               </button>
             }
           }

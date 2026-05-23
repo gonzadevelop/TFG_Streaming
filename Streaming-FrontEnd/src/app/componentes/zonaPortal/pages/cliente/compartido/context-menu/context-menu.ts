@@ -53,10 +53,37 @@ export class ContextMenu implements OnDestroy {
   protected readonly guardando         = signal<boolean>(false);
   private mensajeTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  protected readonly estiloMenu = computed(() => ({
-    top:  `${this.position().y}px`,
-    left: `${this.position().x}px`,
-  }));
+  protected readonly estiloMenu = computed(() => {
+    const pos = this.position();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Dimensiones aproximadas del menú
+    const menuWidth = 220;
+    const menuHeight = 200;
+
+    let x = pos.x;
+    let y = pos.y;
+
+    // Ajustar horizontalmente si se sale por la derecha
+    if (x + menuWidth > viewportWidth) {
+      x = viewportWidth - menuWidth - 16;
+    }
+
+    // Ajustar verticalmente si se sale por abajo
+    if (y + menuHeight > viewportHeight) {
+      y = viewportHeight - menuHeight - 16;
+    }
+
+    // Asegurarse de que no sea negativo
+    x = Math.max(10, x);
+    y = Math.max(10, y);
+
+    return {
+      top: `${y}px`,
+      left: `${x}px`,
+    };
+  });
 
   constructor() {
     // Carga las playlists cuando el menú se abre
@@ -169,6 +196,17 @@ export class ContextMenu implements OnDestroy {
         this.mostrarMensaje('✖ Error al añadir a la playlist');
       },
     });
+  }
+
+  protected abrirSubMenu(): void {
+    this.subMenuAbierto.set(true);
+  }
+
+  protected cerrarSubMenu(): void {
+    // Delay para permitir hover en el submenu
+    setTimeout(() => {
+      this.subMenuAbierto.set(false);
+    }, 200);
   }
 
   protected toggleSubMenu(event: Event): void {

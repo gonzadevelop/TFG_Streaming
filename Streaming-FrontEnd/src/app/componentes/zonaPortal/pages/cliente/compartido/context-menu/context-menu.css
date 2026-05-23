@@ -1,64 +1,108 @@
+/* ══════════════════════════════════════════
+   CONTEXT MENU - KeySound
+   ══════════════════════════════════════════ */
+
 .ctx-menu {
   position: fixed;
   z-index: 9999;
-  background: #ffffff;
-  border-radius: 0.75rem;
-  box-shadow: 0 8px 32px rgba(74, 158, 255, 0.18), 0 2px 8px rgba(0,0,0,0.10);
-  padding: 0.4rem 0;
-  min-width: 200px;
-  font-size: 0.92rem;
-  animation: ctx-fadein 120ms ease;
+  background: rgba(4, 20, 40, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  border-radius: 0.9rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 16px rgba(74, 158, 255, 0.15);
+  padding: 0.5rem 0;
+  min-width: 220px;
+  font-size: 0.88rem;
+  animation: ctx-fadein 150ms ease;
 }
 
 @keyframes ctx-fadein {
-  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+  from { opacity: 0; transform: scale(0.96) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* ── Mensaje de feedback ── */
+.ctx-menu__mensaje {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  margin: 0 0.5rem 0.5rem;
+  background: rgba(74, 158, 255, 0.12);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  border-radius: 0.6rem;
+  color: #e8f4ff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  animation: mensaje-appear 200ms ease;
+}
+
+@keyframes mensaje-appear {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ctx-menu__mensaje-icon {
+  font-size: 1.1rem;
+  color: #4a9eff;
+}
+
+/* ── Items del menú ── */
 .ctx-menu__item,
 .ctx-menu__item-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
   width: 100%;
-  padding: 0.55rem 1.1rem;
-  background: none;
+  padding: 0.65rem 1rem;
+  background: transparent;
   border: none;
   color: #e8f4ff;
   cursor: pointer;
   text-align: left;
   font: inherit;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   border-radius: 0;
-  transition: background 120ms ease;
+  transition: background 140ms ease, color 140ms ease, transform 100ms ease;
+  position: relative;
 }
 
-.ctx-menu__item:hover,
-.ctx-menu__item-btn:hover {
-  background: rgba(74, 158, 255, 0.08);
-  color: #4a9eff;
+.ctx-menu__item:hover:not(:disabled),
+.ctx-menu__item-btn:hover:not(:disabled) {
+  background: rgba(74, 158, 255, 0.12);
+  color: #fff;
+}
+
+.ctx-menu__item:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ctx-menu__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .ctx-menu__item:focus-visible,
 .ctx-menu__item-btn:focus-visible {
   outline: 2px solid #4a9eff;
   outline-offset: -2px;
-}
-
-.ctx-menu__icon {
-  font-size: 1rem;
-  width: 20px;
-  text-align: center;
-  flex-shrink: 0;
+  background: rgba(74, 158, 255, 0.12);
 }
 
 .ctx-menu__arrow {
   margin-left: auto;
-  font-size: 1.1rem;
-  color: #adb5bd;
+  font-size: 1.2rem;
+  color: #7aaed4;
+  transition: color 140ms ease, transform 200ms ease;
 }
 
-/* Submenu */
+.ctx-menu__item-btn:hover .ctx-menu__arrow {
+  color: #fff;
+  transform: translateX(2px);
+}
+
+/* ── Submenu container ── */
 .ctx-menu__item--submenu {
   position: relative;
   padding: 0;
@@ -68,36 +112,110 @@
   width: 100%;
 }
 
+/* ── Submenu desplegable ── */
 .ctx-menu__submenu {
   position: absolute;
-  left: 100%;
-  top: 0;
-  background: #ffffff;
-  border-radius: 0.75rem;
-  box-shadow: 0 8px 32px rgba(74, 158, 255, 0.18), 0 2px 8px rgba(0,0,0,0.10);
-  min-width: 200px;
-  max-height: 260px;
+  left: calc(100% + 6px);
+  top: -0.5rem;
+  background: rgba(4, 20, 40, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  border-radius: 0.9rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 16px rgba(74, 158, 255, 0.15);
+  min-width: 220px;
+  max-width: 280px;
+  max-height: 320px;
   overflow-y: auto;
-  padding: 0.4rem 0;
-  animation: ctx-fadein 100ms ease;
+  padding: 0.5rem 0;
+  animation: submenu-slide 150ms ease;
 }
 
+@keyframes submenu-slide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Items del submenu ── */
+.ctx-menu__submenu-item {
+  padding: 0.6rem 1rem;
+}
+
+
+/* ── Imagen de playlist ── */
 .ctx-menu__playlist-img {
-  width: 28px;
-  height: 28px;
-  border-radius: 0.3rem;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 0.4rem;
   object-fit: cover;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
+
+/* ── Estado vacío ── */
 .ctx-menu__empty {
-  padding: 0.6rem 1.1rem;
-  color: #adb5bd;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #7aaed4;
   font-size: 0.85rem;
-  margin: 0;
+  justify-content: center;
+  text-align: center;
 }
 
-/* Scrollbar sutil */
-.ctx-menu__submenu::-webkit-scrollbar { width: 4px; }
-.ctx-menu__submenu::-webkit-scrollbar-thumb { background: #c8ced6; border-radius: 4px; }
+.ctx-menu__empty .material-icons {
+  font-size: 1.1rem;
+  opacity: 0.6;
+}
+
+/* ── Spinner de carga ── */
+.ctx-menu__spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(74, 158, 255, 0.3);
+  border-top-color: #4a9eff;
+  border-radius: 50%;
+  animation: ctx-spin 0.7s linear infinite;
+}
+
+@keyframes ctx-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Scrollbar personalizado ── */
+.ctx-menu__submenu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ctx-menu__submenu::-webkit-scrollbar-track {
+  background: rgba(74, 158, 255, 0.05);
+  border-radius: 3px;
+}
+
+.ctx-menu__submenu::-webkit-scrollbar-thumb {
+  background: rgba(74, 158, 255, 0.3);
+  border-radius: 3px;
+  transition: background 200ms ease;
+}
+
+.ctx-menu__submenu::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 158, 255, 0.5);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ctx-menu {
+    min-width: 200px;
+    font-size: 0.85rem;
+  }
+
+  .ctx-menu__submenu {
+    min-width: 200px;
+    max-width: 240px;
+  }
+}
 
