@@ -297,6 +297,7 @@ El sistema de autenticación funciona de la siguiente manera: el usuario envía 
 |---|---|---|
 | Firebase Storage | Almacenamiento de ficheros de audio (.mp3) y portadas de álbumes | Firebase Admin SDK 9.2.0; credenciales en `firebase-account.json` |
 | Google Cloud SQL | Base de datos MySQL en la nube para producción | JDBC estándar con Spring Data JPA; configuración vía variables de entorno |
+| UI Avatars | Avatar por defecto para perfiles y playlists sin imagen: devuelve una imagen con la inicial del nombre |  URL pública https://ui-avatars.com/api/?name=<inicial>; el backend pasa la URL al frontend cuando no hay imagen asignada |
 
 ### 2.7. Modelo de datos simplificado
 
