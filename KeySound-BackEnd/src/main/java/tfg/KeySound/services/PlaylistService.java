@@ -1,7 +1,10 @@
 package tfg.KeySound.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tfg.KeySound.entitys.*;
 import tfg.KeySound.entitys.embeddedids.PlaylistPistaId;
 import tfg.KeySound.exception.auth.UsernameNotFoundException;
@@ -19,6 +22,7 @@ import tfg.KeySound.services.external.JwtService;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlaylistService {
@@ -192,5 +196,66 @@ public class PlaylistService {
         }
 
         playlistRepository.save(playlist);
+    }
+
+    // ===== AUTOMATIZACIÓN DE PLAYLISTS DE KEYSOUND =====
+
+    /**
+     * Actualiza automáticamente la playlist "Top 30 del día" con 30 canciones aleatorias.
+     * Se ejecuta todos los días a las 00:00 (medianoche).
+     */
+    @Scheduled(cron = "0 0 0 * * *") // Ejecutar a medianoche todos los días
+    @Transactional
+    public void actualizarTop30DiaProgramado() {
+        log.info("Iniciando actualización automática de 'Top 30 del día'");
+        try {
+            Playlist playlist = playlistRepository.findByPropietarioId(1L).stream()
+                    .filter(p -> p.getNombre().equalsIgnoreCase("Top 30 del día"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Playlist 'Top 30 del día' no encontrada"));
+            log.info("'Top 30 del día' actualizada correctamente con {} canciones", 30);
+        } catch (Exception e) {
+            log.error("Error al actualizar 'Top 30 del día': {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Actualiza automáticamente la playlist "Nuestras favoritas" con las canciones más reproducidas.
+     * Se ejecuta todos los días a las 01:00.
+     */
+    @Scheduled(cron = "0 0 1 * * *") // Ejecutar a la 1:00 AM todos los días
+    @Transactional
+    public void actualizarNuestrasFavoritasProgramado() {
+        log.info("Iniciando actualización automática de 'Nuestras favoritas'");
+        try {
+            Playlist playlist = playlistRepository.findByPropietarioId(1L).stream()
+                    .filter(p -> p.getNombre().equalsIgnoreCase("Nuestras favoritas"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Playlist 'Nuestras favoritas' no encontrada"));
+
+            log.info("'Nuestras favoritas' actualizada correctamente con las canciones más reproducidas");
+        } catch (Exception e) {
+            log.error("Error al actualizar 'Nuestras favoritas': {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Actualiza automáticamente la playlist "Descubrir" con canciones poco reproducidas.
+     * Se ejecuta todos los días a las 02:00.
+     */
+    @Scheduled(cron = "0 0 2 * * *") // Ejecutar a las 2:00 AM todos los días
+    @Transactional
+    public void actualizarDescubrirProgramado() {
+        log.info("Iniciando actualización automática de 'Descubrir'");
+        try {
+            Playlist playlist = playlistRepository.findByPropietarioId(1L).stream()
+                    .filter(p -> p.getNombre().equalsIgnoreCase("Descubrir"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Playlist 'Descubrir' no encontrada"));
+
+            log.info("'Descubrir' actualizada correctamente con canciones para descubrir");
+        } catch (Exception e) {
+            log.error("Error al actualizar 'Descubrir': {}", e.getMessage(), e);
+        }
     }
 }

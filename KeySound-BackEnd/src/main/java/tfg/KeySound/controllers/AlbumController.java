@@ -107,6 +107,26 @@ public class AlbumController {
     }
 
     /**
+     * Endpoint para obtener álbumes de los últimos 7 días.
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseAlbumDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de novedades
+     * @apiNote {@code GET /api/albums/novedades}
+     */
+    @GetMapping("/novedades")
+    public ResponseEntity<List<ResponseAlbumDTO>> obtenerNovedadesAlias() {
+        return ResponseEntity.ok(albumService.obtenerNovedades());
+    }
+
+    /**
+     * Endpoint para obtener álbumes futuros (próximos lanzamientos).
+     * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseProximoAlbumDTO}&gt;&gt; Devuelve un status 200 (OK) con la lista de próximos álbumes
+     * @apiNote {@code GET /api/albums/proximos}
+     */
+    @GetMapping("/proximos")
+    public ResponseEntity<List<ResponseProximoAlbumDTO>> obtenerProximosAlias() {
+        return ResponseEntity.ok(albumService.obtenerProximosLanzamientos());
+    }
+
+    /**
      * Endpoint para buscar álbumes por título.
      * @param q {@link String} término de búsqueda
      * @return {@link ResponseEntity}&lt;{@link List}&lt;{@link ResponseAlbumDTO}&gt;&gt;
