@@ -3,6 +3,8 @@
     class="ctx-menu"
     role="menu"
     aria-label="Opciones de canción"
+    [style.top]="estiloMenu().top"
+    [style.left]="estiloMenu().left"
   >
     @if (mensaje()) {
       <div class="ctx-menu__mensaje" role="status" aria-live="polite">
