@@ -159,7 +159,10 @@ public class AlbumService {
     public List<ResponseAlbumDTO> obtenerNovedades() {
         // Obtener los álbumes más recientes ordenados por fecha de lanzamiento (solo álbumes que no son borradores y con fecha de lanzamiento en el pasado o presente)
         // Y que su fecha de lanzamiento sea posterior a hace 7 días, es decir, que se hayan lanzado en la última semana
-        List<Album> novedades = albumRepository.findByEsBorradorFalseAndFechaLanzamientoAfterOrderByFechaLanzamientoAsc(LocalDateTime.now().minusDays(7));
+        List<Album> novedades = albumRepository.
+                findByEsBorradorFalseAndFechaLanzamientoAfterAndFechaLanzamientoBeforeOrderByFechaLanzamientoDesc(
+                        LocalDateTime.now().minusDays(7),
+                        LocalDateTime.now());
 
         return albumMapper.toDtos(novedades);
     }
@@ -168,10 +171,7 @@ public class AlbumService {
         if (q == null || q.isBlank()) return List.of();
 
         List<Album> albums = albumRepository.buscarPorTitulo(q);
-        List<ResponseAlbumDTO> dtos = albumMapper.toDtos(albums);
-        dtos.forEach(dto ->
-            dto.setUrlPortada(firebaseService.obtenerUrlArchivoImagen(dto.getUrlPortada(), dto.getTitulo()))
-        );
-        return dtos;
+
+        return albumMapper.toDtos(albums);
     }
 }

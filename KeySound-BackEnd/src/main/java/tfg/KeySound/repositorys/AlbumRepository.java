@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface AlbumRepository extends JpaRepository<Album, Long> {
     List<Album> findByEsBorradorFalseAndFechaLanzamientoAfterOrderByFechaLanzamientoAsc(LocalDateTime fecha);
+    List<Album> findByEsBorradorFalseAndFechaLanzamientoAfterAndFechaLanzamientoBeforeOrderByFechaLanzamientoDesc(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 
     /**
      * Obtiene los álbumes publicados de un artista ordenados por fecha de lanzamiento descendente

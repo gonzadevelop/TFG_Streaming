@@ -145,7 +145,7 @@ public abstract class AlbumMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "artista", source = "usuario.username")
     @Mapping(target = "titulo", source = "titulo")
-    @Mapping(target = "urlPortada", source = "archivoPortada")
+    @Mapping(target = "urlPortada", expression = "java(firebaseService.obtenerUrlArchivoImagen(album.getArchivoPortada(), album.getTitulo()))")
     @Mapping(target = "fechaLanzamiento", source = "album.fechaLanzamiento")
     @Mapping(target = "tipo", source = "tipo")
     public abstract ResponseProximoAlbumDTO toProximoAlbumDto(Album album);
