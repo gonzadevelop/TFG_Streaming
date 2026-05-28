@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from '../environments/environment';
+import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs';
 import {IPista} from '../model/pista/IPista';
 import {IExistingSong} from '../model/cancion/IExistingSong';
@@ -8,7 +8,7 @@ import {IExistingSong} from '../model/cancion/IExistingSong';
 @Injectable({ providedIn: 'root' })
 export class CancionService {
   private readonly http = inject(HttpClient);
-  private readonly baseURL = `${environment.apiURL}`;
+  private readonly baseUrl = environment.apiUrl;
 
   /**
    * Registra la reproducción de una canción en el historial del usuario.
@@ -17,7 +17,7 @@ export class CancionService {
    * @param pistaId ID de la pista a reproducir
    */
   setReproducirCancion(pistaId: number): Observable<void> {
-    return this.http.post<void>(`${this.baseURL}/canciones/reproducir`, pistaId);
+    return this.http.post<void>(`${this.baseUrl}/canciones/reproducir`, pistaId);
   }
 
   /**
@@ -25,7 +25,7 @@ export class CancionService {
    * GET /api/canciones/mis-canciones-mas-reproducidas
    */
   getCancionesMasReproducidas(): Observable<IPista[]> {
-    return this.http.get<IPista[]>(`${this.baseURL}/canciones/mis-canciones-mas-reproducidas`);
+    return this.http.get<IPista[]>(`${this.baseUrl}/canciones/mis-canciones-mas-reproducidas`);
   }
 
   /**
@@ -33,7 +33,7 @@ export class CancionService {
    * GET /api/canciones/buscar?q=término
    */
   buscarCanciones(q: string): Observable<IPista[]> {
-    return this.http.get<IPista[]>(`${this.baseURL}/canciones/buscar`, {
+    return this.http.get<IPista[]>(`${this.baseUrl}/canciones/buscar`, {
       params: { q }
     });
   }
@@ -43,7 +43,7 @@ export class CancionService {
    * GET /api/canciones/buscar-mis?q=texto
    */
   buscarMisCanciones(q: string): Observable<IExistingSong[]> {
-    return this.http.get<IExistingSong[]>(`${this.baseURL}/canciones/buscar-mis`, {
+    return this.http.get<IExistingSong[]>(`${this.baseUrl}/canciones/buscar-mis`, {
       params: { q }
     });
   }

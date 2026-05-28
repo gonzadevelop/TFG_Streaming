@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { IPlaylistCompleta } from '../model/playlists/IPlaylistCompleta';
 
 @Injectable({ providedIn: 'root' })
 export class KeySoundPlaylistsService {
   private readonly http = inject(HttpClient);
-  private readonly baseURL = `${environment.apiURL}`;
+  private readonly baseUrl = environment.apiUrl;
 
   /**
    * Top 30 diario. Si no se pasa fecha, el backend usa su lógica por defecto.
@@ -15,8 +15,8 @@ export class KeySoundPlaylistsService {
    */
   getDailyTop30(fechaYYYYMMDD?: string): Observable<IPlaylistCompleta> {
     const url = fechaYYYYMMDD
-      ? `${this.baseURL}/KeySoundPlaylists/dailyTop30/${fechaYYYYMMDD}`
-      : `${this.baseURL}/KeySoundPlaylists/dailyTop30`;
+      ? `${this.baseUrl}/KeySoundPlaylists/dailyTop30/${fechaYYYYMMDD}`
+      : `${this.baseUrl}/KeySoundPlaylists/dailyTop30`;
 
     return this.http.get<IPlaylistCompleta>(url);
   }
@@ -35,7 +35,6 @@ export class KeySoundPlaylistsService {
     if (key.includes('top30')) {
       return this.getDailyTop30(fechaYYYYMMDD);
     }
-    return this.http.get<IPlaylistCompleta>(`${this.baseURL}/KeySoundPlaylists/${encodeURIComponent(nombre)}`);
+    return this.http.get<IPlaylistCompleta>(`${this.baseUrl}/KeySoundPlaylists/${encodeURIComponent(nombre)}`);
   }
 }
-

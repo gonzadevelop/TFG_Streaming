@@ -1,20 +1,20 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { IEstadistica, ITopAlbum, ITopArtista, ITopCancion } from '../model/estadistica/IEstadistica';
 
 @Injectable({ providedIn: 'root' })
 export class EstadisticaService {
   private readonly http = inject(HttpClient);
-  private readonly baseURL = `${environment.apiURL}`;
+  private readonly baseUrl = environment.apiUrl;
 
   /**
    * Devuelve los minutos escuchados por el usuario en el mes actual.
    * GET /api/estadisticas/minutos-mes
    */
   getMinutosMes(): Observable<unknown> {
-    return this.http.get<unknown>(`${this.baseURL}/estadisticas/minutos-mes`);
+    return this.http.get<unknown>(`${this.baseUrl}/estadisticas/minutos-mes`);
   }
 
   /**
@@ -22,7 +22,7 @@ export class EstadisticaService {
    * GET /api/estadisticas/top-canciones
    */
   getTopCanciones(): Observable<ITopCancion[]> {
-    return this.http.get<ITopCancion[]>(`${this.baseURL}/estadisticas/top-canciones`);
+    return this.http.get<ITopCancion[]>(`${this.baseUrl}/estadisticas/top-canciones`);
   }
 
   /**
@@ -30,7 +30,7 @@ export class EstadisticaService {
    * GET /api/estadisticas/top-artistas
    */
   getTopArtistas(): Observable<ITopArtista[]> {
-    return this.http.get<ITopArtista[]>(`${this.baseURL}/estadisticas/top-artistas`);
+    return this.http.get<ITopArtista[]>(`${this.baseUrl}/estadisticas/top-artistas`);
   }
 
   /**
@@ -38,7 +38,6 @@ export class EstadisticaService {
    * GET /api/estadisticas/top-albumes
    */
   getTopAlbumes(): Observable<ITopAlbum[]> {
-    return this.http.get<ITopAlbum[]>(`${this.baseURL}/estadisticas/top-albumes`);
+    return this.http.get<ITopAlbum[]>(`${this.baseUrl}/estadisticas/top-albumes`);
   }
 }
-

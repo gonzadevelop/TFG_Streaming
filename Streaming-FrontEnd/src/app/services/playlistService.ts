@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from '../environments/environment';
+import {environment} from '../../environments/environment';
 import {Observable, of} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
 import { IPlaylistRequest, ICancionesPlaylistRequest } from '../model/playlists/IPlaylistRequest';
@@ -11,14 +11,14 @@ import { IPista } from '../model/pista/IPista';
 @Injectable({ providedIn: 'root' })
 export class PlaylistService {
   private readonly http = inject(HttpClient);
-  private readonly baseURL = `${environment.apiURL}`;
+  private readonly baseUrl = environment.apiUrl;
 
   /**
    * Obtiene todas las playlists destacadas de KeySound.
    * GET /api/playlists/keysound
    */
   getPlaylistsKeysound(): Observable<IPlaylist[]> {
-    return this.http.get<IPlaylist[]>(`${this.baseURL}/playlists/keysound`);
+    return this.http.get<IPlaylist[]>(`${this.baseUrl}/playlists/keysound`);
   }
 
   /**
@@ -32,15 +32,15 @@ export class PlaylistService {
     formData.append('esPublica', String(dto.esPublica));
     if (dto.descripcion) formData.append('descripcion', dto.descripcion);
     if (dto.fotoPortada) formData.append('fotoPortada', dto.fotoPortada);
-    return this.http.post<void>(`${this.baseURL}/playlists/crear`, formData);
+    return this.http.post<void>(`${this.baseUrl}/playlists/crear`, formData);
   }
 
   /**
    * Obtiene una playlist desde el endpoint especificado.
-   * @param endpoint URL completa del endpoint (ej: 'localhost:8080/api/playlists/{id}')
+   * @param endpoint Path relativo del endpoint (ej: '/playlists/{id}')
    */
   getPlaylist(endpoint: string): Observable<IPlaylistCompleta> {
-    return this.http.get<IPlaylistCompleta>(this.baseURL + endpoint);
+    return this.http.get<IPlaylistCompleta>(this.baseUrl + endpoint);
   }
 
   /**
@@ -48,7 +48,7 @@ export class PlaylistService {
    * GET /api/favoritos
    */
   getFavoritos(): Observable<IPista[]> {
-    return this.http.get<IPista[] | null>(`${this.baseURL}/favoritos`).pipe(
+    return this.http.get<IPista[] | null>(`${this.baseUrl}/favoritos`).pipe(
       map(res => res ?? []),
       catchError(err => {
         // Si el status es 200 pero el body no es JSON válido (body vacío, texto plano, etc.)
@@ -68,7 +68,7 @@ export class PlaylistService {
    * POST /api/playlists/agregar-cancion
    */
   setAgregarCancionPlaylist(dto: ICancionesPlaylistRequest): Observable<void> {
-    return this.http.post<void>(`${this.baseURL}/playlists/agregar-cancion`, dto);
+    return this.http.post<void>(`${this.baseUrl}/playlists/agregar-cancion`, dto);
   }
 
   /**
@@ -76,7 +76,7 @@ export class PlaylistService {
    * POST /api/favoritos/{idPista}
    */
   addFavorito(idPista: number): Observable<void> {
-    return this.http.post<void>(`${this.baseURL}/favoritos/${idPista}`, {});
+    return this.http.post<void>(`${this.baseUrl}/favoritos/${idPista}`, {});
   }
 
   /**
@@ -84,7 +84,7 @@ export class PlaylistService {
    * DELETE /api/favoritos/{idPista}
    */
   removeFavorito(idPista: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseURL}/favoritos/${idPista}`);
+    return this.http.delete<void>(`${this.baseUrl}/favoritos/${idPista}`);
   }
 
   /**
@@ -92,7 +92,7 @@ export class PlaylistService {
    * GET /api/favoritos/ids
    */
   getFavoritosIds(): Observable<number[]> {
-    return this.http.get<number[]>(`${this.baseURL}/favoritos/ids`);
+    return this.http.get<number[]>(`${this.baseUrl}/favoritos/ids`);
   }
 
   /**
@@ -100,7 +100,7 @@ export class PlaylistService {
    * GET /api/playlists/mis-playlists
    */
   getMisPlaylists(): Observable<IPlaylist[]> {
-    return this.http.get<IPlaylist[]>(`${this.baseURL}/playlists/mis-playlists`);
+    return this.http.get<IPlaylist[]>(`${this.baseUrl}/playlists/mis-playlists`);
   }
 
   /**
@@ -113,7 +113,7 @@ export class PlaylistService {
     formData.append('esPublica', String(dto.esPublica));
     if (dto.descripcion) formData.append('descripcion', dto.descripcion);
     if (dto.fotoPortada) formData.append('fotoPortada', dto.fotoPortada);
-    return this.http.put<void>(`${this.baseURL}/playlists/editar/${id}`, formData);
+    return this.http.put<void>(`${this.baseUrl}/playlists/editar/${id}`, formData);
   }
 
   /**
@@ -121,7 +121,7 @@ export class PlaylistService {
    * DELETE /api/playlists/{playlistId}/cancion/{pistaId}
    */
   eliminarCancionDePlaylist(playlistId: number, pistaId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseURL}/playlists/${playlistId}/cancion/${pistaId}`);
+    return this.http.delete<void>(`${this.baseUrl}/playlists/${playlistId}/cancion/${pistaId}`);
   }
 
   /**
@@ -129,7 +129,7 @@ export class PlaylistService {
    * DELETE /api/playlists/{id}
    */
   eliminarPlaylist(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseURL}/playlists/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/playlists/${id}`);
   }
 
   /**
@@ -137,6 +137,6 @@ export class PlaylistService {
    * GET /api/playlists/buscar?q=término
    */
   buscarPlaylists(q: string): Observable<IPlaylist[]> {
-    return this.http.get<IPlaylist[]>(`${this.baseURL}/playlists/buscar`, { params: { q } });
+    return this.http.get<IPlaylist[]>(`${this.baseUrl}/playlists/buscar`, { params: { q } });
   }
 }
