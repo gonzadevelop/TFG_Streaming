@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, forkJoin, of } from 'rxjs';
@@ -21,7 +21,7 @@ import { ScrollRevealDirective } from '../../../../../shared/directives/scroll-r
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy {
 
   private readonly tokenService = inject(TokenService);
   private readonly homeService  = inject(HomeService);
@@ -73,17 +73,70 @@ export class Home implements OnInit {
     esPublica:   [true],
   });
 
+  // ── Countdown próximos lanzamientos ──────────────────────
+  private countdownTimerId: number | null = null;
+  /** señal que fuerza a recomputar textos de countdown en plantilla */
+  protected readonly nowTick = signal<number>(Date.now());
+
   ngOnInit(): void {
     this.estaLogueado.set(this.tokenService.isLogged());
     this.cargarDatos();
+    this.iniciarCountdownTick();
+  }
+
+  private iniciarCountdownTick(): void {
+    // En SSR window puede no existir
+    if (typeof window === 'undefined') return;
+
+    // Actualizamos cada minuto para no recalcular en exceso
+    this.countdownTimerId = window.setInterval(() => {
+      this.nowTick.set(Date.now());
+    }, 60_000);
+  }
+
+  ngOnDestroy(): void {
+    if (typeof window === 'undefined') return;
+    if (this.countdownTimerId !== null) {
+      window.clearInterval(this.countdownTimerId);
+      this.countdownTimerId = null;
+    }
+  }
+
+  protected getCountdownLabel(fechaISO: string | null | undefined): string {
+    // lectura para que Angular recompute cuando cambie el tick
+    this.nowTick();
+    if (!fechaISO) return '';
+
+    const target = new Date(fechaISO);
+    const targetMs = target.getTime();
+    if (Number.isNaN(targetMs)) return '';
+
+    const diffMs = targetMs - Date.now();
+    if (diffMs <= 0) return 'Ya disponible';
+
+    const totalMinutes = Math.floor(diffMs / 60000);
+    const days = Math.floor(totalMinutes / (60 * 24));
+    const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+
+    if (days > 0) return `${days}d ${hours}h`;
+
+    const minutes = totalMinutes % 60;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+
+    return `${minutes}m`;
+  }
+
+  /** @deprecated mantener por compatibilidad mientras el template migra */
+  protected getCountdownLabelFromYear(anioLanzamiento: number | string | null | undefined): string {
+    return this.getCountdownLabel(typeof anioLanzamiento === 'string' ? anioLanzamiento : null);
   }
 
   private cargarDatos(): void {
     forkJoin({
-      home:                this.homeService.getDatosHome().pipe(catchError(() => of(null))),
-      keysoundPlaylists:   this.playlistService.getPlaylistsKeysound().pipe(catchError(() => of([] as IPlaylist[]))),
-      misPlaylists:        this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))),
-      novedades:           this.albumService.getNovedades().pipe(catchError(() => of([] as IAlbum[]))),
+      home:                 this.homeService.getDatosHome().pipe(catchError(() => of(null))),
+      keysoundPlaylists:    this.playlistService.getPlaylistsKeysound().pipe(catchError(() => of([] as IPlaylist[]))),
+      misPlaylists:         this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))),
+      novedades:            this.albumService.getNovedades().pipe(catchError(() => of([] as IAlbum[]))),
       proximosLanzamientos: this.albumService.getProximosLanzamientos().pipe(catchError(() => of([] as IAlbum[]))),
     }).subscribe({
       next: ({ home, keysoundPlaylists, misPlaylists, novedades, proximosLanzamientos }: {
@@ -97,10 +150,13 @@ export class Home implements OnInit {
           keySoundPlaylists:      keysoundPlaylists            ?? [],
           artistasSeguidos:       home?.artistasSeguidos       ?? [],
           misPlaylist:            misPlaylists                 ?? [],
-          novedadesDeLaSemana:    novedades                   ?? [],
-          proximosLanzmientos:    proximosLanzamientos        ?? [],
+          novedadesDeLaSemana:    novedades                    ?? [],
+          proximosLanzmientos:    proximosLanzamientos         ?? [],
           cancionesMasEscuchadas: home?.cancionesMasEscuchadas ?? [],
         });
+
+        console.log('[Home] próximos lanzamientos:', proximosLanzamientos);
+
         this.cargando.set(false);
       },
       error: () => {
@@ -114,7 +170,7 @@ export class Home implements OnInit {
     this.router.navigate(['/artistas', username]);
   }
 
-  // ── Modal ────────────────────────────────────────────────
+  // ── Modal creación playlist ──────────────────────────────
   protected abrirModal(): void {
     this.playlistForm.reset({ nombre: '', descripcion: '', esPublica: true });
     this.portadaPreview.set(null);
@@ -164,6 +220,34 @@ export class Home implements OnInit {
   protected quitarPortada(): void {
     this.portadaPreview.set(null);
     this.portadaFile.set(null);
+  }
+
+  protected crearPlaylist(): void {
+    if (this.playlistForm.invalid || this.creando()) return;
+    this.creando.set(true);
+    this.errorModal.set(null);
+
+    const { nombre, descripcion, esPublica } = this.playlistForm.value as {
+      nombre: string; descripcion: string; esPublica: boolean;
+    };
+
+    this.playlistService.setCrearPlaylist({
+      nombre, descripcion, esPublica,
+      fotoPortada: this.portadaFile() ?? undefined,
+    }).subscribe({
+      next: () => {
+        this.creando.set(false);
+        this.modalAbierto.set(false);
+        // Recargar mis playlists tras crear
+        this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))).subscribe({
+          next: (playlists) => this.homeData.update((d: IHome) => ({ ...d, misPlaylist: playlists ?? [] })),
+        });
+      },
+      error: () => {
+        this.creando.set(false);
+        this.errorModal.set('No se pudo crear la playlist. Inténtalo de nuevo.');
+      },
+    });
   }
 
   // ── Modal edición playlist ───────────────────────────────
@@ -288,34 +372,6 @@ export class Home implements OnInit {
       error: () => {
         this.eliminando.set(false);
         this.errorEditModal.set('No se pudo eliminar la playlist.');
-      },
-    });
-  }
-
-  protected crearPlaylist(): void {
-    if (this.playlistForm.invalid || this.creando()) return;
-    this.creando.set(true);
-    this.errorModal.set(null);
-
-    const { nombre, descripcion, esPublica } = this.playlistForm.value as {
-      nombre: string; descripcion: string; esPublica: boolean;
-    };
-
-    this.playlistService.setCrearPlaylist({
-      nombre, descripcion, esPublica,
-      fotoPortada: this.portadaFile() ?? undefined,
-    }).subscribe({
-      next: () => {
-        this.creando.set(false);
-        this.modalAbierto.set(false);
-        // Recargar mis playlists tras crear
-        this.playlistService.getMisPlaylists().pipe(catchError(() => of([] as IPlaylist[]))).subscribe({
-          next: (playlists) => this.homeData.update((d: IHome) => ({ ...d, misPlaylist: playlists ?? [] })),
-        });
-      },
-      error: () => {
-        this.creando.set(false);
-        this.errorModal.set('No se pudo crear la playlist. Inténtalo de nuevo.');
       },
     });
   }
