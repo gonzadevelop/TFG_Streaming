@@ -71,6 +71,7 @@ export class HeaderComponent {
       takeUntilDestroyed()
     ).subscribe(res => {
       if (res) {
+        console.log('[Header] Resultados de búsqueda:', res);
         this.resultados.set(res);
         this.mostrarResultados.set(true);
       }
@@ -79,6 +80,7 @@ export class HeaderComponent {
   }
   onInput(value: string): void {
     this.searchTerm.set(value);
+    console.log('[Header] Búsqueda realizada:', value);
     this.busqueda$.next(value);
   }
   onSearch(): void {

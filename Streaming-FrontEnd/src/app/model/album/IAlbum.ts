@@ -5,5 +5,6 @@ export interface IAlbum {
   urlPortada?: string;
   portada?: string;
   anioLanzamiento: number;
-  tipo: 'álbum' | 'sencillo';
+  tipo: 'Album' | 'Sencillo';
+  fechaLanzamiento?: string;
 }

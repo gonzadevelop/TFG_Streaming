@@ -28,7 +28,6 @@
                 [album]="playlist"
                 [routerLink]="['/playlists', playlist.id.toString()]"
                 [contentType]="'playlist'"
-                role="listitem"
               />
             }
           </div>
@@ -198,33 +197,43 @@
         </div>
 
         @if (homeData().proximosLanzmientos.length > 0) {
-          <div class="lanzamientos-list" scrollReveal [stagger]="80" role="list">
+          <div class="cards-grid cards-grid--proximos" scrollReveal [stagger]="70" [delay]="100" role="list">
             @for (lanzamiento of homeData().proximosLanzmientos; track lanzamiento.id) {
-              <a
-                class="lanzamiento-item"
+              <article
+                class="ks-card ks-proximo"
                 role="listitem"
-                [routerLink]="['/albums', lanzamiento.id]"
+                tabindex="0"
                 [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.artista"
               >
-                <div class="lanzamiento-item__cover">
-                  <img
-                    [src]="lanzamiento.urlPortada ?? lanzamiento.portada"
-                    [alt]="'Portada de ' + lanzamiento.titulo"
-                    class="lanzamiento-item__img"
-                  />
-                </div>
-                <div class="lanzamiento-item__info">
-                  <p class="lanzamiento-item__titulo mb-0">{{ lanzamiento.titulo }}</p>
-                  <p class="lanzamiento-item__artista mb-0">{{ lanzamiento.artista }}</p>
-                </div>
-                <div class="lanzamiento-item__meta ms-auto text-end">
-                  <span class="ks-card__badge">{{ lanzamiento.tipo }}</span>
-                  <p class="lanzamiento-item__fecha mb-0 mt-1">
-                    <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>
-                    {{ lanzamiento.anioLanzamiento }}
-                  </p>
-                </div>
-              </a>
+                <a
+                  class="ks-card__link"
+                  [routerLink]="['/albums', lanzamiento.id]"
+                  [attr.aria-label]="'Ir a ' + lanzamiento.titulo"
+                  tabindex="-1"
+                >
+                  <div class="ks-card__cover ks-proximo__cover">
+                    <img
+                      [src]="lanzamiento.urlPortada"
+                      [alt]="'Portada de ' + lanzamiento.titulo"
+                      class="ks-card__img ks-proximo__img"
+                      loading="lazy"
+                    />
+
+                    <span
+                      class="ks-proximo__countdown"
+                      [attr.aria-label]="'Faltan ' + (getCountdownLabel(lanzamiento.fechaLanzamiento) || 'pronto')"
+                    >
+                      {{ getCountdownLabel(lanzamiento.fechaLanzamiento) || 'Pronto' }}
+                    </span>
+                  </div>
+
+                  <div class="ks-card__body ks-proximo__body">
+                    <p class="ks-card__title mb-1">{{ lanzamiento.titulo }}</p>
+                    <p class="ks-card__desc mb-0">{{ lanzamiento.artista }}</p>
+                    <span class="ks-card__badge mt-2">{{ lanzamiento.tipo }}</span>
+                  </div>
+                </a>
+              </article>
             }
           </div>
         } @else {
