@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiURL: 'http://localhost:8080/api'
+  apiURL: 'https://spring-backend-603923626139.europe-west4.run.app'
 };
 
 
