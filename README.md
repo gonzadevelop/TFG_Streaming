@@ -7,15 +7,15 @@
 
 Ciclo Formativo de Grado Superior — Desarrollo de Aplicaciones Web
 
-## ♪ KeySound
+
+## KeySound
 ### Plataforma Web de Streaming Musical
-*Proyecto Intermodular — Memoria Técnica*
 
 **Autores:**
 
-- Gonzalo Vicente (@gonzadevelop) — Backend Developer
-- Enrique Ruiz (@kikeruuuiz) — Frontend Developer (Zona Cliente)
-- Elena Cristina Chiru (@KiruuxX) — Frontend Developer (Zona Artista)
+- Gonzalo Vicente (@gonzadevelop)
+- Enrique Ruiz (@kikeruuuiz) 
+- Elena Cristina Chiru (@KiruuxX) 
 
 **Tutora:** Mariluz
 
