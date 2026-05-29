@@ -49,17 +49,23 @@ public class SecurityConfig {
     }
 
     /**
-     * Configura la fuente de configuración CORS para permitir solicitudes desde el frontend. Permite solicitudes desde "http://localhost:4200"
-     * con métodos GET, POST, PUT, DELETE y OPTIONS, y permite los encabezados "Authorization", "Content-Type" y "Cache-Control".
+     * Configura la fuente de configuración CORS para permitir solicitudes desde el frontend en desarrollo y producción.
      * @return {@link CorsConfigurationSource} la fuente de configuración CORS configurada
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+
+        // Añadimos tanto el entorno local como la URL definitiva de Firebase Hosting
+        configuration.setAllowedOrigins(java.util.List.of(
+                "http://localhost:4200",
+                "https://angular-keysound-tfg--keysound-5480e.europe-west4.hosted.app",
+                "https://keysound-5480e.web.app"
+        ));
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "Cache-Control"));
         configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

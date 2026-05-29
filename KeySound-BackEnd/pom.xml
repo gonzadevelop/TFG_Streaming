@@ -27,6 +27,7 @@
         <url/>
     </scm>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
     </properties>
     <dependencies>
@@ -137,6 +138,14 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- dependencia para conectar el backend ya desplegado con la bd  -->
+
+        <dependency>
+            <groupId>com.google.cloud.sql</groupId>
+            <artifactId>mysql-socket-factory-connector-j-8</artifactId>
+            <version>1.15.1</version>
+        </dependency>
+
         <!-- No external mp3 library required: audio parsing implemented in AudioUtils -->
      </dependencies>
 
@@ -176,6 +185,12 @@
                 </configuration>
             </plugin>
         </plugins>
+             <resources>
+                 <resource>
+                     <directory>src/main/resources</directory>
+                     <filtering>false</filtering>
+                 </resource>
+             </resources>
     </build>
 
 </project>
