@@ -59,8 +59,7 @@ public class SecurityConfig {
         // Añadimos tanto el entorno local como la URL definitiva de Firebase Hosting
         configuration.setAllowedOrigins(java.util.List.of(
                 "http://localhost:4200",
-                "https://angular-keysound-tfg--keysound-5480e.europe-west4.hosted.app",
-                "https://keysound-5480e.web.app"
+                "https://angular-keysound-tfg--keysound-5480e.europe-west4.hosted.app"
         ));
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "Cache-Control"));

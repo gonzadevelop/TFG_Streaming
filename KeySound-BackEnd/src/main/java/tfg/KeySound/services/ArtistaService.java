@@ -66,7 +66,7 @@ public class ArtistaService {
 
         // Buscar las 10 canciones más populares del artista, ordenadas por número de reproducciones (historialReproducciones)
         List<ResponsePistaHomeDTO> cancionesPopulares = pistaMapper.toDtos(
-                cancionRepository.findTop10CancionesMasReproducidasPorArtista(artista.getId())
+                cancionRepository.findTop10CancionesMasReproducidasPorArtista(artista.getId(), LocalDateTime.now())
         );
 
         // Mapear a DTO

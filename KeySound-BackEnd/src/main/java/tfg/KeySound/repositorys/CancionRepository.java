@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tfg.KeySound.entitys.Cancion;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -28,7 +29,14 @@ public interface CancionRepository extends JpaRepository<Cancion, Long> {
                     WHERE p.album.usuario.id = :usuarioId
                 )
             )
-            ORDER BY SIZE(c.historialReproducciones) DESC LIMIT 10
+            AND EXISTS (
+                SELECT p2.id FROM Pista p2
+                WHERE p2.cancion = c
+                AND p2.album.esBorrador = false
+                AND p2.album.fechaLanzamiento < :ahora
+            )
+            ORDER BY SIZE(c.historialReproducciones) DESC
     """)
-    List<Cancion> findTop10CancionesMasReproducidasPorArtista(@Param("usuarioId") Long usuarioId);
+    List<Cancion> findTop10CancionesMasReproducidasPorArtista(@Param("usuarioId") Long usuarioId,
+                                                             @Param("ahora") LocalDateTime ahora);
 }
