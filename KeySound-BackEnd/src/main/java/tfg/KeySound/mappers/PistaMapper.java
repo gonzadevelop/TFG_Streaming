@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import tfg.KeySound.entitys.Album;
 import tfg.KeySound.entitys.Cancion;
 import tfg.KeySound.entitys.Pista;
+import tfg.KeySound.entitys.TopMusicalDiario;
 import tfg.KeySound.model.pista.ResponsePistaAlbumDTO;
 import tfg.KeySound.model.pista.ResponsePistaHomeDTO;
 import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
@@ -83,6 +84,39 @@ public abstract class PistaMapper {
                     dto.setReproducciones(reproduccionesDelUsuario);
                     return dto;
                 })
+                .toList();
+    }
+
+    public ResponsePistaPlaylistDTO topMusicalDiarioToPlaylistDto(TopMusicalDiario ranking) {
+        if (ranking == null || ranking.getCancion() == null) return null;
+
+        Cancion cancion = ranking.getCancion();
+        ResponsePistaPlaylistDTO dto = new ResponsePistaPlaylistDTO();
+        dto.setTitulo(cancion.getTitulo());
+        dto.setDuracionSegundos(cancion.getDuracionSegundos());
+        dto.setUrlCancion(firebaseService.obtenerUrlArchivoAudio(cancion.getArchivoCancion()));
+        dto.setArtistas(usuarioRepository.findArtistasDeCancion(cancion.getId()));
+        dto.setReproducciones(ranking.getReproduccionesEnElDia() != null
+                ? ranking.getReproduccionesEnElDia().longValue()
+                : 0L);
+
+        var pistas = cancion.getPistas();
+        if (pistas != null && !pistas.isEmpty()) {
+            Pista primeraPista = pistas.iterator().next();
+            dto.setIdPista(primeraPista.getId());
+            Album album = primeraPista.getAlbum();
+            if (album != null) {
+                dto.setUrlPortada(firebaseService.obtenerUrlArchivoImagen(album.getArchivoPortada(), album.getTitulo()));
+            }
+        }
+
+        return dto;
+    }
+
+    public List<ResponsePistaPlaylistDTO> topMusicalDiarioToPlaylistDtos(List<TopMusicalDiario> rankings) {
+        if (rankings == null) return null;
+        return rankings.stream()
+                .map(this::topMusicalDiarioToPlaylistDto)
                 .toList();
     }
 

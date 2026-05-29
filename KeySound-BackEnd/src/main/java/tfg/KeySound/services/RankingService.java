@@ -3,18 +3,15 @@ package tfg.KeySound.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tfg.KeySound.entitys.*;
-import tfg.KeySound.mappers.ArtistaMapper;
 import tfg.KeySound.mappers.PistaMapper;
-import tfg.KeySound.mappers.PlaylistMapper;
 import tfg.KeySound.mappers.TopMusicalDiarioMapper;
 import tfg.KeySound.model.pista.ResponsePistaPlaylistDTO;
 import tfg.KeySound.model.playlist.ResponsePlaylistCompletaDTO;
 import tfg.KeySound.repositorys.*;
-import tfg.KeySound.services.external.FirebaseService;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +41,14 @@ public class RankingService {
                 .orElseThrow(() -> new RuntimeException("No se encontró la playlist de ranking diario"));
 
         // Obtener las pistas del ranking diario para la fecha dada y mapear a ResponsePistaPlaylistDTO
-        List<ResponsePistaPlaylistDTO> pistas = pistaMapper.pistasToPlaylistDtos(
-                topMusicalDiarioRepository.findPistasByFecha(fechaConsulta)
-        );
+        List<TopMusicalDiario> pistas = topMusicalDiarioRepository.findByFecha(fechaConsulta);
+        pistas.sort(Comparator.comparingLong((TopMusicalDiario ranking) ->
+                        ranking.getReproduccionesEnElDia() == null ? 0L : ranking.getReproduccionesEnElDia())
+                .reversed());
 
-        return topMusicalDiarioMapper.toDto(entity, pistas);
+        List<ResponsePistaPlaylistDTO> pistasDTO = pistaMapper.topMusicalDiarioToPlaylistDtos(pistas);
+
+        return topMusicalDiarioMapper.toDto(entity, pistasDTO);
     }
 
     /**
