@@ -81,25 +81,11 @@
                       [attr.aria-label]="'Editar playlist ' + playlist.nombre">
                       <span class="material-icons" aria-hidden="true">edit</span>
                     </button>
-                    @if (confirmDeleteId() === playlist.id) {
-                      <div class="playlist-delete-confirm">
-                        <span>¿Eliminar?</span>
-                        <button type="button" class="playlist-action-btn playlist-action-btn--confirm"
-                          (click)="eliminarPlaylist()" [disabled]="eliminando()" aria-label="Confirmar eliminación">
-                          <span class="material-icons" aria-hidden="true">check</span>
-                        </button>
-                        <button type="button" class="playlist-action-btn playlist-action-btn--cancel-del"
-                          (click)="cancelarEliminar()" aria-label="Cancelar eliminación">
-                          <span class="material-icons" aria-hidden="true">close</span>
-                        </button>
-                      </div>
-                    } @else {
-                      <button type="button" class="playlist-action-btn playlist-action-btn--delete"
-                        (click)="pedirConfirmacionEliminar(playlist.id, $event)"
-                        [attr.aria-label]="'Eliminar playlist ' + playlist.nombre">
-                        <span class="material-icons" aria-hidden="true">delete</span>
-                      </button>
-                    }
+                    <button type="button" class="playlist-action-btn playlist-action-btn--delete"
+                      (click)="pedirConfirmacionEliminar(playlist.id, $event)"
+                      [attr.aria-label]="'Eliminar playlist ' + playlist.nombre">
+                      <span class="material-icons" aria-hidden="true">delete</span>
+                    </button>
                   </div>
                 </div>
               }
@@ -411,8 +397,52 @@
 
 
 <!-- ══════════════════════════
-     MODAL EDITAR PLAYLIST
+     MODAL CONFIRMAR ELIMINACIÓN
 ══════════════════════════ -->
+@if (confirmDeleteId() !== null) {
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-modal-titulo"
+    (click)="cancelarEliminar()" (keydown.escape)="cancelarEliminar()">
+    <div class="modal-panel modal-panel--danger" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-titulo" id="delete-modal-titulo">
+          <span class="material-icons modal-titulo__icon--danger" aria-hidden="true">delete_forever</span>
+          Eliminar playlist
+        </h2>
+        <button type="button" class="modal-close" (click)="cancelarEliminar()" aria-label="Cerrar" [disabled]="eliminando()">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body modal-body--delete">
+        <div class="delete-warning-icon" aria-hidden="true">
+          <span class="material-icons">warning_amber</span>
+        </div>
+        <p class="delete-warning-text">
+          ¿Seguro que quieres eliminar la playlist
+          <strong>"{{ playlistNombreParaEliminar() }}"</strong>?
+        </p>
+        <p class="delete-warning-sub">Esta acción no se puede deshacer.</p>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal btn-modal--cancel" (click)="cancelarEliminar()" [disabled]="eliminando()">
+            Cancelar
+          </button>
+          <button type="button" class="btn-modal btn-modal--danger" (click)="eliminarPlaylist()" [disabled]="eliminando()">
+            @if (eliminando()) {
+              <span class="modal-spinner" aria-hidden="true"></span>
+              Eliminando…
+            } @else {
+              <span class="material-icons" aria-hidden="true">delete</span>
+              Eliminar
+            }
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+}
 @if (editModalAbierto()) {
   <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-modal-titulo"
     (click)="cerrarEditModal()" (keydown.escape)="cerrarEditModal()">
