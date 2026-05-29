@@ -4,9 +4,9 @@ import {
   OnInit,
   inject,
   signal,
+  Signal,
   WritableSignal,
   computed,
-  Signal,
 } from '@angular/core';
 import { IPista } from '../../../../../model/pista/IPista';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
@@ -26,8 +26,10 @@ export class ListaFavoritos implements OnInit {
   private readonly favoritosService = inject(FavoritosService);
   private readonly storage          = inject(StorageGlobal);
 
-  /** Lista de pistas reactiva — se actualiza automáticamente al pulsar el corazón */
-  readonly pistas: Signal<IPista[]> = this.favoritosService.favoritosPistas;
+  /** Lista de pistas en orden descendente (más reciente primero) */
+  readonly pistas: Signal<IPista[]> = computed(() =>
+    [...this.favoritosService.favoritosPistas()].reverse()
+  );
 
   readonly totalCanciones = computed(() => this.pistas().length);
 

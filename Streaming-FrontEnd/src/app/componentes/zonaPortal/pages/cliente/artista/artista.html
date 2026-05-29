@@ -38,7 +38,7 @@
     </header>
 
     <div class="artista-actions">
-      <button class="btn-play-large" aria-label="Reproducir">
+      <button class="btn-play-large" aria-label="Reproducir canciones populares" (click)="reproducirTodo()" [disabled]="cancionesPublicadas().length === 0">
         <span class="material-icons" aria-hidden="true">play_arrow</span>
       </button>
       <button

@@ -5,8 +5,10 @@ import { AlbumCard } from '../compartido/album-card/album-card';
 import { IArtista } from '../../../../../model/artista/IArtista';
 import { ArtistaService } from '../../../../../services/artistaService';
 import { UserService } from '../../../../../services/userService';
+import { StorageGlobal } from '../../../../../services/storageGlobal';
 import { signal, WritableSignal } from '@angular/core';
 import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
+import IPistaCola from '../../../../../model/pista/IPistaCola';
 
 @Component({
   selector: 'app-artista',
@@ -19,6 +21,7 @@ import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
 export class Artista implements OnInit {
   private readonly artistaService: ArtistaService = inject(ArtistaService);
   private readonly userService: UserService = inject(UserService);
+  private readonly storage = inject(StorageGlobal);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -98,6 +101,23 @@ export class Artista implements OnInit {
 
   protected alternarCanciones(): void {
     this.mostrarTodasLasCanciones.update(valor => !valor);
+  }
+
+  protected reproducirTodo(): void {
+    const canciones = this.cancionesPublicadas();
+    if (!canciones.length) return;
+
+    const cola: IPistaCola[] = canciones.map((p, index) => ({
+      idPista:          p.idPista,
+      titulo:           p.titulo,
+      artistas:         p.artistas ?? [],
+      urlPortada:       p.urlPortada ?? p.caratula ?? '',
+      urlCancion:       p.urlCancion,
+      duracionSegundos: p.duracionSegundos,
+      reproduciendo:    index === 0,
+      orden:            index,
+    }));
+    this.storage.SetCola(cola);
   }
 
   protected toggleSeguir(): void {
