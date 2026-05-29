@@ -22,14 +22,22 @@
         </div>
 
         @if (homeData().keySoundPlaylists.length > 0) {
-          <div class="cards-grid" scrollReveal [stagger]="70" [delay]="100" role="list">
-            @for (playlist of homeData().keySoundPlaylists; track playlist.id!) {
-              <app-album-card
-                [album]="playlist"
-                [routerLink]="['/playlists', playlist.id.toString()]"
-                [contentType]="'playlist'"
-              />
-            }
+          <div class="carousel-container">
+            <button class="carousel-btn carousel-btn--prev" (click)="scrollCarousel(ksCarousel, -1)" aria-label="Anterior">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <div class="carousel-track cards-grid" #ksCarousel scrollReveal [stagger]="70" [delay]="100" role="list">
+              @for (playlist of homeData().keySoundPlaylists; track playlist.id!) {
+                <app-album-card
+                  [album]="playlist"
+                  [routerLink]="['/playlists', playlist.id.toString()]"
+                  [contentType]="'playlist'"
+                />
+              }
+            </div>
+            <button class="carousel-btn carousel-btn--next" (click)="scrollCarousel(ksCarousel, 1)" aria-label="Siguiente">
+              <span class="material-icons">chevron_right</span>
+            </button>
           </div>
         }
       </div>
@@ -55,42 +63,50 @@
         </div>
 
         @if (homeData().misPlaylist.length > 0) {
-          <div class="cards-grid" scrollReveal [stagger]="70" [delay]="100" role="list">
-            @for (playlist of homeData().misPlaylist; track playlist.id!) {
-              <div class="playlist-card-wrapper" role="listitem">
-                <app-album-card
-                  [album]="playlist"
-                  [routerLink]="['/playlists', playlist.id.toString()]"
-                  [contentType]="'playlist'"
-                />
-                <div class="playlist-card-actions">
-                  <button type="button" class="playlist-action-btn playlist-action-btn--edit"
-                    (click)="abrirEditModal(playlist, $event)"
-                    [attr.aria-label]="'Editar playlist ' + playlist.nombre">
-                    <span class="material-icons" aria-hidden="true">edit</span>
-                  </button>
-                  @if (confirmDeleteId() === playlist.id) {
-                    <div class="playlist-delete-confirm">
-                      <span>¿Eliminar?</span>
-                      <button type="button" class="playlist-action-btn playlist-action-btn--confirm"
-                        (click)="eliminarPlaylist()" [disabled]="eliminando()" aria-label="Confirmar eliminación">
-                        <span class="material-icons" aria-hidden="true">check</span>
-                      </button>
-                      <button type="button" class="playlist-action-btn playlist-action-btn--cancel-del"
-                        (click)="cancelarEliminar()" aria-label="Cancelar eliminación">
-                        <span class="material-icons" aria-hidden="true">close</span>
-                      </button>
-                    </div>
-                  } @else {
-                    <button type="button" class="playlist-action-btn playlist-action-btn--delete"
-                      (click)="pedirConfirmacionEliminar(playlist.id, $event)"
-                      [attr.aria-label]="'Eliminar playlist ' + playlist.nombre">
-                      <span class="material-icons" aria-hidden="true">delete</span>
+          <div class="carousel-container">
+            <button class="carousel-btn carousel-btn--prev" (click)="scrollCarousel(misCarousel, -1)" aria-label="Anterior">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <div class="carousel-track cards-grid" #misCarousel scrollReveal [stagger]="70" [delay]="100" role="list">
+              @for (playlist of homeData().misPlaylist; track playlist.id!) {
+                <div class="playlist-card-wrapper" role="listitem">
+                  <app-album-card
+                    [album]="playlist"
+                    [routerLink]="['/playlists', playlist.id.toString()]"
+                    [contentType]="'playlist'"
+                  />
+                  <div class="playlist-card-actions">
+                    <button type="button" class="playlist-action-btn playlist-action-btn--edit"
+                      (click)="abrirEditModal(playlist, $event)"
+                      [attr.aria-label]="'Editar playlist ' + playlist.nombre">
+                      <span class="material-icons" aria-hidden="true">edit</span>
                     </button>
-                  }
+                    @if (confirmDeleteId() === playlist.id) {
+                      <div class="playlist-delete-confirm">
+                        <span>¿Eliminar?</span>
+                        <button type="button" class="playlist-action-btn playlist-action-btn--confirm"
+                          (click)="eliminarPlaylist()" [disabled]="eliminando()" aria-label="Confirmar eliminación">
+                          <span class="material-icons" aria-hidden="true">check</span>
+                        </button>
+                        <button type="button" class="playlist-action-btn playlist-action-btn--cancel-del"
+                          (click)="cancelarEliminar()" aria-label="Cancelar eliminación">
+                          <span class="material-icons" aria-hidden="true">close</span>
+                        </button>
+                      </div>
+                    } @else {
+                      <button type="button" class="playlist-action-btn playlist-action-btn--delete"
+                        (click)="pedirConfirmacionEliminar(playlist.id, $event)"
+                        [attr.aria-label]="'Eliminar playlist ' + playlist.nombre">
+                        <span class="material-icons" aria-hidden="true">delete</span>
+                      </button>
+                    }
+                  </div>
                 </div>
-              </div>
-            }
+              }
+            </div>
+            <button class="carousel-btn carousel-btn--next" (click)="scrollCarousel(misCarousel, 1)" aria-label="Siguiente">
+              <span class="material-icons">chevron_right</span>
+            </button>
           </div>
         } @else {
           <div class="empty-state" role="status">
@@ -119,23 +135,31 @@
         </div>
 
         @if (homeData().artistasSeguidos.length > 0) {
-          <div class="artistas-grid" scrollReveal [stagger]="60" [delay]="80" role="list">
-            @for (artista of homeData().artistasSeguidos; track artista.id) {
-              <button
-                type="button"
-                class="artista-card"
-                role="listitem"
-                (click)="navegarArtista(artista.username)"
-                [attr.aria-label]="'Ir a la página del artista ' + artista.username"
-              >
-                <img
-                  [src]="artista.urlAvatar"
-                  [alt]="artista.username"
-                  class="artista-card__img"
-                />
-                <p class="artista-card__nombre mb-0">{{ artista.username }}</p>
-              </button>
-            }
+          <div class="carousel-container">
+            <button class="carousel-btn carousel-btn--prev" (click)="scrollCarousel(artistasCarousel, -1)" aria-label="Anterior">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <div class="carousel-track artistas-grid" #artistasCarousel scrollReveal [stagger]="60" [delay]="80" role="list">
+              @for (artista of homeData().artistasSeguidos; track artista.id) {
+                <button
+                  type="button"
+                  class="artista-card"
+                  role="listitem"
+                  (click)="navegarArtista(artista.username)"
+                  [attr.aria-label]="'Ir a la página del artista ' + artista.username"
+                >
+                  <img
+                    [src]="artista.urlAvatar"
+                    [alt]="artista.username"
+                    class="artista-card__img"
+                  />
+                  <p class="artista-card__nombre mb-0">{{ artista.username }}</p>
+                </button>
+              }
+            </div>
+            <button class="carousel-btn carousel-btn--next" (click)="scrollCarousel(artistasCarousel, 1)" aria-label="Siguiente">
+              <span class="material-icons">chevron_right</span>
+            </button>
           </div>
         } @else {
           <div class="empty-state" role="status">
@@ -158,19 +182,26 @@
             <h2 class="section-title mb-0" id="novedades-heading">Novedades de la semana</h2>
             <p class="section-sub mb-0">Los lanzamientos más recientes</p>
           </div>
-          <a routerLink="/novedades" class="section-link" aria-label="Ver todas las novedades">Ver todas</a>
         </div>
 
         @if (homeData().novedadesDeLaSemana.length > 0) {
-          <div class="cards-grid cards-grid--novedades" scrollReveal [stagger]="60" role="list">
-            @for (novedad of homeData().novedadesDeLaSemana; track novedad.id) {
-              <app-album-card
-                [album]="novedad"
-                [routerLink]="['/albums', novedad.id.toString()]"
-                [showBadge]="true"
-                role="listitem"
-              />
-            }
+          <div class="carousel-container">
+            <button class="carousel-btn carousel-btn--prev" (click)="scrollCarousel(novedadesCarousel, -1)" aria-label="Anterior">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <div class="carousel-track cards-grid cards-grid--novedades" #novedadesCarousel scrollReveal [stagger]="60" role="list">
+              @for (novedad of homeData().novedadesDeLaSemana; track novedad.id) {
+                <app-album-card
+                  [album]="novedad"
+                  [routerLink]="['/album', novedad.id.toString()]"
+                  [showBadge]="true"
+                  role="listitem"
+                />
+              }
+            </div>
+            <button class="carousel-btn carousel-btn--next" (click)="scrollCarousel(novedadesCarousel, 1)" aria-label="Siguiente">
+              <span class="material-icons">chevron_right</span>
+            </button>
           </div>
         } @else {
           <div class="empty-state" role="status">
@@ -193,48 +224,53 @@
             </h2>
             <p class="section-sub mb-0">Lo que viene pronto</p>
           </div>
-          <a routerLink="/lanzamientos" class="section-link" aria-label="Ver todos los próximos lanzamientos">Ver todos</a>
         </div>
 
         @if (homeData().proximosLanzmientos.length > 0) {
-          <div class="cards-grid cards-grid--proximos" scrollReveal [stagger]="70" [delay]="100" role="list">
-            @for (lanzamiento of homeData().proximosLanzmientos; track lanzamiento.id) {
-              <article
-                class="ks-card ks-proximo"
-                role="listitem"
-                tabindex="0"
-                [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.artista"
-              >
-                <a
-                  class="ks-card__link"
-                  [routerLink]="['/albums', lanzamiento.id]"
-                  [attr.aria-label]="'Ir a ' + lanzamiento.titulo"
-                  tabindex="-1"
+          <div class="carousel-container">
+            <button class="carousel-btn carousel-btn--prev" (click)="scrollCarousel(proximosCarousel, -1)" aria-label="Anterior">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <div class="carousel-track cards-grid cards-grid--proximos" #proximosCarousel scrollReveal [stagger]="70" [delay]="100" role="list">
+              @for (lanzamiento of homeData().proximosLanzmientos; track lanzamiento.id) {
+                <article
+                  class="ks-card ks-proximo"
+                  role="listitem"
+                  tabindex="0"
+                  [attr.aria-label]="lanzamiento.titulo + ' de ' + lanzamiento.artista"
                 >
-                  <div class="ks-card__cover ks-proximo__cover">
-                    <img
-                      [src]="lanzamiento.urlPortada"
-                      [alt]="'Portada de ' + lanzamiento.titulo"
-                      class="ks-card__img ks-proximo__img"
-                      loading="lazy"
-                    />
-
-                    <span
-                      class="ks-proximo__countdown"
-                      [attr.aria-label]="'Faltan ' + (getCountdownLabel(lanzamiento.fechaLanzamiento) || 'pronto')"
-                    >
-                      {{ getCountdownLabel(lanzamiento.fechaLanzamiento) || 'Pronto' }}
-                    </span>
-                  </div>
-
-                  <div class="ks-card__body ks-proximo__body">
-                    <p class="ks-card__title mb-1">{{ lanzamiento.titulo }}</p>
-                    <p class="ks-card__desc mb-0">{{ lanzamiento.artista }}</p>
-                    <span class="ks-card__badge mt-2">{{ lanzamiento.tipo }}</span>
-                  </div>
-                </a>
-              </article>
-            }
+                  <a
+                    class="ks-card__link"
+                    [routerLink]="['/album', lanzamiento.id]"
+                    [attr.aria-label]="'Ir a ' + lanzamiento.titulo"
+                    tabindex="-1"
+                  >
+                    <div class="ks-card__cover ks-proximo__cover">
+                      <img
+                        [src]="lanzamiento.urlPortada"
+                        [alt]="'Portada de ' + lanzamiento.titulo"
+                        class="ks-card__img ks-proximo__img"
+                        loading="lazy"
+                      />
+                      <span
+                        class="ks-proximo__countdown"
+                        [attr.aria-label]="'Faltan ' + (getCountdownLabel(lanzamiento.fechaLanzamiento) || 'pronto')"
+                      >
+                        {{ getCountdownLabel(lanzamiento.fechaLanzamiento) || 'Pronto' }}
+                      </span>
+                    </div>
+                    <div class="ks-card__body ks-proximo__body">
+                      <p class="ks-card__title mb-1">{{ lanzamiento.titulo }}</p>
+                      <p class="ks-card__desc mb-0">{{ lanzamiento.artista }}</p>
+                      <span class="ks-card__badge mt-2">{{ lanzamiento.tipo }}</span>
+                    </div>
+                  </a>
+                </article>
+              }
+            </div>
+            <button class="carousel-btn carousel-btn--next" (click)="scrollCarousel(proximosCarousel, 1)" aria-label="Siguiente">
+              <span class="material-icons">chevron_right</span>
+            </button>
           </div>
         } @else {
           <div class="empty-state" role="status">

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { AlbumCard } from '../compartido/album-card/album-card';
@@ -32,6 +32,40 @@ export class Artista implements OnInit {
   protected readonly mostrarTodasLasCanciones: WritableSignal<boolean> = signal(false);
   protected readonly siguiendoLoading: WritableSignal<boolean> = signal(false);
   protected readonly siguiendoError: WritableSignal<string> = signal('');
+
+  /** IDs de álbumes cuya fecha de lanzamiento ya ha llegado (o no tienen fecha). */
+  private readonly albumsPublicadosIds = computed<Set<number>>(() => {
+    const a = this.artista();
+    if (!a) return new Set();
+    const now = Date.now();
+    return new Set(
+      (a.albums ?? [])
+        .filter(album => {
+          if (!album.fechaLanzamiento) return true;
+          return new Date(album.fechaLanzamiento).getTime() <= now;
+        })
+        .map(album => album.id)
+    );
+  });
+
+  /** Canciones filtradas: solo las que pertenecen a un álbum ya publicado. */
+  protected readonly cancionesPublicadas = computed(() => {
+    const a = this.artista();
+    if (!a?.canciones?.length) return [];
+    const publicados = this.albumsPublicadosIds();
+    return a.canciones.filter(p =>
+      // Si no tiene albumId no podemos filtrar → se muestra
+      p.albumId == null || publicados.has(p.albumId)
+    );
+  });
+
+  /** Álbumes filtrados: solo los ya publicados. */
+  protected readonly albumsPublicados = computed(() => {
+    const a = this.artista();
+    if (!a?.albums?.length) return [];
+    const publicados = this.albumsPublicadosIds();
+    return a.albums.filter(album => publicados.has(album.id));
+  });
 
   ngOnInit(): void {
     // Usar paramMap para reaccionar a cambios en los parámetros de ruta

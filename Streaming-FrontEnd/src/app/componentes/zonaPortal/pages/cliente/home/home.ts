@@ -170,6 +170,10 @@ export class Home implements OnInit, OnDestroy {
     this.router.navigate(['/artistas', username]);
   }
 
+  protected scrollCarousel(el: HTMLElement, direction: number): void {
+    el.scrollBy({ left: direction * 240, behavior: 'smooth' });
+  }
+
   // ── Modal creación playlist ──────────────────────────────
   protected abrirModal(): void {
     this.playlistForm.reset({ nombre: '', descripcion: '', esPublica: true });

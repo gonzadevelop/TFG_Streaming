@@ -391,6 +391,7 @@
 
 /* ── Botones de acción de pista ── */
 .artist-upload__remove {
+  justify-self: start;
   align-self: flex-start;
   background: rgba(229, 57, 53, 0.12);
   border: 1px solid rgba(229, 57, 53, 0.3);
@@ -401,11 +402,42 @@
   font-size: 0.82rem;
   font-weight: 600;
   transition: background 0.15s, color 0.15s;
+  width: auto;
 }
 
 .artist-upload__remove:hover {
   background: rgba(229, 57, 53, 0.25);
   color: #ffcdd2;
+}
+
+/* ── Input file personalizado ── */
+.artist-upload__section input[type="file"],
+.artist-upload__track input[type="file"] {
+  /* Ocultar apariencia nativa */
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.artist-upload__section input[type="file"]::file-selector-button,
+.artist-upload__track input[type="file"]::file-selector-button {
+  background: rgba(74, 158, 255, 0.12);
+  border: 1.5px solid rgba(74, 158, 255, 0.3);
+  color: #4a9eff;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: background 0.15s, border-color 0.15s;
+  margin-right: 0.75rem;
+}
+
+.artist-upload__section input[type="file"]::file-selector-button:hover,
+.artist-upload__track input[type="file"]::file-selector-button:hover {
+  background: rgba(74, 158, 255, 0.22);
+  border-color: #4a9eff;
 }
 
 .artist-upload__add {

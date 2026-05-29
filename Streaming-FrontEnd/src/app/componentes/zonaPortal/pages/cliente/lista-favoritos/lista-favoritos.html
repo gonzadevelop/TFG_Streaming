@@ -34,8 +34,9 @@
 
     @if (totalCanciones() > 0) {
       <div class="favoritos-actions">
-        <button class="btn-play-large" aria-label="Reproducir favoritos">
-          ▶
+        <button class="btn-play-large" aria-label="Reproducir favoritos" (click)="reproducirTodo()">
+          <span class="material-icons" aria-hidden="true">play_arrow</span>
+          Reproducir
         </button>
       </div>
 

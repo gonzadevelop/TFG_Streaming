@@ -178,6 +178,95 @@
    Grid de cards
    ══════════════════════════════════════════ */
 
+/* ══════════════════════════════════════════
+   Carrusel
+   ══════════════════════════════════════════ */
+
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carousel-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(4, 20, 40, 0.85);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  color: #e8f4ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, opacity 0.2s ease;
+  z-index: 2;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carousel-container:hover .carousel-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel-btn:hover {
+  background: rgba(74, 158, 255, 0.2);
+  border-color: #4a9eff;
+  transform: scale(1.08);
+}
+
+.carousel-btn:focus-visible {
+  outline: 2px solid #4a9eff;
+  outline-offset: 2px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel-btn .material-icons {
+  font-size: 1.4rem;
+}
+
+/* Pista del carrusel: sustituye al grid clásico */
+.carousel-track {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 1.25rem;
+  padding: 0.5rem 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ancho fijo para cada card dentro del carrusel */
+.carousel-track > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 200px;
+}
+
+/* Artistas más pequeños */
+.carousel-track.artistas-grid > * {
+  width: 140px;
+}
+
+/* Novedades ligeramente menores */
+.carousel-track.cards-grid--novedades > * {
+  width: 180px;
+}
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -1250,20 +1339,19 @@
   align-items: center;
   justify-content: center;
 
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  border-radius: 99px;
 
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.01em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 
-  color: #e8f4ff;
-  background: rgba(4, 20, 40, 0.72);
+  color: #4a9eff;
+  background: rgba(74, 158, 255, 0.15);
   border: 1px solid rgba(74, 158, 255, 0.35);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 /* Mantener accesibilidad: el focus visible está en el article (.ks-card) */
