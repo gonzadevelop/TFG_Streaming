@@ -12,6 +12,8 @@ import { IPista } from '../../../../../model/pista/IPista';
 import { ListaCanciones } from '../compartido/lista-canciones/lista-canciones';
 import { FavoritosService } from '../../../../../services/favoritosService';
 import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
+import { StorageGlobal } from '../../../../../services/storageGlobal';
+import IPistaCola from '../../../../../model/pista/IPistaCola';
 
 @Component({
   selector: 'app-lista-favoritos',
@@ -22,6 +24,7 @@ import { KsLoaderComponent } from '../compartido/ks-loader/ks-loader';
 })
 export class ListaFavoritos implements OnInit {
   private readonly favoritosService = inject(FavoritosService);
+  private readonly storage          = inject(StorageGlobal);
 
   /** Lista de pistas reactiva — se actualiza automáticamente al pulsar el corazón */
   readonly pistas: Signal<IPista[]> = this.favoritosService.favoritosPistas;
@@ -37,6 +40,18 @@ export class ListaFavoritos implements OnInit {
     const minutos = Math.floor((segundos % 3600) / 60);
     if (horas > 0) return `${horas} h ${minutos} min`;
     return `${minutos} min`;
+  }
+
+  protected reproducirTodo(): void {
+    const pistas = this.pistas();
+    if (!pistas.length) return;
+
+    const cola: IPistaCola[] = pistas.map((p, index) => ({
+      ...p,
+      orden: index,
+      reproduciendo: index === 0,
+    }));
+    this.storage.SetCola(cola);
   }
 
   protected readonly cargando: WritableSignal<boolean> = signal(true);

@@ -69,15 +69,15 @@
     }
 
     <!-- Popular canciones -->
-    @if (a.canciones && a.canciones.length > 0) {
+    @if (cancionesPublicadas().length > 0) {
       <div class="artista-section">
         <h2 class="section-title">Popular</h2>
         @if (mostrarTodasLasCanciones()) {
-          <app-lista-canciones [pistas]="a.canciones" />
+          <app-lista-canciones [pistas]="cancionesPublicadas()" />
         } @else {
-          <app-lista-canciones [pistas]="a.canciones.slice(0, 5)" />
+          <app-lista-canciones [pistas]="cancionesPublicadas().slice(0, 5)" />
         }
-        @if (a.canciones.length > 5) {
+        @if (cancionesPublicadas().length > 5) {
           <button class="btn-see-more mt-3" (click)="alternarCanciones()">
             {{ mostrarTodasLasCanciones() ? 'Ver menos' : 'Ver más' }}
           </button>
@@ -107,7 +107,7 @@
     </div>
 
     <!-- Discografía - Álbumes -->
-    @if (a.albums && a.albums.length > 0) {
+    @if (albumsPublicados().length > 0) {
       <div class="artista-section">
         <div class="discography-header d-flex align-items-center justify-content-between">
           <h2 class="section-title mb-0">Discografía</h2>
@@ -115,7 +115,7 @@
         </div>
 
         <div class="albums-grid">
-          @for (album of a.albums.slice(0, 5); track album.id!) {
+          @for (album of albumsPublicados().slice(0, 5); track album.id!) {
             <app-album-card
               [album]="album"
               [routerLink]="['/album', album.id.toString()]"

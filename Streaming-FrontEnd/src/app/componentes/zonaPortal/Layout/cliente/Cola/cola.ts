@@ -75,18 +75,19 @@ export class Cola {
 
   // ── Reproducción / eliminación ───────────────────────────────────────────
   reproducirDeCola(pistaId: number): void {
-    const pistaActualInd = this.storage.cola().findIndex(p => p.idPista === pistaId);
+    const cola = this.storage.cola();
+    const pistaActualInd = cola.findIndex(p => p.idPista === pistaId);
     if (pistaActualInd === -1) return;
 
-    const lista = this.storage.cola().map(p => ({
+    // Marcar solo la pista seleccionada como 'reproduciendo'
+    const lista = cola.map((p, idx) => ({
       ...p,
-      reproduciendo: p.idPista === pistaId
+      reproduciendo: idx === pistaActualInd,
     }));
     this.storage.cola.set(lista);
+    this.storage.colaOriginal.set(lista);
 
     const pista = lista[pistaActualInd];
-    console.log('🎵 Pista a reproducir desde cola:', pista);
-
     this.storage.Reproducir({
       idPista: pista.idPista || 0,
       titulo: pista.titulo,
@@ -94,15 +95,8 @@ export class Cola {
       urlPortada: pista.urlPortada,
       urlCancion: pista.urlCancion,
       duracionSegundos: pista.duracionSegundos,
-      reproduciendo: true
+      reproduciendo: true,
     });
-  }
-
-  /** Convierte un índice relativo de colaRestante al índice absoluto en cola */
-  protected getGlobalIndex(relativeIndex: number): number {
-    const currIdx = this.storage.cola().findIndex(p => p.reproduciendo);
-    const offset = currIdx === -1 ? 0 : currIdx + 1;
-    return relativeIndex + offset;
   }
 
   eliminar(pistaId: number): void {

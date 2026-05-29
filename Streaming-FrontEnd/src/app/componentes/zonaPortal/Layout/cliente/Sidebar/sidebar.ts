@@ -73,7 +73,7 @@ export class Sidebar implements OnInit {
     this.sidebarService.avatarUrl.set(null);
     this.role.set(null);
     this.closeDropdown();
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   ngOnInit(): void {

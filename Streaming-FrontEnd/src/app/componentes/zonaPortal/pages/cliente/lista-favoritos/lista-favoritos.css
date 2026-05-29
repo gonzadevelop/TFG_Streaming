@@ -16,21 +16,22 @@
   gap: 24px;
   padding: 24px;
   margin-bottom: 1.25rem;
-  background: rgba(4, 20, 40, 0.70);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(4, 20, 40, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 1rem;
-  box-shadow: 0 2px 14px rgba(74, 158, 255, 0.08);
+  border: 1px solid rgba(74, 158, 255, 0.12);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3);
 }
 
 .favoritos-cover-container {
   width: 200px;
   height: 200px;
   min-width: 200px;
-  border-radius: 1.1rem;
+  border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(135deg, #f4c2c2, #e8a0bf);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(74, 158, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .favoritos-cover {
@@ -42,7 +43,7 @@
 .favoritos-cover-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f4c2c2, #e8a0bf);
+  background: linear-gradient(135deg, rgba(21, 101, 192, 0.6), rgba(74, 158, 255, 0.25));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +51,8 @@
 
 .favoritos-cover-icon {
   font-size: 64px;
-  color: #c0405a;
+  color: #4a9eff;
+  opacity: 0.7;
 }
 
 .favoritos-info {
@@ -65,7 +67,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #c0405a;
+  color: #7aaed4;
   margin-bottom: 8px;
 }
 
@@ -104,33 +106,34 @@
 .favoritos-actions {
   position: relative;
   z-index: 1;
-  padding: 16px 0;
   display: flex;
   align-items: center;
+  padding: 0.5rem 0 1.5rem;
 }
 
 .btn-play-large {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background-color: #c0405a;
-  color: #fff;
-  border: none;
-  font-size: 24px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  padding: 0.65rem 1.75rem;
+  border-radius: 2rem;
+  background: linear-gradient(135deg, #1565c0, #4a9eff);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
   cursor: pointer;
-  transition: transform 0.1s, background-color 0.1s;
+  box-shadow: 0 4px 18px rgba(74, 158, 255, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-play-large:hover {
-  background-color: #a8364e;
-  transform: scale(1.05);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(74, 158, 255, 0.6);
 }
 
-.btn-play-large:active {
-  transform: scale(1);
+.btn-play-large .material-icons {
+  font-size: 1.5rem;
 }
 
 .favoritos-content {
@@ -156,7 +159,7 @@
 
 .favoritos-empty-icon {
   font-size: 4rem;
-  color: #c0405a;
+  color: #4a9eff;
   opacity: 0.4;
 }
 
