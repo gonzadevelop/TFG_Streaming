@@ -263,6 +263,7 @@ export class Home implements OnInit, OnDestroy {
   protected readonly editDraggingOver     = signal(false);
   protected readonly editPlaylistId       = signal<number | null>(null);
   protected readonly confirmDeleteId      = signal<number | null>(null);
+  protected readonly playlistNombreParaEliminar = signal<string>('');
   protected readonly eliminando           = signal(false);
 
   protected readonly editPlaylistForm: FormGroup = this.fb.group({
@@ -356,6 +357,8 @@ export class Home implements OnInit, OnDestroy {
   protected pedirConfirmacionEliminar(id: number, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
+    const nombre = this.homeData().misPlaylist.find(p => p.id === id)?.nombre ?? '';
+    this.playlistNombreParaEliminar.set(nombre);
     this.confirmDeleteId.set(id);
   }
 
