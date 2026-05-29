@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/key-sound-front/browser",
+    "public": "dist/KeySound-FrontEnd/browser",
     "ignore": [
       "firebase.json",
       "**/.*",

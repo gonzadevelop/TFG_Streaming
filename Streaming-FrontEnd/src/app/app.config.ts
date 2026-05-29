@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
+import {provideRouter, withComponentInputBinding, withHashLocation, withRouterConfig} from '@angular/router';
 
 import { routes } from './app.routes';
 import {provideHttpClient, withFetch, withInterceptors} from '@angular/common/http';
@@ -14,9 +14,12 @@ export const appConfig: ApplicationConfig = {
         onSameUrlNavigation: 'reload',
         paramsInheritanceStrategy: 'always'
       }),
-      withComponentInputBinding()
+      withComponentInputBinding(),
+      withHashLocation()
     ),
-    provideHttpClient(withFetch(),
-      withInterceptors([authInterceptor]))
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor])
+    )
   ]
 };
